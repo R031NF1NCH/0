@@ -2,39 +2,66 @@
 ./unix-privesc-check standard
 
 ~~~Manual Enumeration~~~
-##General Enumeration
-id    #View current User info
-cat /etc/passwd    #View passwd file
-hostname    #view system hostname
 
-##OS Version Info
-cat /etc/issue    #
-cat /etc/os-release    #
+#General Enumeration
+id      #View current User info
+cat /etc/passwd      #View passwd file
+hostname      #view system hostname
 
-##Running Services and Processes
-uname -a    #
-ps aux    #
+#OS Version Info
+cat   /etc/issue      #os version
+cat   /etc/os-release      #
+cat /etc/*-release    #
+uname -a      #OS Kernel/Architecture Version
 
+#Running Services and Processes
 
-##Enumerate Network Info
-ip a    #
-ipconfig a    #
-routel    #
-ss -anp    #
+ps aux      #View system processes (including those run by privileged users) 
 
 
-cat /etc/iptables/rules.v4    #
-ls -lah /etc/cron*    #
-cat /etc/crontab    #
-crontab -l    #
-sudo crontab -l    #
-dpkg -l    #
-find / -writable -type d 2>/dev/null    #
-cat /etc/fstab    #
-lsblk    #
-lsmod    #
-/sbin/modinfo libata    #
-find / -perm -u=s -type f 2>/dev/null    #
+#Enumerate Network Info
+ip a      #List the TCP/IP configuration of every network adapter
+ipconfig a      #List the TCP/IP configuration of every network adapter
+routel      #View Network routing tables
+ss -anp      #Display active network connections and listening ports
+netstat -anp    #Display active network connections and listening ports
+cat /etc/iptables/rules.v4      #Inspecting custom IP tables
+
+#Enumerate Scheduled tasks
+ls -lah /etc/cron*      #List the contents of all cron directories
+cat /etc/crontab      #Viewing /etc/crontab file
+crontab -l      #View the current user's scheduled jobs
+sudo crontab -l      #Listing cron jobs using sudo reveals jobs run by the root user
+
+#Installed applications
+dpkg -l      #list applications installed by dpkg on our Debian system
+
+#Find writable Locations
+find / -writable -type d 2>/dev/null      #Searching for every directory writable by the current user
+
+#Disks and Mounts
+cat /etc/fstab      #List all mounted filesystems.
+mount      #Lists all drives that will be mounted at boot time.
+lsblk      #Use lsblk to view all available disks
+
+#Device Drivers and Kernel Modules
+lsmod    #Enumerate the loaded kernel modules using lsmod without any additional arguments
+/sbin/modinfo libata      #Displaying additional information about the example libata module
+
+#SETUID & SETGID
+find / -perm -u=s -type f 2>/dev/null      #search for SUID-marked binaries
+find / -perm -1000 -type d 2>/dev/null    #??
+find / -perm -g=s -type f 2>/dev/null    #??
+
+#User Information
+env    #Sometimes administrators store credentials inside environment variables
+cat .bashrc    #Inspect .bashrc file for custom env variables
+
+#SU
+su - root    #Try to su as root 
+
+
+
 
 
 
