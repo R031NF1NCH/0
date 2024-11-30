@@ -1,0 +1,45 @@
+~~~Automated Enumeration~~~
+./unix-privesc-check standard
+
+~~~Manual Enumeration~~~
+##General Enumeration
+id    #View current User info
+cat /etc/passwd    #View passwd file
+hostname    #view system hostname
+
+##OS Version Info
+cat /etc/issue    #
+cat /etc/os-release    #
+
+##Running Services and Processes
+uname -a    #
+ps aux    #
+
+
+##Enumerate Network Info
+ip a    #
+ipconfig a    #
+routel    #
+ss -anp    #
+
+
+cat /etc/iptables/rules.v4    #
+ls -lah /etc/cron*    #
+cat /etc/crontab    #
+crontab -l    #
+sudo crontab -l    #
+dpkg -l    #
+find / -writable -type d 2>/dev/null    #
+cat /etc/fstab    #
+lsblk    #
+lsmod    #
+/sbin/modinfo libata    #
+find / -perm -u=s -type f 2>/dev/null    #
+
+
+
+
+
+
+
+
