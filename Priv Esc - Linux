@@ -71,6 +71,7 @@ su - root    #Try to su as root
 
 
 #Sudo
+sudo --version    #Check version for exploits
 sudo -l    #Sudo capabilities of current user
 sudo -i    #Elevate directly to root by running i with sudo and supplying eve's or other admins credentials.
 echo targetUser ALL=(ALL) NOPASSWD:ALL >> /etc/sudoers
