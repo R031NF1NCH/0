@@ -1,0 +1,24 @@
+~~~Scripts and tools for automated enumeration~~~
+smbenum.sh
+enum4linux -a <ip>
+enum4linux -u 'guest' -p '' -a <ip>
+smbmap 
+
+~~~SMBClient~~~
+
+smbclient -L    #List SMB shares
+smbclient //192.168.1216.11/ITDEPT -N    #Login to ITDEPT SMB share using null session(-n) and no password
+smbclient -L <target-IP> -U username%password    #List shares on a machine using a valid username + password
+smbclient //<target>/<share$> -U username%password   #Connect to a valid share with username + password
+smbclient //<target>/<share$> -c 'cd folder; ls' password -U username    #List files on a specific share folder inside the share
+smbclient //<target>/<share$> -c 'cd folder;get desired_file_name' password -U username    #Download a file from a specific share folder
+smbclient //<target>/<share$> -c 'put /var/www/my_local_file.txt .\target_folder\target_file.txt' password -U username    #Copy a file to a specific share folder
+
+
+~~~Rpcclient~~~
+rpcclient -U "" <ip>    #Null session with rpcclient
+
+Some important commands
+rpcclient>srvinfo
+rpcclient>enumdomusers
+rpcclient>getdompwinfo
