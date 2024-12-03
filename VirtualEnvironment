@@ -1,4 +1,4 @@
-If encountering the pip or python error: "externally-managed-environment"
+#If encountering the pip or python error: "externally-managed-environment"
 #Best practice is to use a virtual environment to install packages. 
 #To do this cd to the dir you would like to install your virtual 
 #environment I usually put it in the dir of the tool I am installing packages for. Next run 
@@ -9,5 +9,8 @@ virtualenv -p {PYTHON VERSION} {NAME OF VIRTUAL ENVIRONMENT}
 #Start using the environment
 source {NAME OF VIRTUAL ENVIRONMENT}/bin/activate
 
-#To exit the virtual environment simply run `deactivate`. Below is a quick command to copy and paste:
+Sample quick command to setup and start a virtual environment:
 virtualenv -p python3 venv; source venv/bin/activate
+
+#To exit the virtual environment simply run `deactivate`. 
+deactivate
