@@ -1,0 +1,3 @@
+mysql -u {username} -p'{password}' \
+    -h {remote server ip or name} -P {port} \
+    -D {DB name}
