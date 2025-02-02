@@ -90,3 +90,7 @@ Debian System Maintenance User: The /etc/mysql/debian.cnf file contains the plai
 
 MySQL User Hashes: User password hashes are stored in /var/lib/mysql/mysql/user.MYD. These hashes represent the encrypted passwords of MySQL users and can be extracted for potential cracking.
 grep -oaE "[-_\.\*a-Z0-9]{3,}" /var/lib/mysql/mysql/user.MYD | grep -v "mysql_native_password"
+
+Overwriting wordpress password in wordpress database
+UPDATE wp_users SET user_pass=MD5('robert') WHERE user_login = 'admin';  #Updating using admin passsword to "robert" using md5 encryption
+UPDATE `wp_users` SET `user_pass` = "$P$BxA3ZFHi3G.ccutvJTqbuSZilRhfqP0" WHERE user_email="your_email_adress"  #Updating the password using PHPass encryption. Encrupted pass is "robert"
