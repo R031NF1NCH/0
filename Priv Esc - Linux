@@ -94,8 +94,9 @@ su root2      #Elevate Privs with su
 #Setuid, Linux Capabilities and GTFO Bins
 /usr/sbin/getcap -r / 2>/dev/null    #Manually Enumerating Linux Capabilities for setuid capabilities enabled, along with the +ep flag specifying that capabilities are effective and permitted.
 
-
-
+#search for files that contain the string “passw” and “pwd” across the entire filesystem
+grep --color=auto -rnw '/' -iIe "PASSW\|PASSWD\|PASSWORD\|PWD" --color=always 2>/dev/null  #Recursively grep from root directory
+grep --color=auto -rnw -iIe "PASSW\|PASSWD\|PASSWORD\|PWD" --color=always 2>/dev/null    Recursively grep from current directory (less output)
 
 
 
