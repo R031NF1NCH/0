@@ -1,1 +1,4 @@
-
+telnet example.com 25
+nmap -p25 --script smtp-enum-users.nse target.com
+dig +short mx example.com
+nmap -p25 --script smtp-ntlm-info --script-args smtp-ntlm-info.fingerprint=on target.com
