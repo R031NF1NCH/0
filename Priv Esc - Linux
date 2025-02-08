@@ -44,6 +44,8 @@ dpkg -l      #list applications installed by dpkg on our Debian system
 #Find writable Locations
 find / -writable -type d 2>/dev/null      #Searching for every directory writable by the current user
 
+#Searching for Files
+find / -name flag.txt
 
 #Disks and Mounts
 cat /etc/fstab      #List all mounted filesystems.
