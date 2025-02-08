@@ -1,9 +1,17 @@
+nmap --script=smtp-commands,smtp-enum-users,smtp-vuln-cve2010-4344,smtp-vuln-cve2011-1720,smtp-vuln-cve2011-1764 -p 25 IP
+
 ~~~Scripts and tools for automated enumeration~~~
 smbenum.sh
 enum4linux -a -o <ip>
 
 enum4linux -u 'guest' -p '' -a <ip>
-smbmap 
+smbmap -H $IP
+smbmap -u "user" -p "pass" -H $IP
+smbmap -H $IP -u null
+smbmap -H $IP -P 139 2>&1
+smbmap -H $IP -P 445 2>&1
+smbmap -u null -p "" -H $IP -P 139 -x "ipconfig /all" 2>&1
+smbmap -u null -p "" -H $IP -P 445 -x "ipconfig /all" 2>&1
 
 ~~~SMBClient~~~
 
@@ -20,8 +28,22 @@ smbclient //<target>/<share$> -c 'put /var/www/my_local_file.txt .\target_folder
 
 ~~~Rpcclient~~~
 rpcclient -U "" <ip>    #Null session with rpcclient
+rpcclient -U "" -N $IP
 
 Some important commands
 rpcclient>srvinfo
 rpcclient>enumdomusers
 rpcclient>getdompwinfo
+rpcclient>enumdomusers
+rpcclient>enumdomgroups
+rpcclient>queryuser 0x450
+rpcclient>enumprinters
+rpcclient>querydominfo
+rpcclient>createdomuser
+rpcclient>deletedomuser
+rpcclient>lookupnames
+rpcclient>lookupsids
+rpcclient>lsaaddacctrights
+rpcclient>lsaremoveacctrights
+rpcclient>dsroledominfo
+rpcclient>dsenumdomtrusts
