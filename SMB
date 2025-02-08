@@ -1,13 +1,16 @@
 ~~~Scripts and tools for automated enumeration~~~
 smbenum.sh
-enum4linux -a <ip>
+enum4linux -a -o <ip>
+
 enum4linux -u 'guest' -p '' -a <ip>
 smbmap 
 
 ~~~SMBClient~~~
 
-smbclient -L    #List SMB shares
-smbclient //192.168.1216.11/ITDEPT -N    #Login to ITDEPT SMB share using null session(-n) and no password
+smbclient -L IP    #List SMB shares
+smbclient //192.168.0.0/ITDEPT -N    #Login to ITDEPT SMB share using null session(-n) and no password
+smbclient //192.168.0.0/IPC$         #Login to share
+sudo smbclient //192.168.0.0/IPC$    #Try sudoing 
 smbclient -L <target-IP> -U username%password    #List shares on a machine using a valid username + password
 smbclient //<target>/<share$> -U username%password   #Connect to a valid share with username + password
 smbclient //<target>/<share$> -c 'cd folder; ls' password -U username    #List files on a specific share folder inside the share
