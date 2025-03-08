@@ -5,6 +5,7 @@ openssl s_client -connect example.com:465  #Connect using encryption
 nmap -p25 --script smtp-enum-users.nse target.com
 dig +short mx example.com
 nmap -p25 --script smtp-ntlm-info --script-args smtp-ntlm-info.fingerprint=on target.com
+nmap --script=smtp-commands,smtp-enum-users,smtp-vuln-cve2010-4344,smtp-vuln-cve2011-1720,smtp-vuln-cve2011-1764 -p 25 IP
 
 # Metasploit
 auxiliary/scanner/smtp/smtp_enum
