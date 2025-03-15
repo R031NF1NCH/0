@@ -1,1 +1,22 @@
-<h1>test</h1>
+# https://medium.com/@masjadaan/hijacking-shared-libraries-c3dff035c5f9
+
+# Search Path for Shared Libraries
+1.  First checks the directories listed in its Runtime Library Search Path (RPATH), which is embedded within the executable itself.
+2.  Looks in the directories specified in the LD_LIBRARY_PATH environment variable. This variable allows users to define custom library paths without modifying the system-wide configuration.
+3.  Similar to RPATH, the Runtime Search Path (RUNPATH) is another directory list embedded in the executable but is checked after LD_LIBRARY_PATH.
+4.  The application then checks the directories listed in /etc/ld.so.conf configuration file.
+5.  Finally, the search proceeds to the standard system library directories, which include /lib, /lib64, /usr/lib, /usr/lib64.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
