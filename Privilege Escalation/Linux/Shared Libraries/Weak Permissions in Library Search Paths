@@ -1,4 +1,4 @@
-Below is an example of exploiting **Exploiting Weak Permissions in Library Search Paths** to achieve a reverse shell on a Linux target. This technique involves placing a malicious shared library in a directory with weak permissions that is included in the library search path, causing a target program to load it instead of the legitimate library. I’ll also include helpful commands to identify a suitable target, as requested.
+Below is an example of exploiting **Exploiting Weak Permissions in Library Search Paths** to achieve a reverse shell on a Linux target. This technique involves placing a malicious shared library in a directory with weak permissions that is included in the library search path, causing a target program to load it instead of the legitimate library. 
 
 
 ### How It Works
