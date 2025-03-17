@@ -1,4 +1,4 @@
-Below is an example of exploiting **Hijacking via Symbolic Links** (method #4 from the original list) to achieve a reverse shell on a Linux target. This technique involves creating a symbolic link that redirects a legitimate shared library to a malicious one in a writable directory exploited by the target program. I’ll also include helpful commands to identify a suitable target.
+Below is an example of exploiting **Hijacking via Symbolic Links** to achieve a reverse shell on a Linux target. This technique involves creating a symbolic link that redirects a legitimate shared library to a malicious one in a writable directory exploited by the target program. I’ll also include helpful commands to identify a suitable target.
 
 ### How It Works
 1. The target program attempts to load a shared library (e.g., `libcustom.so`) from a known location (e.g., `/tmp`).
