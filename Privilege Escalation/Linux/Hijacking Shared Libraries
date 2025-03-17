@@ -7,6 +7,146 @@
 4.  The application then checks the directories listed in /etc/ld.so.conf configuration file.
 5.  Finally, the search proceeds to the standard system library directories, which include /lib, /lib64, /usr/lib, /usr/lib64.
 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+### Key Considerations
+- **Privilege Requirements**: Many methods require elevated privileges or specific conditions (e.g., writable directories, misconfigured permissions).
+- **Detection**: Techniques like `LD_PRELOAD` or library overwriting can be detected by security tools or system monitoring.
+- **Mitigations**: Modern Linux systems use protections like ASLR, RELRO, and restricted library loading for setuid binaries, which may limit the effectiveness of these methods.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--------------------------Methods--------------------------
+
+### 1. **LD_PRELOAD Exploitation**
+   - **Description**: The `LD_PRELOAD` environment variable allows a user to specify a shared library that will be loaded before all others by the dynamic linker. This can override functions in standard libraries (e.g., `libc`) with malicious versions.
+   - **How it Works**: An attacker creates a malicious shared object (e.g., `malicious.so`) with redefined functions (like `malloc()` or `system()`) and sets `LD_PRELOAD` to point to it.
+   - **Example**:
+     ```bash
+     export LD_PRELOAD=/path/to/malicious.so
+     ./target_program
+     ```
+   - **Limitations**: Some programs (e.g., setuid binaries) may ignore `LD_PRELOAD` for security reasons unless the attacker has sufficient privileges.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+### 2. **Modifying LD_LIBRARY_PATH**
+   - **Description**: The `LD_LIBRARY_PATH` environment variable specifies directories to search for shared libraries before the default system paths. An attacker can point it to a directory containing a malicious library with the same name as a legitimate one.
+   - **How it Works**: The dynamic linker (`ld.so`) loads the malicious library instead of the intended one.
+   - **Example**:
+     ```bash
+     export LD_LIBRARY_PATH=/path/to/malicious/dir:$LD_LIBRARY_PATH
+     ./target_program
+     ```
+   - **Limitations**: Similar to `LD_PRELOAD`, this may not work with setuid binaries or systems with hardened configurations.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+### 3. **Library Path Injection via RPATH/RUNPATH**
+   - **Description**: Binaries can have embedded `RPATH` or `RUNPATH` entries in their ELF headers, specifying library search paths. An attacker can modify or exploit these paths to load a malicious library.
+   - **How it Works**: Use tools like `patchelf` to alter the `RPATH` of a binary to point to a malicious directory.
+   - **Example**:
+     ```bash
+     patchelf --set-rpath /path/to/malicious/dir target_binary
+     ./target_binary
+     ```
+   - **Limitations**: Requires write access to the binary and knowledge of its dependencies.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+### 4. **Hijacking via Symbolic Links**
+   - **Description**: Replace or redirect a legitimate shared library with a symbolic link pointing to a malicious library.
+   - **How it Works**: If an application loads a library from a writable directory (e.g., `/tmp`), an attacker can create a symlink with the same name pointing to their malicious library.
+   - **Example**:
+     ```bash
+     ln -sf /path/to/malicious/libfake.so /tmp/libtarget.so
+     ```
+   - **Limitations**: Requires the target application to load libraries from an attacker-controlled or predictable location.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+### 5. **Overwriting Legitimate Libraries**
+   - **Description**: Directly replace a system library (e.g., `/lib/libc.so.6`) with a malicious version containing backdoored functions.
+   - **How it Works**: The attacker needs write permissions to the library file, often requiring root access or exploitation of a vulnerability.
+   - **Example**:
+     ```bash
+     cp /path/to/malicious/libc.so.6 /lib/libc.so.6
+     ```
+   - **Limitations**: Requires elevated privileges and may break system stability if not done carefully.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+### 6. **DT_NEEDED Dependency Hijacking**
+   - **Description**: Modify an executable’s ELF header to include a malicious library in its `DT_NEEDED` section (list of required libraries).
+   - **How it Works**: Use a tool like `patchelf` to inject a dependency that points to a malicious shared object.
+   - **Example**:
+     ```bash
+     patchelf --add-needed malicious.so target_binary
+     ```
+   - **Limitations**: Requires write access to the binary and may be detected by integrity checks.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+### 7. **Exploiting Weak Permissions in Library Search Paths**
+   - **Description**: If a program searches for libraries in a directory with weak permissions (e.g., `/usr/local/lib`), an attacker can place a malicious library there.
+   - **How it Works**: The dynamic linker loads the attacker’s library due to its higher priority in the search order.
+   - **Example**:
+     ```bash
+     cp /path/to/malicious/libfake.so /usr/local/lib/libfake.so
+     ```
+   - **Limitations**: Requires write access to a directory in the library search path.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+### 8. **Constructor Function Injection**
+   - **Description**: Shared libraries can define constructor functions (e.g., via `__attribute__((constructor))`) that execute when the library is loaded. An attacker can inject malicious code into a library that runs automatically.
+   - **How it Works**: Combine with any of the above methods (e.g., `LD_PRELOAD`) to load a library with a constructor that executes a payload.
+   - **Example**:
+     ```c
+     void __attribute__((constructor)) init() {
+         system("whoami > /tmp/hacked");
+     }
+     ```
+   - **Limitations**: Depends on successfully loading the library via another hijacking method.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+### 9. **Exploiting Dynamic Linker Configuration (/etc/ld.so.conf)**
+   - **Description**: Modify the dynamic linker’s configuration file (`/etc/ld.so.conf`) or its cache (`/etc/ld.so.cache`) to include a path to a malicious library.
+   - **How it Works**: After editing, run `ldconfig` to update the cache, causing the linker to prioritize the malicious path.
+   - **Example**:
+     ```bash
+     echo "/path/to/malicious/dir" >> /etc/ld.so.conf
+     ldconfig
+     ```
+   - **Limitations**: Requires root privileges and may be logged or detected.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+### 10. **Hijacking via dlopen() Calls**
+   - **Description**: If a program uses `dlopen()` to dynamically load a library at runtime, an attacker can manipulate the library name or path passed to `dlopen()`.
+   - **How it Works**: This could involve environment variable manipulation (e.g., `LD_LIBRARY_PATH`) or replacing the expected library with a malicious one.
+   - **Example**:
+     ```c
+     // Target program calls: dlopen("libplugin.so", RTLD_LAZY);
+     // Attacker places malicious libplugin.so in the search path.
+     ```
+   - **Limitations**: Requires knowledge of the program’s behavior and control over the library path.
+
+---
+
+### Key Considerations
+- **Privilege Requirements**: Many methods require elevated privileges or specific conditions (e.g., writable directories, misconfigured permissions).
+- **Detection**: Techniques like `LD_PRELOAD` or library overwriting can be detected by security tools or system monitoring.
+- **Mitigations**: Modern Linux systems use protections like ASLR, RELRO, and restricted library loading for setuid binaries, which may limit the effectiveness of these methods.
+
+
+
+
+
+
+
+
 
 
 
