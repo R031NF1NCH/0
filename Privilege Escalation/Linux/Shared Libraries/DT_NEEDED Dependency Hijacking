@@ -1,4 +1,4 @@
-Below is an example of exploiting **DT_NEEDED Dependency Hijacking** to achieve a reverse shell on a Linux target. This technique involves modifying an executable’s ELF header to add a malicious library to its `DT_NEEDED` section (list of required libraries), causing the dynamic linker to load it when the program runs. I’ll also include helpful commands to identify a suitable target, as requested.
+Below is an example of exploiting **DT_NEEDED Dependency Hijacking** to achieve a reverse shell on a Linux target. This technique involves modifying an executable’s ELF header to add a malicious library to its `DT_NEEDED` section (list of required libraries), causing the dynamic linker to load it when the program runs.
 
 ### How It Works
 1. The `DT_NEEDED` section in an ELF binary lists libraries the dynamic linker (`ld.so`) must load at runtime.
