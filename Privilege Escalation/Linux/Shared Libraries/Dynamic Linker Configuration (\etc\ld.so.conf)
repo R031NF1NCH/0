@@ -1,4 +1,4 @@
-Below is an example of exploiting **Exploiting Dynamic Linker Configuration (/etc/ld.so.conf)** to achieve a reverse shell on a Linux target. This technique involves modifying the dynamic linker’s configuration file (`/etc/ld.so.conf`) or its cache (`/etc/ld.so.cache`) to include a directory containing a malicious library, which the linker then loads for programs. I’ll also include helpful commands to identify a suitable target, as requested.
+Below is an example of exploiting **Exploiting Dynamic Linker Configuration (/etc/ld.so.conf)** to achieve a reverse shell on a Linux target. This technique involves modifying the dynamic linker’s configuration file (`/etc/ld.so.conf`) or its cache (`/etc/ld.so.cache`) to include a directory containing a malicious library, which the linker then loads for programs.
 
 
 ### How It Works
