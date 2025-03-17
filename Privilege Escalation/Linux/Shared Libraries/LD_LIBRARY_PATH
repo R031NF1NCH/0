@@ -70,6 +70,7 @@ Create a C file (e.g., `malicious_lib.c`) with the following code:
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 
 void __attribute__((constructor)) init() {
     // Create a socket
