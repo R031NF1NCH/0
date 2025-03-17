@@ -1,4 +1,4 @@
-Below is an example of exploiting **Hijacking via dlopen() Calls** to achieve a reverse shell on a Linux target. This technique targets programs that use the `dlopen()` function to dynamically load libraries at runtime, allowing an attacker to manipulate the library name or path to load a malicious library instead. I’ll also include helpful commands to identify a suitable target, as requested.
+Below is an example of exploiting **Hijacking via dlopen() Calls** to achieve a reverse shell on a Linux target. This technique targets programs that use the `dlopen()` function to dynamically load libraries at runtime, allowing an attacker to manipulate the library name or path to load a malicious library instead.
 
 
 ### How It Works
