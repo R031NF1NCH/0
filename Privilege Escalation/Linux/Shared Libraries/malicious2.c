@@ -12,7 +12,7 @@
  * 3. It sets the group and user IDs to 0 (root) to escalate privileges.
  * 4. It spawns /bin/bash as root using system(), ie it makes you the root
  *
- * Usage:
+ * Usage: Copy and save this file as malicious.c
  * 1. Compile: gcc -fPIC -shared -o malicious.so malicious.c -nostartfiles
  * 2. Run: sudo LD_PRELOAD=./malicious.so /usr/bin/ping
  * 3. Result: A root shell (# prompt) is spawned locally, ie you should now be root!
