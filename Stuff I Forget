@@ -1,3 +1,4 @@
+- Research any installed apps for location of installation directories
 - Look for config files associated with installed apps
 - Look for DB files associated with installed apps
 - Enumerate, Restart Machine, Enumerate again
