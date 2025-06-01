@@ -58,7 +58,12 @@ find / -writable -type d 2>/dev/null      #Searching for every directory writabl
 
 #Searching for Files and in Files
 find / -name flag.txt    #Search for file by filename
+find / -iname flag.txt    #Search for file by filename case insenstive
+find /path/to/search -ctime -1    #Find things changed in the last 24 hours
+find /path/to/search -user owner    #Find things by it's owner
+find / -name *.kdbx 2>/dev/null    #search for files with kdbx extension
 grep -R "examplestringtosearch" / -s -n    #Search through each file for a string
+grep -rnw '/path/to/somewhere/' -e 'pattern'    'search for the word pattern recursively through files in the somewhere directory
 
 #Disks and Mounts
 cat /etc/fstab      #List all mounted filesystems.
