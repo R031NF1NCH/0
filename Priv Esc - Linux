@@ -26,6 +26,7 @@ ipconfig a      #List the TCP/IP configuration of every network adapter
 routel      #View Network routing tables
 ss -anp      #Display active network connections and listening ports
 netstat -anp    #Display active network connections and listening ports
+grep -nRw '8080\|8081' /etc/* 2>/dev/null    #Search recursively through files for references to 8080 & 8081 (ports) to determine their purpose on the server
 cat /etc/iptables/rules.v4      #Inspecting custom IP tables
 
 
