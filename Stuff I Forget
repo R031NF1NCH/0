@@ -4,4 +4,4 @@
 - Enumerate, Restart Machine, Enumerate again
 - Restart Machine if getting nowhere as you may have knocked services over during testing
 - Don't always need reverse shell try to edit password files etc
-- Double check config files for info  .cfg,ini,etc
+- Double check config files for info  .cfg,ini,cnf,conf,etc
