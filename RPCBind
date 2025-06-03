@@ -8,6 +8,3 @@ rpcinfo -p <target-ip>
 rpcenum -v <target-ip>
 #Attack Vectors -There are various rpcbind modules in Metasploit. For example, you can use the following Metasploit commands for the rpcbind_cgi_mainenv vulnerability
 msfconsole
-use auxiliary/gather/rpcbind_cgi_mainenv
-set RHOST <target-ip>
-run
