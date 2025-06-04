@@ -5,3 +5,4 @@
 - Restart Machine if getting nowhere as you may have knocked services over during testing
 - Don't always need reverse shell try to edit password files etc
 - Double check config files for info  .cfg,ini,cnf,conf,etc
+-Any webapps returning 401s that use basic auth - can we use an LFI to retrieve creds for the app
