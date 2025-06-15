@@ -1,4 +1,22 @@
-XML Sample - https://www.vaadata.com/blog/xpath-injections-exploitations-and-security-tips/#understanding-the-structure-of-xml-documents
+#Example Attack Setup using https://github.com/R031NF1NCH/0/blob/main/Intruder/XML
+#XPath is similar to SQLi in that we are injecting payloads into queries, however, instead of injecting into SQL queries we are injecting into XPath (XML Path Language).
+#XPath is used to retrieve data from an XML document and is often used with languages such as PHP.
+#The work parameter in the following URL is vulnerable to XPATH injection. This was identified by a number of simplexml errors returned when injecting special chars. 
+#http://192.168.0.1/employee.php?work=van&action=search
+#As the XPath query was being used in PHP we ran the following payload list to break out of the XPath statement.https://github.com/R031NF1NCH/0/blob/main/Intruder/XML
+#While running the payload list we guessed that there might be a password element and so we appended //password%00 to the injection point before running the intruder.
+#The attack was successful using the following payload ')%5D//password%00 returning the contents of the password element for all users.
+#http://192.168.0.1/employee.php?work=')%5D//password%00&action=search
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+XML Document Example - https://www.vaadata.com/blog/xpath-injections-exploitations-and-security-tips/#understanding-the-structure-of-xml-documents
+The first line of the XML document contains the XML declaration, which specifies the version used (in this case 1.0) and the type of character encoding (in this case UTF-8).
+The rest of the document is made up of different nodes. There are several types of node in XML, but the most common are:
+    -The root node, which represents the entire document and can have only one child.
+    -Elements, which can contain text, attributes or other elements. With the exception of the root node, each element has a single parent and can have one or more children.
+    -Attributes, which provide additional information about an element.
+    -Text, which is the content of elements.
+    -Comments, which are used to document the file.
 
 <?xml version="1.0" encoding="UTF-8"?>
 
@@ -20,14 +38,8 @@ XML Sample - https://www.vaadata.com/blog/xpath-injections-exploitations-and-sec
     <price currency="GBP">15</price>
   </product>
 </products>
-
-The first line of the XML document contains the XML declaration, which specifies the version used (in this case 1.0) and the type of character encoding (in this case UTF-8).
-The rest of the document is made up of different nodes. There are several types of node in XML, but the most common are:
-    -The root node, which represents the entire document and can have only one child.
-    -Elements, which can contain text, attributes or other elements. With the exception of the root node, each element has a single parent and can have one or more children.
-    -Attributes, which provide additional information about an element.
-    -Text, which is the content of elements.
-    -Comments, which are used to document the file.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+In the example provided above, the table below details the various components of the XML document
 *Name*	                    *Node type*
 products	                  Root node
 product, id, name, price	  Element
@@ -47,7 +59,65 @@ node()	      To select all the nodes
 *	            Selects all elements
 @*	          Selects all attributes
 |	            To combine XPath requests
+
+Important to note that several XPath requests can produce the same result. The following examples illustrate some of the possibilities, but there are many others.
+
+Objective	                                Query
+Select all the ‘product’ elements	        /products/product
+                                          //product
+Select all the ‘name’ elements	          /products/product/name
+                                          /products//name
+                                          //product/name
+                                          //name
+                                          /*/*/name
+Select all the attributes	                /products/product/price/@*
+                                          /products//@*
+                                          //@*
+Select all the ‘currency’ attributes	    /products/product/price/@currency
+                                          /products/product//@currency
+                                          //@currency
+Select all the nodes in the root element	/node()
+Select all the nodes	                    //node()
+Select all the text nodes	                //text()
+Select all the element nodes	            //*
+Select all the ‘id’ and ‘price’ elements	//id | //price
 ------------------------------------------------------------------------------------
+XPath Predicates
+Like the WHERE in an SQL query, predicates can be used to filter the results of an XPath query.
+A predicate is written in square brackets ‘[ ]’ and can include various operators and functions to obtain specific results.
+
+Operator	    Comment
++	            Addition
+–		          Subtraction
+*		          Multiplication
+div		        Division
+=		          Is equal to
+!=	          Is not equal to
+<	            Is less than
+<=	          Is less than or equal to
+>	            Is greater than
+>=	          Is greater than or equal to
+or	          Boolean OR
+and	          Boolean AND
+mod	          Modulo
+position()	  Represents the position of the node
+last()	      Represents the number of elements in the sequence of elements being processed.
+true()	      Boolean true
+contains()	  Character string search
+
+These operators can be used to make XPath queries more complex and precise. Here are a few examples:
+
+Objective	                                                                    Query
+Select the first ‘product’ element	                                          //product[1]
+                                                                              //product[position()=1]
+Select the last ‘product’ element	                                            //product[last()]
+Select the ‘product’ element whose ‘currency’ attribute has the value ‘GBP’.	//product/price[@currency=’GBP’]/..
+                                                                              //product/*[@currency=’GBP’]/..
+Select product elements with an id between 1 and 3	                          /products/product[id>1 and id<3]
+Select the second child element of the third parent element	                  /products/product[3]/name
+                                                                              /products/product[3]/*[2]
+                                                                              /*/*[3]/*[2]
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
