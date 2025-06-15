@@ -1,0 +1,62 @@
+XML Sample - https://www.vaadata.com/blog/xpath-injections-exploitations-and-security-tips/#understanding-the-structure-of-xml-documents
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<products>
+<!-- List of products -->
+  <product>
+    <id>1</id>
+    <name>Lamp</name>
+    <price currency="EUR">20</price>
+  </product>
+  <product>
+    <id>2</id>
+    <name>Fan</name>
+    <price currency="USD">50</price>
+  </product>
+  <product>
+    <id>3</id>
+    <name>Pillow</name>
+    <price currency="GBP">15</price>
+  </product>
+</products>
+
+The first line of the XML document contains the XML declaration, which specifies the version used (in this case 1.0) and the type of character encoding (in this case UTF-8).
+The rest of the document is made up of different nodes. There are several types of node in XML, but the most common are:
+    -The root node, which represents the entire document and can have only one child.
+    -Elements, which can contain text, attributes or other elements. With the exception of the root node, each element has a single parent and can have one or more children.
+    -Attributes, which provide additional information about an element.
+    -Text, which is the content of elements.
+    -Comments, which are used to document the file.
+*Name*	                    *Node type*
+products	                  Root node
+product, id, name, price	  Element
+1, Lamp, Fan, Pillow	      Text
+currency	                  Attribute
+List of product	            Comment
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+The following table shows some of the basic elements that make up an XPath request:
+*Syntax*	    *Comment*
+/	            To select the root node
+//	          Selects the child nodes
+.	            Selects the context node
+..	          To select the parent node
+@attribut	    Selects the ‘attribute’ attribute
+text()	      Selects the text nodes
+node()	      To select all the nodes
+*	            Selects all elements
+@*	          Selects all attributes
+|	            To combine XPath requests
+------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
