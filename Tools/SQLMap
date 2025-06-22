@@ -28,6 +28,14 @@ sqlmap -r file --dbms mysql  --risk=3 --os-shell  --batch
 --dbms="<KNOWN DB TECH>" 
 --os="<OS>"
 --technique="UB" #Use only techniques UNION and BLIND in that order (default "BEUSTQ")
+
+    B: Boolean-based blind
+    E: Error-based
+    U: Union query-based
+    S: Stacked queries
+    T: Time-based blind
+    Q: Inline queries
+
 --batch #Non interactive mode, usually Sqlmap will ask you questions, this accepts the default answers
 --auth-type="<AUTH>" #HTTP authentication type (Basic, Digest, NTLM or PKI)
 --auth-cred="<AUTH>" #HTTP authentication credentials (name:password)
