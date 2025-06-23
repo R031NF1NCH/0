@@ -17,3 +17,9 @@ Open a browser on your Kali machine. Navigate to http://localhost:8080.
 ssh -fN -L 8080:localhost:8080 victimUser@192.168.238.103
 #Stop the tunnel:
 Find the SSH process ID (PID) using ps aux | grep ssh and terminate it with kill <PID>.
+
+Troubleshooting:
+
+    If localhost:8080 doesn't work in your browser, ensure the webapp is running on the server's localhost:8080.
+    Check if the SSH connection is successful (ssh victimuser@192.168.238.103).
+    If port 8080 is in use on your Kali machine, choose a different local port (e.g., -L 8081:localhost:8080) and access http://localhost:8081.
