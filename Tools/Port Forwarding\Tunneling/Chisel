@@ -20,7 +20,9 @@ chmod +x /tmp/chisel
   server>
 /tmp/chisel server --port 9000
   server/>
-#####On Kali, run the Chisel client to connect to the server and forward the webapp port. 192.168.238.103:9000: Chisel server’s IP and port. 80:localhost:8080: Maps port 80 on the server to port 8080 on Kali.
+#####On Kali, run the Chisel client to connect to the server and forward the webapp port. 
+#####192.168.238.103:9000: Chisel server’s IP and port. 
+#####80:localhost:8080: Maps port 80 on the server to port 8080 on Kali.
   kali>
 chisel client 192.168.238.103:9000 80:localhost:8080
   kali/>
