@@ -63,8 +63,10 @@ find / -iname flag.txt    #Search for file by filename case insenstive
 find /path/to/search -ctime -1    #Find things changed in the last 24 hours
 find /path/to/search -user owner    #Find things by it's owner
 find / -name *.kdbx 2>/dev/null    #search for files with kdbx extension
+
 #Searching In Files
-grep -R -i "password" /var/www -s -n  #R:recursive,-i:caseInsensitive,-s:hideErrors,-n:lineNumbersForMatches. Search files in /var/www for word password
+#Search files in /var/www for word password R:recursive,-i:caseInsensitive,-s:hideErrors,-n:lineNumbersForMatches. 
+grep -R -i "password" /var/www -s -n  
 
 #Disks and Mounts
 cat /etc/fstab      #List all mounted filesystems.
