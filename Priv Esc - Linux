@@ -57,13 +57,14 @@ dpkg -l      #list applications installed by dpkg on our Debian system
 #Find writable Locations
 find / -writable -type d 2>/dev/null      #Searching for every directory writable by the current user
 
-#Searching for Files and in Files
+#Searching for Files 
 find / -name flag.txt    #Search for file by filename
 find / -iname flag.txt    #Search for file by filename case insenstive
 find /path/to/search -ctime -1    #Find things changed in the last 24 hours
 find /path/to/search -user owner    #Find things by it's owner
 find / -name *.kdbx 2>/dev/null    #search for files with kdbx extension
-grep -R -i "examplestringtosearch" / -s -n  #R:recursive,-i:caseInsensitive,-s:hideErrors,-n:lineNumbersForMatches
+#Searching In Files
+grep -R -i "password" /var/www -s -n  #R:recursive,-i:caseInsensitive,-s:hideErrors,-n:lineNumbersForMatches. Search files in /var/www for word password
 
 #Disks and Mounts
 cat /etc/fstab      #List all mounted filesystems.
