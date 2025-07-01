@@ -19,6 +19,7 @@ smbmap -u null -p "" -H $IP -P 445 -x "ipconfig /all" 2>&1
 ~~~SMBClient~~~
 
 smbclient -L IP    #List SMB shares
+smbclient -L IP -U guest
 smbclient //192.168.0.0/ITDEPT -N    #Login to ITDEPT SMB share using null session(-n) and no password
 smbclient //192.168.0.0/IPC$         #Login to share
 sudo smbclient //192.168.0.0/IPC$    #Try sudoing 
