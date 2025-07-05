@@ -38,3 +38,8 @@ DELETE FROM <schema_name>.<table_name> WHERE id = 1;
 SELECT * FROM <schema_name>.<table_name> WHERE column_name = '' OR '1'='1';
 20. Attempt to execute a system command to test for command injection
 SELECT * FROM pg_execute_server_program('whoami');
+
+Notes
+-Commands like 15 and 20 may require superuser privileges or specific server configurations (e.g., pg_execute_server_program enabled). They’re included for testing privilege escalation or misconfigurations.
+-If the server requires SSL, add sslmode=require to connection commands (e.g., psql "host=<host> port=5437 dbname=<database> user=<username> sslmode=require").   
+-Test for weak credentials (command 2).
