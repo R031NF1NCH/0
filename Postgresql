@@ -1,12 +1,10 @@
 Notes
 
-Placeholders: Replace <-h host>, <-U username>, <-d database>, <schema_name>, <table_name>, <column_name>, <function_name>, and <sequence_name> with actual values from your target environment.
-Pentesting Context: Commands like 18, 23, 26, 37, 38, and 40 may require superuser privileges or specific server configurations (e.g., pg_execute_server_program enabled or file system access). They’re included to test for misconfigurations or privilege escalation.
-Permissions: Many commands (e.g., creating users, schemas, or extensions) will fail without sufficient privileges, making them useful for testing access boundaries.
-SQL Injection: Command 22 is a basic SQL injection test. In a real pentest, you’d adapt it based on application inputs or use tools like sqlmap.
-Legal Warning: Only perform these actions with explicit permission on systems you’re authorized to test.
-Connection Tips: If SSL is required, add sslmode=require to connection strings. Use ~/.pgpass for password automation (host:5437:database:username:password).
-Troubleshooting: If connections fail, verify port 5437 is open (telnet <host> 5437) and check pg_hba.conf for IP restrictions.
+-Placeholders: Replace <-h host>, <-U username>, <-d database>, <schema_name>, <table_name>, <column_name>, <function_name>, and <sequence_name> with actual values from your target environment.
+-Pentesting Context: Commands like 18, 23, 26, 37, 38, and 40 may require superuser privileges or specific server configurations (e.g., pg_execute_server_program enabled or file system access). They’re included to test for misconfigurations or privilege escalation.
+-SQL Injection: Command 22 is a basic SQL injection test. In a real pentest, you’d adapt it based on application inputs or use tools like sqlmap.
+-Connection Tips: If SSL is required, add sslmode=require to connection strings. Use ~/.pgpass for password automation (host:5437:database:username:password).
+-Troubleshooting: If connections fail, verify port 5437 is open (telnet <host> 5437) and check pg_hba.conf for IP restrictions.
 
 1. Connect to the remote database to test access with password prompt. -W flag in psql is used to force a password prompt when connecting to a PostgreSQL database, regardless of whether a password is stored in a configuration file (e.g., ~/.pgpass) or provided via other means (e.g., environment variables like PGPASSWORD).
 psql -h  -p 5437 -U  -d  -W
