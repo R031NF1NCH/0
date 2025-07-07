@@ -6,3 +6,5 @@
 - Don't always need reverse shell try to edit password files etc
 - Double check config files for info  .cfg,ini,cnf,conf,etc
 - Any webapps returning 401s that use basic auth - can we use an LFI to retrieve creds for the app
+- Run dirbuster against sub-directories
+- Spray creds/passwords everywhere when found.
