@@ -22,7 +22,8 @@ grep "CRON" /var/log/syslog
 cat /etc/cron*
 cat /etc/crontab
 cat /etc/anacrontab
-find / -writable -type d 2>/dev/null       
+find / -writable -type d 2>/dev/null
+find / -writable -type f 2>/dev/null
 find / -name flag.txt    #Search for file by filename
 find / -iname flag.txt    #Search for file by filename case insenstive
 find /path/to/search -ctime -1    #Find things changed in the last 24 hours
@@ -89,6 +90,7 @@ dpkg -l      #list applications installed by dpkg on our Debian system
 
 #Find writable Locations
 find / -writable -type d 2>/dev/null      #Searching for every directory writable by the current user
+find / -writable -type f 2>/dev/null      #Searching for every file writable by the current user
 
 #Searching for Files 
 find / -name flag.txt    #Search for file by filename
