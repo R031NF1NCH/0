@@ -24,6 +24,7 @@ cat /etc/crontab
 cat /etc/anacrontab
 find / -writable -type d 2>/dev/null
 find / -writable -type f 2>/dev/null
+find / -type f -writable 2>/dev/null | grep -E '\.(sh|bash|ksh|zsh|csh|py|pl|pm|rb|js|mjs|php|lua|tcl|awk|sed|ps1|bat|cmd|vbs|go|r|jl|fish|scpt|jar|groovy|raku|p6)$'
 find / -name flag.txt    #Search for file by filename
 find / -iname flag.txt    #Search for file by filename case insenstive
 find /path/to/search -ctime -1    #Find things changed in the last 24 hours
@@ -91,6 +92,13 @@ dpkg -l      #list applications installed by dpkg on our Debian system
 #Find writable Locations
 find / -writable -type d 2>/dev/null      #Searching for every directory writable by the current user
 find / -writable -type f 2>/dev/null      #Searching for every file writable by the current user
+
+##These commands do the same thing - Find writable files with common executable extensions
+find / -type f -writable \( -name '*.sh' -o -name '*.bash' -o -name '*.ksh' -o -name '*.zsh' -o -name '*.csh' -o -name '*.py' -o -name '*.pl' -o -name '*.pm' -o -name '*.rb' -o -name '*.js' -o -name '*.mjs' -o -name '*.php' -o -name '*.lua' -o -name '*.tcl' -o -name '*.awk' -o -name '*.sed' -o -name '*.ps1' -o -name '*.bat' -o -name '*.cmd' -o -name '*.vbs' -o -name '*.go' -o -name '*.r' -o -name '*.jl' -o -name '*.fish' -o -name '*.scpt' -o -name '*.jar' -o -name '*.groovy' -o -name '*.raku' -o -name '*.p6' \) 2>/dev/null
+find / -type f -writable 2>/dev/null | grep -E '\.(sh|bash|ksh|zsh|csh|py|pl|pm|rb|js|mjs|php|lua|tcl|awk|sed|ps1|bat|cmd|vbs|go|r|jl|fish|scpt|jar|groovy|raku|p6)$'
+find / -type f -perm /u+w \( -name '*.sh' -o -name '*.bash' -o -name '*.ksh' -o -name '*.zsh' -o -name '*.csh' -o -name '*.py' -o -name '*.pl' -o -name '*.pm' -o -name '*.rb' -o -name '*.js' -o -name '*.mjs' -o -name '*.php' -o -name '*.lua' -o -name '*.tcl' -o -name '*.awk' -o -name '*.sed' -o -name '*.ps1' -o -name '*.bat' -o -name '*.cmd' -o -name '*.vbs' -o -name '*.go' -o -name '*.r' -o -name '*.jl' -o -name '*.fish' -o -name '*.scpt' -o -name '*.jar' -o -name '*.groovy' -o -name '*.raku
+find / -type f -perm /u+w 2>/dev/null | grep -E '\.(sh|bash|ksh|zsh|csh|py|pl|pm|rb|js|mjs|php|lua|tcl|awk|sed|ps1|bat|cmd|vbs|go|r|jl|fish|scpt|jar|groovy|raku|p6)$'
+find / -type f -perm /u+w -perm /u+x 2>/dev/null  #writable and executable files(Permission check instead of file extensions)
 
 #Searching for Files 
 find / -name flag.txt    #Search for file by filename
