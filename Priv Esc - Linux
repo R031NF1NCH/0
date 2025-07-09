@@ -2,7 +2,7 @@
 ./unix-privesc-check standard
 
 ~~~Manual Enumeration Quick Start~~~
-
+/usr/bin/script -qc /bin/bash /dev/null
 sudo -l
 su root
 id
