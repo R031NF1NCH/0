@@ -25,6 +25,8 @@ cat /etc/anacrontab
 find / -writable -type d 2>/dev/null
 find / -writable -type f 2>/dev/null
 find / -type f -writable 2>/dev/null | grep -E '\.(sh|bash|ksh|zsh|csh|py|pl|pm|rb|js|mjs|php|lua|tcl|awk|sed|ps1|bat|cmd|vbs|go|r|jl|fish|scpt|jar|groovy|raku|p6)$'
+pspy64 -d /path/to/monitor/dir
+pspy -d /path/to/monitor/dir
 find / -name flag.txt    #Search for file by filename
 find / -iname flag.txt    #Search for file by filename case insenstive
 find /path/to/search -ctime -1    #Find things changed in the last 24 hours
