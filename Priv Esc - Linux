@@ -11,7 +11,9 @@ cat /etc/passwd
 uname -a
 ps aux
 watch -n 1 "ps -aux | grep pass"
+ss -antp
 ss -anp
+netstat -antp
 netstat -anp
 grep -nRw '8080\|8081' /etc/* 2>/dev/null
 ls -lah /etc/cron*
