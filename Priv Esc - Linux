@@ -9,6 +9,7 @@ id
 env
 cat /etc/passwd
 uname -a
+ps aux | grep -v '\[.*\]'
 ps aux
 watch -n 1 "ps -aux | grep pass"
 ss -antp
