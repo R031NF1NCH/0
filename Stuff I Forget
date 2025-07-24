@@ -8,3 +8,4 @@
 - Any webapps returning 401s that use basic auth - can we use an LFI to retrieve creds for the app
 - Run dirbuster against sub-directories
 - Spray creds/passwords everywhere when found.
+- Search for vulns in any scripts being run by root. (ie RPC.py)
