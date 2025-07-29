@@ -1,0 +1,123 @@
+Open a Database
+#Opens the SQLite3 shell for a specified database file, creating it if it doesn't exist.
+sqlite3 database.db
+
+List All Tables
+#Displays all tables in the current database.
+.tables
+
+View Table Schema
+#Shows the CREATE TABLE statement for a specific table to understand its structure.
+.schema table_name
+
+List Databases
+#Lists the main database and any attached databases.
+.databases
+
+Select All Data from a Table
+#Retrieves all rows and columns from a specified table.
+SELECT * FROM table_name;
+
+List Column Names
+#Shows column names, data types, and constraints for a table.
+PRAGMA table_info(table_name);
+
+Set Output to Readable Format
+#Formats query output in columns with headers for better readability.
+.mode column
+.headers on
+
+Count Rows in a Table
+#Returns the number of rows in a specified table.
+SELECT COUNT(*) FROM table_name;
+
+Search for Specific Data
+#Finds rows where a column contains a specific keyword (case-insensitive).
+SELECT * FROM table_name WHERE column_name LIKE '%keyword%';
+
+Dump Database to SQL File
+#Exports the entire database to a SQL file for offline analysis.
+.output dump.sql
+.dump
+.output stdout
+
+Execute SQL from Terminal
+#Runs a SQL query directly from the terminal without entering the SQLite shell.
+sqlite3 database.db "SELECT * FROM table_name;"
+
+Import CSV into a Table
+#Imports data from a CSV file into a specified table.
+.mode csv
+.import file.csv table_name
+
+List Indexes
+#Shows all indexes in the database.
+.indexes
+
+Get Index Details
+#Displays details about a specific index.
+PRAGMA index_info(index_name);
+
+View Database Version
+#Returns the SQLite version used by the database.
+SELECT sqlite_version();
+
+Create a New Table
+#Creates a new table with specified columns and data types.
+CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT, password TEXT);
+
+Insert Data
+#Adds a new row to a specified table.
+INSERT INTO users (username, password) VALUES ('testuser', 'testpass');
+
+Update Data
+#Modifies existing data in a table based on a condition.
+UPDATE users SET password='newpass' WHERE username='testuser';
+
+Delete Data
+#Removes rows from a table based on a condition.
+DELETE FROM users WHERE username='testuser';
+
+Drop a Table
+#Deletes a specified table from the database.
+DROP TABLE table_name;
+
+List Foreign Keys
+#Shows foreign key relationships for a specified table.
+PRAGMA foreign_key_list(table_name);
+
+Enable Foreign Key Support
+#Enforces foreign key constraints during operations.
+PRAGMA foreign_keys = ON;
+
+Query Specific Columns
+#Retrieves only specified columns from a table.
+SELECT username, password FROM users;
+
+Order Results
+#Sorts query results by a column in ascending or descending order.
+SELECT * FROM users ORDER BY username ASC;
+
+Limit Results
+#Restricts the number of rows returned by a query.
+SELECT * FROM users LIMIT 10;
+
+Join Tables
+#Combines data from two tables based on a common column.
+SELECT users.username, roles.role FROM users JOIN roles ON users.role_id = roles.id;
+
+Check Database Integrity
+#Verifies if the database file is corrupted.
+PRAGMA integrity_check;
+
+Backup Database
+#Creates a backup of the database to a new file.
+.backup backup.db
+
+Attach Another Database
+#Attaches another database file for cross-database queries.
+ATTACH DATABASE 'other.db' AS other_db;
+
+Execute SQL from a File
+#Runs SQL commands from a file in the terminal.
+sqlite3 database.db < script.sql
