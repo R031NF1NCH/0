@@ -196,5 +196,22 @@ Step 3: Use sudo to escalate privs
 grep --color=auto -rnw '/' -iIe "PASSW\|PASSWD\|PASSWORD\|PWD" --color=always 2>/dev/null  #Recursively grep from root directory
 grep --color=auto -rnw -iIe "PASSW\|PASSWD\|PASSWORD\|PWD" --color=always 2>/dev/null    Recursively grep from current directory (less output)
 
+#cat - Overwrite file 
+cat <<EOF > output.txt
+Hello, this is line 1.
+This is line 2.
+Goodbye!
+EOF
+
+#cat - Append to file 
+cat <<EOF >> output.txt
+This is appended text.
+Another line.
+EOF
+
+
+
+
+
 
 
