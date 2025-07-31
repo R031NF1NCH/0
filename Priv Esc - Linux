@@ -1,6 +1,9 @@
 ~~~Automated Enumeration~~~
+./linpeas.sh -s
+./linpeas.sh -o system_information,container,cloud,procs_crons_timers_srvcs_sockets,network_information,users_information,software_information,interesting_files,api_keys_regex
+./linEnum.sh
+./linpeas.sh -a -e -r
 ./unix-privesc-check standard
-
 ~~~Manual Enumeration Quick Start~~~
 /usr/bin/script -qc /bin/bash /dev/null
 sudo -l
