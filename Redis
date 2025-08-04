@@ -1,3 +1,15 @@
+## Notes for OSCP Context:
+# 
+# File Read/Write Exploitation: The CONFIG SET dir and CONFIG SET dbfilename commands followed by SAVE can be used to write Redis database files to 
+# disk, potentially overwriting critical files (e.g., /etc/passwd) if Redis runs with sufficient privileges. Similarly, setting the dir and dbfilename 
+# to a target file and attempting to load it may allow reading file contents as Redis keys.
+# Permissions: These file operations require Redis to have write permissions in the target directory or file. In OSCP labs, check if Redis is 
+# running as root or a privileged user (INFO SERVER can help).
+# Unauthenticated Access: Many Redis instances in labs are unauthenticated. If authentication is required, try default credentials (AUTH foobared) 
+# or check for exposed credentials in configuration files.
+# Enumeration: Use KEYS *, INFO, and CONFIG GET * to gather information about the Redis instance, such as directories, filenames, or stored data.
+# Caution: Be careful with FLUSHDB or FLUSHALL in a lab, as they delete data and could disrupt your progress or other users.
+
 ##
 ## Extra Tips -> https://hacktricks.boitatech.com.br/pentesting/6379-pentesting-redis
 
