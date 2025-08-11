@@ -1,4 +1,5 @@
 Default Port: 3306
+Version: If MySQL server 4.x/5.x and root database user creds found, try User Defined Functions (Multiple Methods) to escalate privs https://steflan-security.com/linux-privilege-escalation-exploiting-user-defined-functions/
 
 mysql -u <username>      #specified username #no password
 mysql -u <username> -p   #with password
