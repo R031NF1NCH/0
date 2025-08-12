@@ -215,6 +215,8 @@ try User Defined Functions (Multiple Methods) to escalate privs
 https://steflan-security.com/linux-privilege-escalation-exploiting-user-defined-functions/
 *Note: Might need to restart the machine a few times if you have to run the exploit more than once.
 
+# Pwnkit
+https://github.com/ly4k/PwnKit
 
 
 
