@@ -3,3 +3,28 @@ gobuster fuzz -u "http://192.168.213.209/welcome.php?file=FUZZ" -w ~/wordlists/p
 
 gobuster fuzz -u "http://192.168.112.181/public/plugins/cloudwatch/../../../../../../../../../../../../../FUZZ" -w ~/wordlists/path-traversal/linuxLogsAll --proxy http://127.0.0.1:8080
 gobuster fuzz -u "http://192.168.112.181/public/plugins/cloudwatch/../../../../../../../../../../../../..FUZZ" -w ~/wordlists/path-traversal/linuxSensitiveFiles --proxy http://127.0.0.1:8080
+
+-------------------------------------------------------------------------------------------
+## dir flag - target files and directories
+## -H flag - Custom Header 
+## -a flag - Appends to Default User-Agent
+## -s flag - status codes to report
+## -k flag - Skips SSL certificate verification
+gobuster dir -u https://example.com/api -w /path/to/wordlist.txt -H "Authorization: Bearer your_token_here" -H "Abacus: 7" -a "abacus" -s "200,201,202,204,301,302,307,401,403,404,429" -k
+
+
+## dir flag - target files and directories
+## -H flag - Custom Header 
+## -U flag - Custom User-Agent
+## -s flag - status codes to report
+## -k flag - Skips SSL certificate verification
+##  -t flag - thread limit. (-t 3 = 3 threads)
+## --delay -  Time each thread waits between requests (e.g. 500ms)
+## --proxy - Proxy to use
+## -o flag - output file
+## "gobuster dir --help" - Use help command to see additional flags that can be used with the dir flag. i.e -x file extensions
+gobuster dir -u https://example.com/api -w /path/to/wordlist.txt -H "Authorization: Bearer your_token_here" -H "Abacus: 7" -U "customuserAgentValue" -s "200,201,202,204,301,302,307,401,403,404,429" -k --proxy http://127.0.0.1:8080 -t 3 --delay 500 -o output.txt
+
+gobuster dir --help
+
+-------------------------------------------------------------------------------------------
