@@ -1,4 +1,31 @@
 #FFUF
+===================================================================
+##Sample Command Linux/Windows
+
+ffuf -u "https://test.com/FUZZ" -w "/home/kali/wordlists/dirb/common.txt" -H "Authorization: Bearer asdasdasdasdasas" -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0" -mc "200,201,202,204,301,302,307,401,403,429" -k -x http://127.0.0.1:7177 -t 3 -p 0.5 -o output.json -recursion -recursion-depth 3 -recursion-strategy greedy
+
+ffuf -u "https://test.com/FUZZ" -w "C:\Users\R031NF1NCH\Desktop\ffuf\IntruderList.txt" -H "Authorization: Bearer asdasdasdasdasas" -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0" -mc "200,201,202,204,301,302,307,401,403,429" -k -x http://127.0.0.1:7177 -t 3 -p 0.5 -o output.json -recursion -recursion-depth 3 -recursion-strategy greedy
+
+
+
+##Command breakdown 
+## -u flag - URL to target 
+## FUZZ - Ffuf injects into the URL wherever the word "FUZZ" is placed 
+## -w flag - Wordlist location 
+## -H flag - Custom Header ie auth header, Cookies header, or whatever you want 
+## -H flag - Custom Header for User-agent 
+## -mc flag - Status codes to report 
+## -k flag - Skips SSL certificate verification 
+## -x flag - Burp Proxy port and IP 
+## -t flag - Threads (To be used with -d flag for delay) 
+## -p flag - delay in seconds to apply to threads flag (For half a second enter 05.) 
+## -o flag - Output file 
+## -recursion - Turn on recursion so ffuf attempts to discover files/directories from previously discovered items. 
+## -recursion-depth 5 - Number of directories deep Ffuf will attempt to discover items 
+## -recursion-strategy greedy - Necessary to force Ffuf to recurse into discovered directories as it doesn't recurse if it thinks it found a file Sample command 
+
+====================================================================
+
 •	Directory discovery
 ffuf -w /path/to/wordlist -u https://target/FUZZ -x http://proxy:8080
 
