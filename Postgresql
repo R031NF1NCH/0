@@ -178,6 +178,15 @@ Example: BEGIN; INSERT INTO public.users (username) VALUES ('test'); ROLLBACK;
 Example: \o /tmp/users.txt
 SELECT * FROM public.users;\o
 
+Default Usernames 
+dcmadmin
+postgres
+admin
 
-
-
+Default Passwords
+123
+admin
+passw0rd
+postgres
+amber
+password
