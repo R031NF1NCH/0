@@ -3,10 +3,6 @@ ssh2john id_rsa > ssh.hash            #Use ssh2john tograb password hash from ss
 zip2john /path/to/your/protected.zip > ziphash.txt    #Use zip2john tograb password hash from zip
 keepass2john Database.kdbx > keepass.hash            #Use keepass2john tograb password hash from keepass
 
-#Cracking password with JTR
-john ziphash.txt    #Use john the ripper default settings to attack the hash
-john hash.txt --wordlist=~/wordlists/rockyou.txt    #Use wordlist to crack hash
-
 
 #Create Password Lists
 crunch 6 6 -t Lab%%% > wordlist    #Create custom password list using crunch. Min/max length set to 6 and first 3 letter of password are Lab
