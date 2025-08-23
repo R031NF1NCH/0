@@ -28,7 +28,7 @@ smbclient //<target>/<share$> -U username%password   #Connect to a valid share w
 smbclient //<target>/<share$> -c 'cd folder; ls' password -U username    #List files on a specific share folder inside the share
 smbclient //<target>/<share$> -c 'cd folder;get desired_file_name' password -U username    #Download a file from a specific share folder
 smbclient //<target>/<share$> -c 'put /var/www/my_local_file.txt .\target_folder\target_file.txt' password -U username    #Copy a file to a specific share folder
-
+smbclient '//server/share' -U username -c 'prompt OFF; recurse ON; cd path\to\remote\dir; lcd ~/path/to/download/to; mget *'  #Download all files recursively
 
 ~~~Rpcclient~~~
 rpcclient -U "" <ip>    #Null session with rpcclient
