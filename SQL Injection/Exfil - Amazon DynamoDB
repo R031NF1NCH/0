@@ -1,0 +1,14 @@
+# Amazon DynamoDB
+
+DynamoDB is NoSQL, injection if attributes concatenated.
+
+## Boolean-based
+Make condition always true: ' OR '1'='1 to bypass and "retrieve" access.
+
+To check = 'admin': set param to 'admin'.
+
+Blind: app-dependent conditions for length/chars if exposed.
+
+## Error-based
+Invalid operators: {"username": {"$invalid": 1}} to error.
+
