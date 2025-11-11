@@ -1,3 +1,7 @@
+Wordlist of common user pass combinations - hydra -C /home/kali/wordlists/seclists/Passwords/Default-Credentials/ftp-betterdefaultpasslist.txt 192.168.0.0 ftp -V -I -t 64
+
+/home/kali/wordlists/seclists/Passwords/Default-Credentials/ftp-betterdefaultpasslist.txt
+
 #ftp client commands
 ftp anonymous@192.168.1.1
 binary - set binary transfer type
