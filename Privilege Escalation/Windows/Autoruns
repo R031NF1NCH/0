@@ -1,0 +1,4 @@
+Autoruns: Programs that start automatically with weak permissions.
+
+Sample commands: 
+Use autoruns.exe (Sysinternals) or wmic startup get caption,command to list; check file perms.
