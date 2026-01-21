@@ -1,0 +1,5 @@
+Weak Registry Permissions: Modifiable keys that control services or autoruns.
+
+Sample commands: 
+Use accesschk.exe -kwuvs HKLM\Software to find writable keys; 
+focus on autorun locations like reg query HKLM\Software\Microsoft\Windows\CurrentVersion\Run
