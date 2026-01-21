@@ -1,0 +1,5 @@
+Group Policy Preferences (GPP): Old GPP files with encrypted passwords (easily decryptable).
+
+Sample commands: 
+Search SYSVOL with dir /s /b \\<domain>\SYSVOL | findstr Groups.xml; 
+decrypt cpassword with known tools
