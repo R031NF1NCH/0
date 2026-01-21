@@ -1,0 +1,6 @@
+Services running as SYSTEM with modifiable binaries or paths are prime targets. 
+Focus on services where the executable path is writable by your user.
+
+Sample commands: 
+sc qc <service_name> to check service config; accesschk.exe -ucqv <service_name> (from Sysinternals) to verify permissions. 
+Look for writable paths with icacls <path>
