@@ -1,0 +1,5 @@
+PowerShell History/Profiles: Scripts or commands with credentials.
+
+Sample commands: 
+type %userprofile%\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt 
+check profiles with type $PROFILE
