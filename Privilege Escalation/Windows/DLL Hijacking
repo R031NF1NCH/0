@@ -1,0 +1,5 @@
+DLL Hijacking: Applications loading DLLs from writable directories.
+
+Sample commands: 
+Use ProcMon (Sysinternals) to monitor process creation and DLL loads; c
+heck paths with icacls <dll_path>
