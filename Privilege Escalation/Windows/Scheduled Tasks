@@ -1,0 +1,5 @@
+Scheduled Tasks: 
+Tasks running as SYSTEM with modifiable executables or weak permissions.
+
+Sample commands: schtasks /query /fo LIST /v to list tasks; 
+check permissions with icacls <task_path>
