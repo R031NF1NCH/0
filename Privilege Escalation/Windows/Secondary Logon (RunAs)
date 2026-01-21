@@ -1,0 +1,5 @@
+Secondary Logon (RunAs): Cached credentials or services using RunAs with stored passwords.
+
+Sample commands: 
+reg query HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\Credential Providers; 
+look for LSA secrets with tools like Mimikatz (post-exploit)
