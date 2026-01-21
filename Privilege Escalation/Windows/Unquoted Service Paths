@@ -1,0 +1,6 @@
+Unquoted Service Paths: 
+Services with paths lacking quotes around spaces can lead to path hijacking if directories are writable.
+
+Sample commands: 
+Query all services with 
+wmic service get name,displayname,pathname,startmode | findstr /i "Auto" | findstr /i /v "C:\Windows\\" | findstr /i /v """ to spot unquoted paths
