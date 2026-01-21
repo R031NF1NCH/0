@@ -1,0 +1,4 @@
+Web Server Configurations: IIS or other servers with creds in web.config.
+Sample commands: 
+findstr /si password C:\inetpub\wwwroot\web.config; 
+check app pools with appcmd list apppool
