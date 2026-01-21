@@ -1,0 +1,5 @@
+AlwaysInstallElevated: 
+Registry keys allowing MSI installs with elevated privileges.
+
+Sample commands: 
+reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated; if set to 1, exploit by creating a malicious MSI
