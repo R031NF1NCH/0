@@ -1,0 +1,5 @@
+Environment Variables: PATH or other vars pointing to writable locations for hijacking.
+
+Sample commands: 
+set to list variables; 
+focus on PATH and check writability of directories
