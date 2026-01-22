@@ -6,6 +6,8 @@ dir C:\local.txt /s /b
 # Recursively searches the C: drive for "local.txt", handles errors silently, includes hidden files, and outputs full paths. In PowerShell:
 Get-ChildItem -Path C:\ -Recurse -Filter local.txt -ErrorAction SilentlyContinue -Force | Select-Object FullName
 
+Get-ChildItem -Path C:\ -Include *.kdbx -File -Recurse -ErrorAction SilentlyContinue    #Search for Keepass database - PowerShell with the Get-ChildItem cmdlet to locate files in specified locations. We'll use -Path C:\ to search the whole drive. Next use -Include to specify file types to include, -File and -Recurse arguments to get list of files and search in subdirectories. Set -ErrorAction to SilentlyContinue to silence errors and continue execution.
+
 # Recursively lists all files in the C: drive and filters for those named "local.txt".
 where /R C:\ local.txt
 
