@@ -1,0 +1,31 @@
+## File Search Commands
+
+# Searches the entire C: drive recursively for the file "local.txt" and lists the full path in bare format. In Command Prompt:
+dir C:\local.txt /s /b
+
+# Recursively searches the C: drive for "local.txt", handles errors silently, includes hidden files, and outputs full paths. In PowerShell:
+Get-ChildItem -Path C:\ -Recurse -Filter local.txt -ErrorAction SilentlyContinue -Force | Select-Object FullName
+
+# Recursively lists all files in the C: drive and filters for those named "local.txt".
+where /R C:\ local.txt
+
+# Uses PowerShell alias 'dir' to recursively search C: for "local.txt", silences errors, and outputs full names.
+dir C:\ -r -fi local.txt -ea SilentlyContinue | % {$_.FullName}
+
+# Recursively searches C: drive using a loop to find and echo full paths of "local.txt". In Command Prompt:
+for /r C:\ %i in (local.txt) do @echo %~fi
+
+# Filters all items recursively in C: for exact name match to "local.txt" and selects full paths. In PowerShell:
+gci C:\ -r -ea SilentlyContinue | where {$_.Name -eq 'local.txt'} | select FullName
+
+# Lists all files recursively in bare format and pipes to find lines containing "local.txt". In Command Prompt:
+dir /s /b C:\ | find "local.txt"
+
+# Uses -Include for recursive search of "local.txt" on C:, silences errors, and lists full names. In PowerShell:
+Get-ChildItem -Path C:\ -Recurse -Include local.txt -ErrorAction SilentlyContinue | Select-Object FullName
+
+# Recursively searches with Force to include hidden/system files and formats output as list of full names. In PowerShell:
+Get-ChildItem -Path C:\ -Recurse -Filter local.txt -Force -ErrorAction SilentlyContinue | Format-List FullName
+
+# Lists directory tree with files and filters for "local.txt" occurrences. In Command Prompt:
+tree C:\ /f | find "local.txt"
