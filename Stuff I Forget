@@ -12,3 +12,4 @@
 - Use paramter names returned in responses in requests 
 - If zip files are allowed, check if they auto unzip
 - Use cupp and cewl to make wordlists.
+- Try 403 bypasses on web apps
