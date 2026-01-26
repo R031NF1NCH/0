@@ -1,3 +1,5 @@
+This method, downloads nc.exe from kali to the windows machine and then executes a reverse shell back to the kali. Python should be used on kali to serve nc.exe and netcat should be used on kali to catch the shell.
+
 -Create/Open ODT file using libreoffice
 -Tools > Macros > Organise Macros > Basic
 -Highlight the ODT file name > New
