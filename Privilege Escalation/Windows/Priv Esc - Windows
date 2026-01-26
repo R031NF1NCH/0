@@ -94,7 +94,7 @@ What to look for/do:
 - Running as high priv with modifiable configs.
 
 Sample commands:
-- `wmic service get name,displayname,pathname,startmode | findstr /i "Auto" | findstr /i /v "C:\Windows\\" | findstr /i /v """`: Spots auto-start unquoted paths.
+- `cmd /c 'wmic service get name,displayname,pathname,startmode | findstr /i "auto" | findstr /i /v "C:\windows\\" | findstr /i /v "\"" '`: Spots auto-start unquoted paths.
 - `sc query` or `Get-Service` (PS): List services; `sc qc <service>` for config (binpath, start type).
 - `icacls "C:\path\to\service.exe"`: Checks permissions (look for (M) or (F) for Users/Authenticated Users).
 - `accesschk.exe -wus "Everyone" *`: If uploaded Sysinternals, checks writable services. Or `-ucqv <service>` for specific.
