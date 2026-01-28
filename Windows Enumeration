@@ -1,3 +1,5 @@
+ `enum4linux-ng -A -d -v IP 2>&1` 
+
 ### Sample Initial Nmap Scans
 
 1. Full TCP port scan:  
@@ -16,14 +18,15 @@
   `telnet <target> 21` (VRFY/USER enum; pre-installed).  
   `ftp <target>` (anon login: user anonymous, pass blank/email; pre-installed).  
   `nmap -sV --script=ftp-anon,ftp-brute,ftp-syst <target> -p21` (pre-installed).  
-  `lftp <target>` (advanced anon browsing if needed; pre-installed).
+  `lftp <target>` (advanced anon browsing if needed; pre-installed).  
+  `ftp <target>` (implied manual/anon check).
 
 - **22/TCP - SSH** (info disclosure, brute force, RCE via creds):  
   `ssh -V <target>` (version; pre-installed).  
   `hydra -l <user> -P <wordlist> <target> ssh` (brute; pre-installed).  
   `nmap -sV --script=ssh2-enum-algos,ssh-hostkey <target> -p22` (pre-installed).  
   `medusa -h <target> -u <user> -P <wordlist> -M ssh` (alt brute; pre-installed).  
-  `ssh-audit <target>` (policy scan; install via `apt install ssh-audit`).
+  `ssh-audit <target>` (policy scan; install via `apt install ssh-audit`).  
 
 - **23/TCP - Telnet** (info disclosure, brute force, cleartext creds capture):  
   `telnet <target> 23` (banner/login; pre-installed).  
@@ -58,7 +61,12 @@
   Browser inspection for IIS version/cookies (manual via Firefox/Chrome; pre-installed).  
   `gobuster dir -u http://<target> -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt` (faster dir brute; pre-installed).  
   `whatweb <target>` (fingerprint; pre-installed).  
-  `wpscan --url http://<target>` (if WP suspected; pre-installed).
+  `wpscan --url http://<target>` (if WP suspected; pre-installed).  
+  `feroxbuster -u http://<target> -t 10 -x txt,html,php,asp,aspx,jsp` (dir brute; pre-installed).  
+  `nikto -h <target>` (vuln scan).  
+  `whatweb <target>` (fingerprint).  
+  `curl <target>/` (robots.txt, etc.).  
+  Alt dir tools like `dirsearch -u http://<target> -r -t 50` (install via git), `ffuf -H "Host: FUZZ.<domain>" -u http://<target> -w <wordlist>` (pre-installed).
 
 - **88/TCP - Kerberos** (user enumeration, AS-REP roasting, ticket forging):  
   `nmap -sV --script=krb5-enum-users --script-args krb5-enum-users.realm=<domain> <target> -p88` (pre-installed).  
@@ -91,7 +99,10 @@
   `smbclient -L //<target>` (null session; pre-installed).  
   `enum4linux -a <target>` (pre-installed).  
   `nmap -sV --script=smb-enum-shares,smb-enum-users <target> -p139` (pre-installed).  
-  `smbmap -H <target>` (share enum; pre-installed).
+  `smbmap -H <target>` (share enum; pre-installed).  
+  `enum4linux-ng -a <target>` (improved enum; install via git).  
+  `smbclient -L //<target>` (shares).  
+  `smbmap -H <target> -p 139` (shares).
 
 - **143/TCP - IMAP** (brute force, info disclosure, mail retrieval):  
   `telnet <target> 143` (LOGIN; pre-installed).  
@@ -104,7 +115,9 @@
   `onesixtyone -c /usr/share/seclists/Discovery/SNMP/common-snmp-community-strings.txt <target>` (pre-installed).  
   `nmap -sU --script=snmp-info,snmp-sysdescr <target> -p161` (pre-installed).  
   `snmp-check <target> -c public` (detailed enum; pre-installed).  
-  `braa public@<target>:.1.3.6.*` (brute OID; install via `apt install braa`).
+  `braa public@<target>:.1.3.6.*` (brute OID; install via `apt install braa`).  
+  `snmpwalk -v1 -c public <target>` (MIB walk).  
+  `onesixtyone -c <wordlist> <target>` (community brute).
 
 - **389/TCP - LDAP** (info disclosure, user enumeration, AD details):  
   `ldapsearch -x -H ldap://<target> -b "" -s base "(objectclass=*)"` (pre-installed).  
@@ -118,7 +131,11 @@
   `sslscan <target>` (pre-installed).  
   `nmap -sV --script=ssl-enum-ciphers,http-enum <target> -p443` (pre-installed).  
   `testssl.sh <target>` (TLS scan; pre-installed).  
-  `sslyze --regular <target>` (cert analysis; pre-installed).
+  `sslyze --regular <target>` (cert analysis; pre-installed).  
+  `feroxbuster -u https://<target> -t 10 -x txt,html,php,asp,aspx,jsp` (dir brute).  
+  `nikto -h https://<target>` (vuln scan).  
+  `whatweb https://<target>` (fingerprint).  
+  `curl https://<target>/` (robots.txt, etc.).
 
 - **445/TCP - SMB** (info disclosure, share enumeration, brute force, RCE via vulns):  
   `smbclient -L //<target> -N` (pre-installed).  
@@ -127,7 +144,10 @@
   `nmap -sV --script=smb-enum-shares,smb2-security-mode <target> -p445` (pre-installed).  
   `crackmapexec smb <target> --shares` (pre-installed).  
   `smbmap -H <target> -u "" -p ""` (null enum; pre-installed).  
-  `impacket-smbclient guest@<target>` (Impacket install as above).
+  `impacket-smbclient guest@<target>` (Impacket install as above).  
+  `enum4linux-ng -a <target>` (AD/shares enum).  
+  `smbclient -L //<target>` (shares).  
+  `smbmap -H <target> -p 445` (shares).
 
 - **464/TCP - Kerberos Password Change** (user enumeration, password spraying, ticket abuse):  
   `nmap -sV --script=krb5-enum-users <target> -p464` (pre-installed).  
@@ -158,7 +178,8 @@
   `tnscmd10g version -h <target>` (install via `git clone https://github.com/irsdl/tnscmd10g`).  
   `odat.py all -s <target>` (install via `git clone https://github.com/quentinhardy/odat`).  
   `nmap -sV --script=oracle-sid-brute <target> -p1521` (pre-installed).  
-  `oscanner -s <target>` (install via `apt install oscanner`).
+  `oscanner -s <target>` (install via `apt install oscanner`).  
+  `tnscmd10g version -h <target>` (TNS enum).
 
 - **2049/TCP - NFS** (info disclosure, unauthorized mount, file access):  
   `showmount -e <target>` (pre-installed).  
@@ -170,19 +191,19 @@
   `mysql -h <target> -u root -p` (test default; pre-installed).  
   `nmap -sV --script=mysql-info,mysql-users <target> -p3306` (pre-installed).  
   `hydra -l root -P <wordlist> <target> mysql` (brute; pre-installed).  
-  `mysqloit -h <target>` (if vuln check; part of sqlmap, pre-installed).
+  `mysqloit -h <target>` (if vuln check; part of sqlmap, pre-installed).  
 
 - **3389/TCP - RDP** (brute force, RCE via creds, session hijacking):  
   `rdesktop -u <user> -p <pass> <target>` (pre-installed).  
   `hydra -l <user> -P <wordlist> <target> rdp` (pre-installed).  
   `nmap -sV --script=rdp-enum-encryption <target> -p3389` (pre-installed).  
   `xfreerdp /u:<user> /p:<pass> /v:<target>` (alt client; pre-installed).  
-  `crowbar -b rdp -u <user> -C <wordlist> -t <target>` (brute; pre-installed).
+  `crowbar -b rdp -u <user> -C <wordlist> -t <target>` (brute; pre-installed).  
 
 - **5432/TCP - PostgreSQL** (info disclosure, brute force, SQL injection):  
   `psql -h <target> -U postgres` (pre-installed).  
   `nmap -sV --script=pgsql-brute <target> -p5432` (pre-installed).  
-  `hydra -l postgres -P <wordlist> <target> postgres` (brute; pre-installed).
+  `hydra -l postgres -P <wordlist> <target> postgres` (brute; pre-installed).  
 
 - **5900/TCP - VNC** (brute force, unauthorized access, RCE via viewer):  
   `vncviewer <target>:5900` (pre-installed).  
@@ -203,13 +224,13 @@
   Same as 80; `curl -I http://<target>:8080` (pre-installed).  
   `nikto -h http://<target>:8080` (pre-installed).  
   `nmap -sV --script=http-enum <target> -p8080` (pre-installed).  
-  `gobuster dir -u http://<target>:8080 -w <wordlist>` (pre-installed).
+  `gobuster dir -u http://<target>:8080 -w <wordlist>` (pre-installed).  
 
 - **8443/TCP - HTTPS Alternate** (info disclosure, SSL misconfig, RCE via web vulns):  
   `curl -k -I https://<target>:8443` (pre-installed).  
   `sslscan <target>:8443` (pre-installed).  
   `nmap -sV --script=ssl-enum-ciphers <target> -p8443` (pre-installed).  
-  `testssl.sh <target>:8443` (pre-installed).
+  `testssl.sh <target>:8443` (pre-installed).  
 
 - **27017/TCP - MongoDB** (info disclosure, unauthorized access, database dumping):  
   `mongo --host <target>` (pre-installed).  
@@ -229,7 +250,8 @@
 - **6379/TCP - Redis** (info disclosure, unauthorized access, key dumping):  
   `redis-cli -h <target> INFO` (pre-installed).  
   `nmap -sV --script=redis-info <target> -p6379` (pre-installed).  
-  `redis-cli -h <target> --scan --pattern "*"` (key scan; pre-installed).
+  `redis-cli -h <target> --scan --pattern "*"` (key scan; pre-installed).  
+  `redis-cli -h <target> ping` (basic check).
 
 - **445/TCP - CIFS** (info disclosure, share enumeration, file access):  
   Extension of SMB; same tools as 445 above.
@@ -240,3 +262,10 @@
 
 - **3269/TCP - LDAPS GC** (info disclosure, secure user enumeration, global AD details):  
   Similar to 636; `ldapsearch -x -H ldaps://<target>:3269` (pre-installed).
+
+- **1524/TCP - SIP** (info disclosure, VoIP enum, extension brute):  
+  `sipvicious` (VoIP enum; install via `apt install sipvicious`).  
+  Note: Rare in Windows, but for mixed envs.
+
+- **21010/TCP - SIP** (info disclosure, VoIP enum, extension brute):  
+  Similar to 1524; `sipvicious` tools.
