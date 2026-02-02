@@ -121,9 +121,9 @@
 
 - **389/TCP - LDAP** (info disclosure, user enumeration, AD details):  
   `ldapsearch -x -h <IP> -b "dc=X,dc=Y"`  Search output for usernames (Replace X & Y in command. Search for sAMAccountName in output. Look for password hints) Example ldapsearch -x -H ldap://192.168.199.122 -b "DC=hutch,DC=offsec" -s sub "(&(objectclass=user))"
-  `ldapsearch -x -H ldap://<target> -b "" -s base "(objectclass=*)"` (pre-installed).  
-  `nmap -sV --script=ldap-rootdse,ldap-search <target> -p389` (pre-installed).  
-  `enum4linux -a <target>` (pre-installed).  
+  `ldapsearch -x -H ldap://<target> -b "" -s base "(objectclass=*)"`.  
+  `nmap -sV --script=ldap-rootdse,ldap-search <target> -p389`.  
+  `enum4linux-ng <IP> -L -S -oJ output.json` -L: Get additional info via LDAP/LDAPS, -S: Get shares via RPC, -oJ: Outputs to file.  
   `windapsearch -d <domain> --dc <target> --module users` (install via `git clone https://github.com/ropnop/windapsearch`).
 
 - **443/TCP - HTTPS** (info disclosure, SSL misconfig, RCE via web vulns):  
