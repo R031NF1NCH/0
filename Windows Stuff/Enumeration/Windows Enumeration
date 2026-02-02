@@ -89,6 +89,9 @@
   `rpcclient -U "" <target>` (null session, enumdomusers; pre-installed).  
   `nmap -sV --script=msrpc-enum <target> -p135` (pre-installed).  
   `impacket-rpcdump <target>` (endpoint dump; Impacket install as above).
+  WMI exec / query:  
+  `nxc wmi <target> -u user -p pass -x 'whoami'  
+  `nxc wmi <target> -u user -p pass --wmi 'SELECT * FROM Win32_ComputerSystem'
 
 - **137/UDP - NetBIOS** (info disclosure, name resolution, system details):  
   `nbtscan <target>` (pre-installed).  
@@ -275,6 +278,7 @@ Other modules:
   `hydra -l postgres -P <wordlist> <target> postgres` (brute; pre-installed).  
 
 - **5900/TCP - VNC** (brute force, unauthorized access, RCE via viewer):  
+  `nxc vnc <target> -u user -p pass
   `vncviewer <target>:5900` (pre-installed).  
   `nmap -sV --script=vnc-info <target> -p5900` (pre-installed).  
   `hydra -P <wordlist> <target> vnc` (brute, no user needed; pre-installed).
