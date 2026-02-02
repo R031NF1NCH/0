@@ -120,7 +120,7 @@
   `onesixtyone -c <wordlist> <target>` (community brute).
 
 - **389/TCP - LDAP** (info disclosure, user enumeration, AD details):  
-  `ldapsearch -x -h <IP> -b "dc=X,dc=Y"`  Search output for usernames (Replace X & Y in command. Search for sAMAccountName in output. Look for password hints)
+  `ldapsearch -x -h <IP> -b "dc=X,dc=Y"`  Search output for usernames (Replace X & Y in command. Search for sAMAccountName in output. Look for password hints) Example ldapsearch -x -H ldap://192.168.199.122 -b "DC=hutch,DC=offsec" -s sub "(&(objectclass=user))"
   `ldapsearch -x -H ldap://<target> -b "" -s base "(objectclass=*)"` (pre-installed).  
   `nmap -sV --script=ldap-rootdse,ldap-search <target> -p389` (pre-installed).  
   `enum4linux -a <target>` (pre-installed).  
