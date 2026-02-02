@@ -26,7 +26,8 @@
   `hydra -l <user> -P <wordlist> <target> ssh` (brute; pre-installed).  
   `nmap -sV --script=ssh2-enum-algos,ssh-hostkey <target> -p22` (pre-installed).  
   `medusa -h <target> -u <user> -P <wordlist> -M ssh` (alt brute; pre-installed).  
-  `ssh-audit <target>` (policy scan; install via `apt install ssh-audit`).  
+  `ssh-audit <target>` (policy scan; install via `apt install ssh-audit`). 
+  `nxc ssh <target> -u user -p pass -x 'whoami'  `
 
 - **23/TCP - Telnet** (info disclosure, brute force, cleartext creds capture):  
   `telnet <target> 23` (banner/login; pre-installed).  
