@@ -14,3 +14,5 @@
 - Use cupp and cewl to make wordlists.
 - Try 403 bypasses on web apps
 - Even if you get access as a regular user, if you can write to web directory - host php shell to gain access as the web user on windows/linux
+- If webdav on host, try to put files on server. 
+- Brute force basic auth
