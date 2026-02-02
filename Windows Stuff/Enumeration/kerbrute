@@ -1,0 +1,101 @@
+#### Subcommands
+These are the core operations. Syntax: `kerbrute <subcommand> [flags] <arguments>`. Run with `-d <domain>` (required) and optionally `--dc <dc_ip>` for targeting.
+
+- **userenum**  
+  Full Command:  
+  `kerbrute userenum -d lab.local --dc 10.0.0.1 usernames.txt`  
+  Usage & Example: `kerbrute userenum [flags] <username_list.txt>`  
+  Input: One username per line in the file.  
+  Description & Workflow Optimization: Enumerates valid AD usernames by checking Kerberos pre-auth responses (no passwords needed). Outputs valid users.  
+  Optimization: Best for initial recon—generate username lists from OSINT (e.g., LinkedIn, email patterns) and run with high threads (`-t 50`) for speed on large lists (10k+). Use `--safe` to avoid lockouts; pipe output to other tools like `crackmapexec` for further spraying. Keeps workflows stealthy by not hitting LDAP.
+
+- **passwordspray**  
+  Full Command:  
+  `kerbrute passwordspray -d lab.local userlist.txt Password123 -t 5`  
+  Usage & Example: `kerbrute passwordspray [flags] <user_list.txt> <single_password>`  
+  Input: One username per line; single password as arg.  
+  Description & Workflow Optimization: Tests one password against multiple users (horizontal spray). Logs valid logins.  
+  Optimization: Ideal mid-recon after userenum—use seasonal passwords (e.g., Winter2023) from policy intel. Limit threads (`-t 5-10`) and add `--delay 1000` to evade detection in locked environments. Chain with userenum output for targeted sprays, optimizing time by avoiding full brute-force.
+
+- **bruteuser**  
+  Full Command:  
+  `kerbrute bruteuser -d lab.local passwords.txt jdoe --downgrade`  
+  Usage & Example: `kerbrute bruteuser [flags] <password_list.txt> <single_username>`  
+  Input: One password per line; single username as arg.  
+  Description & Workflow Optimization: Brute-forces passwords for one user from a wordlist.  
+  Optimization: Use post-enum for high-value targets (e.g., admins). Combine with weak wordlists like rockyou.txt subsets; `--downgrade` forces weaker encryption for faster cracks if supported. Low threads (`-t 1-5`) with `--delay` for stealth in production; saves time vs. full domain sprays.
+
+- **bruteforce**  
+  Full Command:  
+  `cat combos.txt | kerbrute bruteforce -d lab.local -`  
+  Usage & Example: `kerbrute bruteforce [flags] <combo_list.txt>` (or pipe from stdin)  
+  Input: `username:password` per line (ignores blanks).  
+  Description & Workflow Optimization: Tests pre-made username:password combos.  
+  Optimization: For refined attacks after harvesting creds (e.g., from breaches). Use stdin piping from scripts for automation; high threads (`-t 20`) on small, targeted lists. Optimizes workflows by testing leaked combos quickly before broader sprays—add `--hash-file` to capture AS-REPs for offline cracking with Hashcat.
+
+- **version**  
+  Full Command:  
+  `kerbrute version`  
+  Usage & Example: `kerbrute version`  
+  No args/flags needed.  
+  Description & Workflow Optimization: Displays tool version and exits.  
+  Optimization: Quick check before sessions to ensure compatibility; include in setup scripts for reproducible workflows.
+
+- **help**  
+  Full Command:  
+  `kerbrute help userenum`  
+  Usage & Example: `kerbrute help [subcommand]`  
+  Description & Workflow Optimization: Shows general or subcommand-specific help.  
+  Optimization: Use during note-taking or troubleshooting; alias in shell for fast reference, keeping workflows efficient without web searches.
+
+#### Global Flags
+These apply to all subcommands. Defaults are tuned for speed; adjust for stealth.
+
+- `-d, --domain <string>`  
+  Full Command:  
+  `-d lab.local`  
+  Usage: Required: `-d lab.local`  
+  Description & Workflow Optimization: Specifies the full domain name (e.g., contoso.com).  
+  Optimization: Always set to target correctly; derive from nmap or rpcclient enum. Essential for all AD workflows—avoids DNS resolution issues in isolated nets.
+
+- `--dc <string>`  
+  Full Command:  
+  `--dc 10.0.0.1`  
+  Usage: `--dc 10.0.0.1`  
+  Description & Workflow Optimization: Targets a specific Domain Controller/KDC IP (DNS lookup if omitted).  
+  Optimization: Use for reliability in multi-DC envs; scan with nmap first. Optimizes by bypassing DNS, reducing noise and speeding up in firewalled labs.
+
+- `-t, --threads <int>`  
+  Full Command:  
+  `-t 20`  
+  Usage: `-t 20` (default: 10)  
+  Description & Workflow Optimization: Sets concurrent threads for parallel operations.  
+  Optimization: Ramp up (20-50) for fast enum on large lists in labs; drop to 1-5 in real engagements to mimic normal traffic. Balances speed vs. detection.
+
+- `--delay <int>`  
+  Full Command:  
+  `--delay 500`  
+  Usage: `--delay 500` (ms)  
+  Description & Workflow Optimization: Adds delay between attempts (forces single-threaded).  
+  Optimization: For evasion in monitored envs—set to 1000+ ms with sprays. Optimizes stealth workflows, preventing rate-limiting or alerts.
+
+- `--safe`  
+  Full Command:  
+  `--safe`  
+  Usage: `--safe` (default: false)  
+  Description & Workflow Optimization: Aborts on detecting a locked account.  
+  Optimization: Enable in policy-strict envs to avoid burning accounts. Optimizes ethical workflows by self-regulating aggression.
+
+- `--downgrade`  
+  Full Command:  
+  `--downgrade`  
+  Usage: `--downgrade`  
+  Description & Workflow Optimization: Forces RC4-HMAC encryption (weaker, but faster in some cases).  
+  Optimization: Use when targeting legacy DCs for speed; capture hashes for offline attacks. Enhances cracking workflows with tools like John the Ripper.
+
+- `--hash-file <string>`  
+  Full Command:  
+  `--hash-file hashes.txt`  
+  Usage: `--hash-file hashes.txt`  
+  Description & Workflow Optimization: Saves captured AS-REP hashes to file.  
+  Optimization: Crucial for AS-REP roasting—run during enum/sprays, then crack offline. Optimizes by separating online/offline phases, reducing exposure.
