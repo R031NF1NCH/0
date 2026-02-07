@@ -1,5 +1,25 @@
 ## File Search Commands
 
+# Edited by My user — last 5 min
+$me = "$env:USERDOMAIN\$env:USERNAME"; Get-ChildItem C:\ -Recurse -Force -ErrorAction SilentlyContinue | Where { $_.LastWriteTime -gt (Get-Date).AddMinutes(-5) -and {try{(Get-Acl $_.FullName -ErrorAction Stop).Owner -eq $me}catch{$false}} } | Select FullName, LastWriteTime | Format-Table -Auto
+
+# Edited by My user — last 25 min searching only in C:\Users,C:\Temp,C:\Windows\Temp,C:\ProgramData 
+$me = "$env:USERDOMAIN\$env:USERNAME"; Get-ChildItem C:\Users,C:\Temp,C:\Windows\Temp,C:\ProgramData -Recurse -Force -ErrorAction SilentlyContinue | Where { $_.LastWriteTime -gt (Get-Date).AddMinutes(-25) -and {try{(Get-Acl $_.FullName -ErrorAction Stop).Owner -eq $me}catch{$false}} } | Select FullName, LastWriteTime | Format-Table -Auto
+
+# Edited by My user — last 24 h (the one you ran)
+$me = "$env:USERDOMAIN\$env:USERNAME"; Get-ChildItem C:\ -Recurse -Force -ErrorAction SilentlyContinue | Where { $_.LastWriteTime -gt (Get-Date).AddHours(-24) -and {try{(Get-Acl $_.FullName -ErrorAction Stop).Owner -eq $me}catch{$false}} } | Select FullName, LastWriteTime | Format-Table -Auto
+
+# Files changed by domain Administrator (last 24 hours)
+$admin="YOURDOMAIN\Administrator"; Get-ChildItem C:\ -Recurse -Force -ErrorAction SilentlyContinue | Where { $_.LastWriteTime -gt (Get-Date).AddHours(-24) -and {try{(Get-Acl $_.FullName -ErrorAction Stop).Owner -like "*\$admin"}catch{$false}} } | Select FullName, LastWriteTime | Format-Table -Auto
+
+# Files changed by local user (non-Domain user) Sarah (last 24 hours)
+$sarah=".\Sarah"; Get-ChildItem C:\ -Recurse -Force -ErrorAction SilentlyContinue | Where { $_.LastWriteTime -gt (Get-Date).AddHours(-24) -and {try{(Get-Acl $_.FullName -ErrorAction Stop).Owner -like "*\$sarah"}catch{$false}} } | Select FullName, LastWriteTime | Format-Table -Auto
+
+# Files changed by David in the last 24 hrs. Uses asterisk in search so searches both domain and local users named david. Change David to any other user.
+Get-ChildItem C:\ -Recurse -Force -ErrorAction SilentlyContinue | Where { $_.LastWriteTime -gt (Get-Date).AddHours(-24) -and {try{(Get-Acl $_.FullName -ErrorAction Stop).Owner -like "*\David"}catch{$false}} } | Select FullName, LastWriteTime | Format-Table -Auto
+
+
+
 # Searches the entire C: drive recursively for the file "local.txt" and lists the full path in bare format. In Command Prompt:
 dir C:\local.txt /s /b
 
