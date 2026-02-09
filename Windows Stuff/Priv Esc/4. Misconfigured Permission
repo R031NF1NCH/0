@@ -1,6 +1,0 @@
-Misconfigured Permissions on Files/Directories: 
-Check for writable system directories or files that can be exploited, like startup folders or PATH hijacking.
-
-Sample commands: 
-icacls C:\Windows\Tasks or similar paths
-dir /a /s /b C:\ | findstr /i /m "Everyone" "Users" to find overly permissive areas.
