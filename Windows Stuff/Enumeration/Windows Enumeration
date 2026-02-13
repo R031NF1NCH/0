@@ -277,7 +277,8 @@ Other modules:
   `hydra -l <user> -P <wordlist> $IP rdp` (pre-installed).  
   `nmap -sV --script=rdp-enum-encryption $IP -p3389` (pre-installed).  
   `xfreerdp /u:<user> /p:<pass> /v:$IP` (alt client; pre-installed).  
-  `crowbar -b rdp -u <user> -C <wordlist> -t $IP` (brute; pre-installed).  
+  `crowbar -b rdp -u <user> -C <wordlist> -t $IP` (brute; pre-installed).
+  `crowbar -b rdp -u offsec -C /home/kali/wordlists/rockyou_utf_8.txt  -s 192.168.118.46/32   # bruteforce password using crowbar and rockyou.txt minus non-utf-8 chars. (crowbar throws error if you use original rockyou.txt)
 
 - **5432/TCP - PostgreSQL** (info disclosure, brute force, SQL injection):  
   `psql -h $IP -U postgres` (pre-installed).  
