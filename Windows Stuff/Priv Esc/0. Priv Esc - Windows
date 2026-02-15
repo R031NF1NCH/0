@@ -4,6 +4,7 @@ whoami /all     # current user, SIDs, groups, privileges, and integrity level
 whoami /priv    # SeImpersonatePrivilege, SeAssignPrimaryTokenPrivilege, SeDebugPrivilege, SeBackupPrivilege, SeTakeOwnershipPrivilege, SeRestorePrivilege, SeLoadDriverPrivilege, SeManageVolumePrivilege, SeTcbPrivilege, SeSecurityPrivilege, SeSystemEnvironmentPrivilege, SeShutdownPrivilege, SeEnableDelegationPrivilege, SeCreateTokenPrivilege
 whoami /groups    # (shows group SIDs); look for high-priv groups like INTERACTIVE or SERVICE.
 net users    # List local users
+net user adam    # Check what groups adam is in
 net localgroup    # Lists groups, Check if in any interesting groups like "Remote Desktop Users".
 net localgroup administrators    # View members of administrators group
 net accounts    # Domain/local policy
@@ -25,6 +26,38 @@ systeminfo > sysinfo.txt    # Dump systeminfo to file and review in Windows-Expl
   python3 wes.py systeminfo.txt -i "Elevation Privilege"    #Filter for Priv Esc vectors only
   python3 wes.py systeminfo.txt --output vulns.csv    # Determine vulnerabilities and output to file 
   python3 wes.py systeminfo.txt --exploits-only    #  List only vulnerabilities with exploits
+
+ipconfig /all  # Full network config, including DNS servers (might resolve internal names).
+route print    # Routing table; look for other subnets.
+arp -a    # ARP cache for nearby hosts.
+netstat -ano > netstat.txt    # Ports, connections, PIDs. (focus on 0.0.0.0 vs 127.0.0.1—localhost might need port-forward).
+netstat -ano | findstr LISTENING    # for listeners; match PID to process with `tasklist /svc /fi "PID eq <pid>"
+netsh advfirewall show allprofiles    # Firewall state
+netsh advfirewall firewall show rule name=all    # Firewall Rules
+net view    # Visible shares
+net session    # net session
+
+findstr /sim password *.txt *.ini *.config *.xml /C:"password"    # Recursive search for "password" in files
+findstr /si password C:\Users\*    # Searches all files in C:\Users\ and subdirectories for the string "password" (case-insensitive, recursive). Outputs matching lines with file paths.
+dir /s /b *pass*   #  Lists full paths of files matching "pass" recursively from C:\. Swap cred for other interesting words, ie *vnc*, *unattend*, *.config*, *cred* 
+  type C:\Windows\Panther\Unattend.xml  # Unattended install files with encoded creds (base64 decode passwords).
+  type C:\sysprep.inf  # Unattended install files with encoded creds (base64 decode passwords).
+reg query HKLM /f password /t REG_SZ /s > regpass.txt    # Searches registry for password strings.
+reg query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v DefaultPassword    #  Autologon creds.
+cmdkey /list    # Outputs stored creds, use `/add` and `runas` to exploit if found.
+  cmdkey /add:TARGET /user:DOMAIN\Admin /pass:Password123    # Add creds (if pw known/extracted):
+  runas /user:DOMAIN\Admin cmd.exe    #  Run as elevated user (local priv esc):(Prompts for pw; cached one auto-fills if matching target.)
+  runas /netonly /user:DOMAIN\Admin cmd.exe    # Run as for network access (e.g., SMB admin shares):(Uses cached creds for remote resources without local priv change; then dir \\Server1\C$ as admin.)
+Get-History    # Check the PowerShell history of a user using get-history. 
+(Get-PSReadlineOption).HistorySavePath    # Shows us the path of the history file from PSReadline.
+type %userprofile%\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt    # Powershell History
+type C:\Users\Anthony\Transcripts\transcript01.txt    # Read PS transcript file if found
+Get-ChildItem -Path C:\ -Include *.kdbx -File -Recurse -ErrorAction SilentlyContinue    # Search recursively for keepass  files
+Get-ChildItem -Path C:\xampp -Include *.txt,*.ini -File -Recurse -ErrorAction SilentlyContinue    # Search for sensitive info in xampp directory
+Get-ChildItem -Path C:\Users\dave\ -Include *.txt,*.pdf,*.xls,*.xlsx,*.doc,*.docx -File -Recurse -ErrorAction SilentlyContinue    # Search for documents and text files in the home directory of the user Dave
+runas /user:backupadmin cmd    # Reuse found pwds from configs/text files across users/services/servers (common reuse).
+
+
 
 
 
