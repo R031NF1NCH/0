@@ -3,3 +3,21 @@ Secondary Logon (RunAs): Cached credentials or services using RunAs with stored 
 Sample commands: 
 reg query HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\Credential Providers; 
 look for LSA secrets with tools like Mimikatz (post-exploit)
+
+
+==================================================================================================================================
+==================================================================================================================================
+### runas /user:backupadmin cmd
+Runs cmd as another user (local/domain) if they have logon rights. Useful when target lacks GUI access.
+
+**Limitation:** No GUI → pw prompt fails in non-interactive shells (e.g., bind/WinRM).
+
+**Alternatives:**
+- WinRM/RDP: If user in relevant groups.
+- Schtasks: If user has "Log on as batch job" right (schedule task as them).
+- PsExec (Sysinternals): If active session exists.
+
+**Tip:** Reuse found pwds from configs/text files across users/services (common reuse).
+
+==================================================================================================================================
+==================================================================================================================================
