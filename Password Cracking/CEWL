@@ -1,8 +1,8 @@
-# Make wordlist of website, crawl 3 pages deep
-cewl http://192.168.3.5/ -d 3
+# Make wordlist of website, crawl 3 pages deep and save all words as lowercase
+cewl http://192.168.3.5/ --lowercase -d 3
 
 # To spider a site for a given depth and minimum word length
-cewl -d <depth> -m <min word length> <url>
+cewl -d <depth> -m <min word length> <url> 
 
 # To spider a site and store email addresses in a separate file
 cewl -e -email_file <file> <url>
