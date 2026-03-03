@@ -1,0 +1,38 @@
+```markdown
+# SSH Local Port Forwarding - Access Webapp on Target localhost
+
+## Scenario
+There is a webapp running on localhost on the target and you need to access from your local machine
+
+## Solution
+SSH local port forwarding
+
+## Set up SSH local port forwarding
+From your Kali machine (192.168.45.184),  
+run the following command to forward a local port (e.g.,-L 8080) on your Kali machine to the server's localhost port 8080:
+```bash
+ssh -L 8080:localhost:8080 victimUser@192.168.238.103
+```
+
+## To access the webapp on the linux target from kali machine
+Open a browser on your Kali machine. Navigate to http://localhost:8080.
+
+## Additional if needed
+### To Keep the SSH session open
+The SSH connection must remain active for the tunnel to work. If you close the terminal, the forwarding stops.
+
+To run it in the background, add the -fN flags:  
+-f: Forks the SSH process to the background.  
+-N: Prevents executing a remote command, keeping the connection for forwarding only.
+```bash
+ssh -fN -L 8080:localhost:8080 victimUser@192.168.238.103
+```
+
+### Stop the tunnel
+Find the SSH process ID (PID) using `ps aux | grep ssh` and terminate it with `kill <PID>`.
+
+## Troubleshooting
+- If localhost:8080 doesn't work in your browser, ensure the webapp is running on the server's localhost:8080.
+- Check if the SSH connection is successful (ssh victimuser@192.168.238.103).
+- If port 8080 is in use on your Kali machine, choose a different local port (e.g., -L 8081:localhost:8080) and access http://localhost:8081.
+```
