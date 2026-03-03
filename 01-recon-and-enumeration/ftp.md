@@ -1,5 +1,6 @@
 ```markdown
 # Wordlist location of common user pass combinations
+```
 ```bash
 hydra -C /home/kali/wordlists/seclists/Passwords/Default-Credentials/ftp-betterdefaultpasslist.txt 192.168.0.0 ftp -V -I -t 64
 ```
