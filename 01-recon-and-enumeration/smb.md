@@ -1,12 +1,24 @@
+# SMB
+
+## NetBIOS & Nmap
+
+```bash
 sudo nbtscan -r 192.168.50.0/24  # Query NetBIOS name service for valid NetBIOS names, specifying the originating UDP port as 137 with -r.
-(from windows) net view \\dc01 /all
+```
+
+```powershell
+net view \\dc01 /all
+```
+
+```bash
 ls -1 /usr/share/nmap/scripts/smb*    # Nmap SMB NSE scripts
+```
 
+## Scripts and Tools for Automated Enumeration
 
-~~~Scripts and tools for automated enumeration~~~
+```bash
 smbenum.sh
 enum4linux -a -o <ip>
-
 enum4linux -u 'guest' -p '' -a <ip>
 smbmap -H $IP
 smbmap -u "user" -p "pass" -H $IP
@@ -15,26 +27,34 @@ smbmap -H $IP -P 139 2>&1
 smbmap -H $IP -P 445 2>&1
 smbmap -u null -p "" -H $IP -P 139 -x "ipconfig /all" 2>&1
 smbmap -u null -p "" -H $IP -P 445 -x "ipconfig /all" 2>&1
+```
 
-~~~SMBClient~~~
+## SMBClient
 
-smbclient -L IP    #List SMB shares
+```bash
+smbclient -L IP                       # List SMB shares
 smbclient -L IP -U guest
-smbclient //192.168.0.0/ITDEPT -N    #Login to ITDEPT SMB share using null session(-n) and no password
-smbclient //192.168.0.0/IPC$         #Login to share
-sudo smbclient //192.168.0.0/IPC$    #Try sudoing 
-smbclient -L <target-IP> -U username%password    #List shares on a machine using a valid username + password
-smbclient //<target>/<share$> -U username%password   #Connect to a valid share with username + password
-smbclient //<target>/<share$> -c 'cd folder; ls' password -U username    #List files on a specific share folder inside the share
-smbclient //<target>/<share$> -c 'cd folder;get desired_file_name' password -U username    #Download a file from a specific share folder
-smbclient //<target>/<share$> -c 'put /var/www/my_local_file.txt .\target_folder\target_file.txt' password -U username    #Copy a file to a specific share folder
-smbclient '//server/share' -U username -c 'prompt OFF; recurse ON; cd path\to\remote\dir; lcd ~/path/to/download/to; mget *'  #Download all files recursively
+smbclient //192.168.0.0/ITDEPT -N     # Login to ITDEPT SMB share using null session(-n) and no password
+smbclient //192.168.0.0/IPC$          # Login to share
+sudo smbclient //192.168.0.0/IPC$     # Try sudoing
+smbclient -L <target-IP> -U username%password                                                              # List shares on a machine using a valid username + password
+smbclient //<target>/<share$> -U username%password                                                         # Connect to a valid share with username + password
+smbclient //<target>/<share$> -c 'cd folder; ls' password -U username                                      # List files on a specific share folder inside the share
+smbclient //<target>/<share$> -c 'cd folder;get desired_file_name' password -U username                    # Download a file from a specific share folder
+smbclient //<target>/<share$> -c 'put /var/www/my_local_file.txt .\target_folder\target_file.txt' password -U username   # Copy a file to a specific share folder
+smbclient '//server/share' -U username -c 'prompt OFF; recurse ON; cd path\to\remote\dir; lcd ~/path/to/download/to; mget *'  # Download all files recursively
+```
 
-~~~Rpcclient~~~
-rpcclient -U "" <ip>    #Null session with rpcclient
+## Rpcclient
+
+```bash
+rpcclient -U "" <ip>     # Null session with rpcclient
 rpcclient -U "" -N $IP
+```
 
-Some important commands
+Some important commands:
+
+```bash
 rpcclient>srvinfo
 rpcclient>enumdomusers
 rpcclient>getdompwinfo
@@ -51,3 +71,4 @@ rpcclient>lsaaddacctrights
 rpcclient>lsaremoveacctrights
 rpcclient>dsroledominfo
 rpcclient>dsenumdomtrusts
+```
