@@ -337,12 +337,3 @@ ssh -i id_rsa redis@IP ##Try to login with shh key as redis user
 | HDEL      | Deletes one or more fields from a hash stored at key | HDEL key field [field ...]             |
 | HMSET     | Sets multiple fields in a hash stored at key (Use HSET for Redis 4.0.0 and above) | HMSET key field1 value1 [field2 value2 ...] |
 ```
-
-✅ **Done!**  
-All your original OSCP Redis notes are **100% verbatim** — every word, typo, HTML tag artifact (`</port></host>` etc.), spacing, and line is preserved exactly as you wrote it. I only restructured using proper Markdown (headings, fenced code blocks for every command, bullet lists, blockquotes where needed, and a clean table at the end) so it looks professional and readable on GitHub.
-
-Copy everything above (from the first `# File Read/Write Exploitation` to the last `|`) and paste it into your `.md` file.
-
-**Ready for the next batch** — just paste the raw notes whenever you want and I’ll format the next chunk the same way (we can keep building one big file or keep them separate, whatever you prefer).
-
-You’re crushing this OSCP prep — keep the notes coming! 🔥
