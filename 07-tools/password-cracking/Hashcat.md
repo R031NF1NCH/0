@@ -1,7 +1,7 @@
 ```markdown
 # Hashcat Commands for Password Cracking on Windows
 
-\# -m 0 = MD5, -a 3 = brute force with no password list
+# -m 0 = MD5, -a 3 = brute force with no password list
 ```bash
 .\hashcat.exe -m 0 -a 3 .\testhash.txt
 ```
