@@ -1,39 +1,63 @@
-Monitor a specific directory non-recursively
+```markdown
+# pspy64 Monitoring Commands
+
+## Monitor a specific directory non-recursively
+```bash
 ./pspy64 -d /path/to/monitor/dir
+```
 This command monitors the specified directory (/path/to/monitor/dir) for file system events without watching its subdirectories. It’s useful for focusing on a single directory where specific activity is expected.
 
-Monitor default directories with process and file system events
+## Monitor default directories with process and file system events
+```bash
 ./pspy64 -pf
+```
 Enables printing both process commands (-p) and file system events (-f) to stdout, watching default directories (/usr, /tmp, /etc, /home, /var, /opt) recursively.
 
-Monitor with custom scan interval
+## Monitor with custom scan interval
+```bash
 ./pspy64 -pf -i 1000
+```
 Prints both process commands and file system events, scanning /proc every 1000 milliseconds (1 second) to catch processes even if inotify events are missed.
 
-Monitor specific directories recursively
+## Monitor specific directories recursively
+```bash
 ./pspy64 -r /path/to/first/dir -r /path/to/second/dir
+```
 Watches two directories recursively, including all their subdirectories, for file system events, useful for broader monitoring.
 
-Monitor specific directories with mixed recursive and non-recursive watching
+## Monitor specific directories with mixed recursive and non-recursive watching
+```bash
 ./pspy64 -r /path/to/recursive/dir -d /path/to/non-recursive/dir
+```
 Combines recursive watching of one directory (-r) with non-recursive watching of another (-d), allowing flexible monitoring.
 
-Disable process printing, enable file system events
+## Disable process printing, enable file system events
+```bash
 ./pspy64 -p=false -f
+```
 Disables printing of process commands but enables file system event logging, focusing solely on file system activity.
 
-Use colored output for better readability
+## Use colored output for better readability
+```bash
 ./pspy64 -pf -c
+```
 Prints process commands and file system events with colored output (e.g., red for new processes, green for inotify events) for easier differentiation.
 
-Enable debug mode for verbose output
+## Enable debug mode for verbose output
+```bash
 ./pspy64 -pf --debug
+```
 Runs pspy with verbose error messages for troubleshooting, alongside process and file system event monitoring.
 
-Monitor with minimal output (processes only)
+## Monitor with minimal output (processes only)
+```bash
 ./pspy64 -p
+```
 Prints only process commands to stdout, using default recursive directory watching, ideal for focusing on process activity.
 
-Check available options
+## Check available options
+```bash
 ./pspy64 --help
+```
 Displays all available flags and their definitions, useful for understanding pspy’s capabilities before running it.
+```
