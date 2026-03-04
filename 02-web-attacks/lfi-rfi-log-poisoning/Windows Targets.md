@@ -1,4 +1,4 @@
-# === SSH / OpenSSH keys for Administrator ===
+#  SSH / OpenSSH keys for Administrator 
 C:/Users/Administrator/.ssh/id_rsa
 C:/Users/Administrator/.ssh/id_dsa
 C:/Users/Administrator/.ssh/id_ecdsa
@@ -11,7 +11,7 @@ C:/ProgramData/ssh/ssh_host_ed25519_key
 C:/ProgramData/ssh/administrators_authorized_keys
 C:/Users/Administrator/AppData/Roaming/OpenSSH/id_rsa
 
-# === SSH / OpenSSH keys for David ===
+#  SSH / OpenSSH keys for David 
 C:/Users/David/.ssh/id_rsa
 C:/Users/David/.ssh/id_dsa
 C:/Users/David/.ssh/id_ecdsa
@@ -20,7 +20,7 @@ C:/Users/David/.ssh/authorized_keys
 C:/Users/David/.ssh/known_hosts
 C:/Users/David/AppData/Roaming/OpenSSH/id_rsa
 
-# === All other sensitive Windows targets (sorted alphabetically for easy scanning) ===
+#  All other sensitive Windows targets (sorted alphabetically for easy scanning) 
 C:/$recycle.bin/s-1-5-18/desktop.ini
 C:/apache/log/access.log
 C:/apache/log/error.log
