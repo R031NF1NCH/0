@@ -13,6 +13,7 @@ C:/ProgramData/ssh/administrators_authorized_keys
 C:/Users/Administrator/AppData/Roaming/OpenSSH/id_rsa
 ```
 #  SSH / OpenSSH keys for David 
+```
 C:/Users/David/.ssh/id_rsa
 C:/Users/David/.ssh/id_dsa
 C:/Users/David/.ssh/id_ecdsa
@@ -20,8 +21,9 @@ C:/Users/David/.ssh/id_ed25519
 C:/Users/David/.ssh/authorized_keys
 C:/Users/David/.ssh/known_hosts
 C:/Users/David/AppData/Roaming/OpenSSH/id_rsa
-
+```
 #  All other sensitive Windows targets (sorted alphabetically for easy scanning) 
+```
 C:/$recycle.bin/s-1-5-18/desktop.ini
 C:/apache/log/access.log
 C:/apache/log/error.log
@@ -224,5 +226,6 @@ C:/Windows/System32/config/SAM
 C:/Windows/System32/config/SYSTEM
 C:/Windows/System32/config/SECURITY
 C:/Windows/Repair/SAM
+```
 C:/Windows/Repair/SYSTEM
 C:/Windows/Repair/SECURITY
