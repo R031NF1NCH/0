@@ -4,8 +4,10 @@
 ```bash
 hydra -C /home/kali/wordlists/seclists/Passwords/Default-Credentials/ftp-betterdefaultpasslist.txt 192.168.0.0 ftp -V -I -t 64
 ```
-
-
+```
+Recursive Download ftp files. Wget tries anonymous creds by default but can provide manually if needed--user=anonymous --password="anonymous"
+wget -m ftp://ftp.example.com/pub/somefolder/
+```
 
 # FTP Client Commands
 ```bash
