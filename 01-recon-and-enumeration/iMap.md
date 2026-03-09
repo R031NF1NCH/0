@@ -1,4 +1,4 @@
-```markdown
+
 ### IMAP / IMAPS Enumeration & Connection
 
 **Quick port check (IMAP ports)**  
@@ -111,5 +111,5 @@ hydra -L users.txt -P /usr/share/wordlists/rockyou.txt <target-ip> imap -t 4
 # After nc connect:
 A1 LOGIN "" ""
 ```
-```
+
 
