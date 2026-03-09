@@ -1,4 +1,4 @@
-```markdown
+
 # Hydra Brute Force Commands
 
 ### HTTP-Related Commands
