@@ -21,13 +21,13 @@ nmap -p 143,993 --script imap-capabilities,imap-ntlm-info <target-ip>
 nc -nv <target-ip> 143
 ```
 
-**Banner grab + capabilities check – plain IMAP**  
+**Connect/Banner grab + capabilities check – plain IMAP**  
 ```bash
 # Connect with nc then immediately type (case sensitive, end with CRLF):
 A1 CAPABILITY
 ```
 
-**Banner grab – IMAPS (port 993, SSL/TLS)**  
+**Connect/Banner grab – IMAPS (port 993, SSL/TLS)**  
 ```bash
 openssl s_client -connect <target-ip>:993 -quiet
 ```
