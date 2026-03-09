@@ -15,12 +15,12 @@ nmap -p- --min-rate 5000 <target-ip> | grep -E "110|995"
 nmap -p 110,995 --script pop3-* <target-ip>
 ```
 
-**Banner grab with netcat (plain POP3)**  
+**Connect/Banner grab with netcat (plain POP3)**  
 ```bash
 nc -nv <target-ip> 110
 ```
 
-**Banner grab for POP3S (SSL)**  
+**Connect/Banner grab for POP3S (SSL)**  
 ```bash
 openssl s_client -connect <target-ip>:995
 ```
