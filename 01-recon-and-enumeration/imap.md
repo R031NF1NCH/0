@@ -17,10 +17,9 @@
       - **Username**: target username
   - Click **Re-test** to verify the settings
   - Click **Done** to connect and access/send emails
-## To log out / clear credentials
-- Go to **Account Settings** → select the account → **Delete Account**
+  - To log out / clear credentials - Go to **Account Settings** → select the account → **Delete Account**
 
------------------------------------------------------------------
+----------------------------------------------------------------
 
 ### IMAP / IMAPS Enumeration & Connection
 **Alternative: Connect & fetch via curl (if credentials known, simpler for quick read)**  
