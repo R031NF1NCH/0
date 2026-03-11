@@ -1,5 +1,5 @@
 # Remote GUI for IMAP/POP3/SMTP → Thunderbird (Read/Send Emails)
-
+```
 - `sudo apt install thunderbird`
 - Start Thunderbird GUI  
   or if already installed: select **New Account** to set up a new connection
@@ -18,7 +18,7 @@
   - Click **Re-test** to verify the settings
   - Click **Done** to connect and access/send emails
   - To log out / clear credentials - Go to **Account Settings** → select the account → **Delete Account**
-
+```
 ----------------------------------------------------------------
 
 ### IMAP / IMAPS Enumeration & Connection
