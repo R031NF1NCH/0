@@ -1,0 +1,144 @@
+Sure — here's the whole thing as one block:
+
+````markdown
+## RDP Command Reference — Windows / AD Targets
+
+### xfreerdp (preferred for modern Windows)
+
+```bash
+# Basic connection with password
+xfreerdp /v:$IP /u:username /p:'password'
+
+# With domain (AD environment — always specify domain)
+xfreerdp /v:$IP /u:username /p:'password' /d:corp.local
+
+# Ignore certificate warning (almost always needed on lab boxes)
+xfreerdp /v:$IP /u:username /p:'password' /d:corp.local /cert:ignore
+
+# Pass the Hash (no plaintext password needed)
+xfreerdp /v:$IP /u:administrator /pth:NTLMhash /cert:ignore
+
+# Non-standard port
+xfreerdp /v:$IP:3390 /u:username /p:'password' /cert:ignore
+
+# Full quality — useful flags for a clean session
+xfreerdp /v:$IP /u:username /p:'password' /d:corp.local /cert:ignore \
+  +clipboard /dynamic-resolution /drive:share,/tmp
+
+# Drive sharing — mounts your Kali /tmp as a share inside the RDP session
+# Useful for transferring tools without a separate file transfer step
+xfreerdp /v:$IP /u:username /p:'password' /cert:ignore /drive:kali,/home/kali/tools
+
+# If connection drops or is unstable
+xfreerdp /v:$IP /u:username /p:'password' /cert:ignore /timeout:80000
+
+# Older protocol fallback (sometimes needed for older Server 2008/2012 boxes)
+xfreerdp /v:$IP /u:username /p:'password' /cert:ignore /sec:rdp
+
+# If you get "credssp" or NLA errors — cycle through these
+xfreerdp /v:$IP /u:username /p:'password' /cert:ignore /sec:tls
+xfreerdp /v:$IP /u:username /p:'password' /cert:ignore /sec:nla
+xfreerdp /v:$IP /u:username /p:'password' /cert:ignore /sec:rdp
+```
+
+> **xfreerdp troubleshooting:** The single most common reason it fails is a missing `/cert:ignore` flag. The second is NLA enforcement — try cycling through `/sec:rdp`, `/sec:tls`, and `/sec:nla` until one works.
+
+---
+
+### rdesktop (older tool — inconsistent on modern Windows)
+
+```bash
+# Basic
+rdesktop $IP
+
+# With credentials
+rdesktop -u username -p 'password' $IP
+
+# With domain
+rdesktop -u username -p 'password' -d corp.local $IP
+
+# Specify geometry
+rdesktop -u username -p 'password' -g 1280x800 $IP
+
+# Full screen
+rdesktop -u username -p 'password' -f $IP
+
+# Older security protocol (helps with Windows Server 2003/2008)
+rdesktop -u username -p 'password' -r sound:off $IP
+```
+
+> **Why rdesktop often fails on modern targets:** It doesn't support NLA properly, which is enabled by default on Windows 10, Server 2016 and later. If you get an immediate disconnect, that's almost certainly why. Use xfreerdp instead for anything modern.
+
+---
+
+### netexec (test RDP access before connecting)
+
+```bash
+# Test if creds work over RDP without actually connecting
+netexec rdp $IP -u username -p 'password'
+netexec rdp $IP -u username -p 'password' -d corp.local
+
+# Spray across a subnet
+netexec rdp 10.10.10.0/24 -u username -p 'password' -d corp.local
+
+# Pass the Hash test
+netexec rdp $IP -u administrator -H NTLMhash
+```
+
+> Use netexec to verify RDP access before connecting — confirms the credentials work and the account is in Remote Desktop Users without opening a full GUI session.
+
+---
+
+### Remmina (GUI backup option)
+
+```bash
+# Launch GUI
+remmina &
+
+# Open directly to a host
+remmina -c rdp://username:password@$IP
+```
+
+> Remmina handles certificate errors through a click-through dialog and sometimes connects where command-line tools struggle. Good backup option.
+
+---
+
+### Enabling RDP Remotely (if you have a shell but RDP is off)
+
+```cmd
+:: Enable RDP via registry
+reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
+
+:: Open firewall rule
+netsh advfirewall firewall set rule group="remote desktop" new enable=Yes
+
+:: Add user to Remote Desktop Users group
+net localgroup "Remote Desktop Users" username /add
+```
+
+```powershell
+# PowerShell equivalent
+Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
+Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+```
+
+---
+
+### Quick Troubleshooting Reference
+
+| Error | Likely cause | Fix |
+|---|---|---|
+| `credssp` / NLA error | NLA required, wrong security layer | Try `/sec:rdp` then `/sec:tls` |
+| Immediate disconnect | rdesktop + modern Windows | Switch to xfreerdp |
+| `certificate error` | Self-signed cert on lab box | Add `/cert:ignore` |
+| `connection refused` | RDP not enabled or wrong port | Confirm port 3389 open with nmap |
+| `account restricted` | User not in Remote Desktop Users | Check group membership |
+| Black screen after login | Display resolution issue | Add `/dynamic-resolution` or `/size:1280x720` |
+| Pass-the-Hash fails | Restricted Admin mode disabled | Enable via registry or use evil-winrm instead |
+
+---
+
+> **Most reliable combination for OSCP lab boxes:**
+> `xfreerdp /v:$IP /u:username /p:'password' /d:corp.local /cert:ignore`
+> Those two flags (`/cert:ignore` and `/d:`) alone resolve the majority of connection failures.
+````
