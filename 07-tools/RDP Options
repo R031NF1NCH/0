@@ -1,6 +1,3 @@
-Sure — here's the whole thing as one block:
-
-````markdown
 ## RDP Command Reference — Windows / AD Targets
 
 ### xfreerdp (preferred for modern Windows)
@@ -141,4 +138,3 @@ Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
 > **Most reliable combination for OSCP lab boxes:**
 > `xfreerdp /v:$IP /u:username /p:'password' /d:corp.local /cert:ignore`
 > Those two flags (`/cert:ignore` and `/d:`) alone resolve the majority of connection failures.
-````
