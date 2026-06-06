@@ -8,7 +8,7 @@ wpscan --url "target" --verbose
 
 # enumerate vulnerable plugins, users, vulrenable themes, timthumbs
 ```bash
-wpscan --url "target" --enumerate vp,u,vt,tt --follow-redirection --verbose --log target.log
+wpscan --url "target" --wp-content-dir="/wp-content/" --force --enumerate vp,vt,cb,dbe,u,tt  --plugins-detection aggressive --detection-mode aggressive
 ```
 
 ```bash
